@@ -45,10 +45,7 @@ const studentSchema= new mongoose.Schema({
         ref:"Fee"
         
     },
-    TimeTable:{
-        type:mongoose.Schema.ObjectId,
-        ref:'TimeTable'
-    },
+    
     
 })
 
