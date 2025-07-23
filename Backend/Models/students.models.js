@@ -40,12 +40,21 @@ const studentSchema= new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'Ticket',
     }],
-    currentFee:{
-        type:mongoose.Schema.ObjectId,
-        ref:"Fee"
-        
+    CpgaRecord:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:'Grade'
+        }
+    ],
+    currentSemester:{
+        type:Number,
+        required:true
     },
-    
+    statusOfStudent:{
+        type:String,
+        enum:['studying','semester Freeze','degree completed','leave university','pending'],
+        default:'studying'
+    }
     
 })
 

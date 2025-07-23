@@ -10,6 +10,15 @@ const CourseSchema=new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'departmentModel',
         required:true
+    },
+    code:{
+        type:Number,
+        required:true
+    },
+    creditHours:{
+        type:Number,
+        enum:[1,2,3],
+        required:true
     }
 },{timestamps:true})
 
