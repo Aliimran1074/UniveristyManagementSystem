@@ -16,4 +16,4 @@ const StudentSemesterSchema = new mongoose.Schema({
   }]
 
 
-})
+},{timestamps:true})
