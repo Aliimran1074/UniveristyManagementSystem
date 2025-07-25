@@ -6,17 +6,17 @@ const timeTableSchema= new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'departmentModel'
     },
-    course:{
+    courses:[{
         type:mongoose.Schema.ObjectId,
         ref:'courseModel'
-    },
-    instructor:{
+    }],
+    instructors:[{
         type:mongoose.Schema.ObjectId,
         ref:'instructorModel'
-    },
-    timeSlot:{
+    }],
+    timeSlots:[{
         type:mongoose.Schema.ObjectId,
         ref:'timeSlotModel'
-    }
+    }]
 
 },{timestamps:true})

@@ -11,6 +11,10 @@ const CourseSchema=new mongoose.Schema({
         ref:'departmentModel',
         required:true
     },
+    ForSemester:{
+        type:Number,
+        required:true
+    },
     code:{
         type:Number,
         required:true

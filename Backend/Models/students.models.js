@@ -48,7 +48,10 @@ const studentSchema= new mongoose.Schema({
             ref:'Grade'
         }
     ],
+    registeredCourse:
+    {
 
+    },
     statusOfStudent:{
         type:String,
         enum:['studying','semester Freeze','degree completed','leave university','pending'],
