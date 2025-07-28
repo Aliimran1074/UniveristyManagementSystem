@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-const department = require('./deparment.model')
+const department = require('../deparment.model')
 
 const courseRegistrationSchema=new mongoose.Schema({
     courses:[{

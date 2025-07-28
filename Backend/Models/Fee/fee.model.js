@@ -17,6 +17,12 @@ const feeSchema= new mongoose.Schema({
     },
     totalFee:{
         type:BigInt
+    },
+    paidFee:{
+        type:Number,
+    },
+    remainingFee:{
+     type:Number   
     }
 
 })

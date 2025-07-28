@@ -5,8 +5,8 @@ const resultSchema= new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'StudentModel'
     },
-    calculatedResult:{
+    calculatedResult:[{
         type:mongoose.Schema.ObjectId,
         ref:'studentResultModel'
-    }
+    }]
 })

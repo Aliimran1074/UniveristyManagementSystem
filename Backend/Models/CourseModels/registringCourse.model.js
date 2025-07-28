@@ -1,6 +1,6 @@
 const mongoose=require('mongoose')
 
-const registredCourse= new mongoose.Schema({
+const registredCourseByIndividualStudent= new mongoose.Schema({
     studentId:{
         type:mongoose.Schema.ObjectId,
         ref:'studentModel',

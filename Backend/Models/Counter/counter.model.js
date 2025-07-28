@@ -1,4 +1,4 @@
-const {mongoose} = require('../utils/db.connection')
+const {mongoose} = require('../../utils/db.connection')
 
 const counterSchema = new mongoose.Schema({
     id:{
