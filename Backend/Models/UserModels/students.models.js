@@ -10,10 +10,15 @@ const studentSchema= new mongoose.Schema({
         unique:true,
         required:true
     },
-    email:{
+    personalEmail:{
         type:String,
 
     },
+    universityEmail:{
+        type:String,
+
+    },
+
     password:{
         type:String,
         required:true
@@ -48,15 +53,17 @@ const studentSchema= new mongoose.Schema({
             ref:'Grade'
         }
     ],
-    registeredCourse:
-    {
-
-    },
     statusOfStudent:{
         type:String,
         enum:['studying','semester Freeze','degree completed','leave university','pending'],
         default:'studying'
+    },
+    counter:{
+        type:Number,
+        required:true      
     }
     
 })
 
+const studentModel = mongoose.model('studentModel',studentSchema)
+module.exports= studentModel
