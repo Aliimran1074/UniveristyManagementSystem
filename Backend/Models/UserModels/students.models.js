@@ -12,22 +12,23 @@ const studentSchema= new mongoose.Schema({
     },
     personalEmail:{
         type:String,
+        required:true
 
     },
     universityEmail:{
         type:String,
 
     },
-
     password:{
         type:String,
         required:true
     },
+
     semesterNo:{
      type: Number,
      enum:[1,2,3,4,5,6,7,8,9,10],
      default:1,
-     required:true   
+     
     },
     department:{
         type:mongoose.Schema.ObjectId,

@@ -1,10 +1,9 @@
 const mongoose= require('mongoose')
 
 const counterSchema = new mongoose.Schema({
-    id:{
+    customid:{
         type:String,
-        required:true,
-        unique:true
+        default:'abc'
     },
     sequence:{
         type:Number,
