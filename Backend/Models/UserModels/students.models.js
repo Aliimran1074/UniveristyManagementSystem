@@ -8,7 +8,6 @@ const studentSchema= new mongoose.Schema({
     studentId :{
         type:String,
         unique:true,
-        required:true
     },
     personalEmail:{
         type:String,
@@ -21,7 +20,6 @@ const studentSchema= new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
     },
 
     semesterNo:{
@@ -59,10 +57,10 @@ const studentSchema= new mongoose.Schema({
         enum:['studying','semester Freeze','degree completed','leave university','pending'],
         default:'studying'
     },
-    counter:{
-        type:Number,
-        required:true      
-    }
+    // counter:{
+    //     type:Number,
+    //     required:true      
+    // }
     
 })
 

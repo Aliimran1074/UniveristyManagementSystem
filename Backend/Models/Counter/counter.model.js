@@ -1,7 +1,7 @@
 const mongoose= require('mongoose')
 
 const counterSchema = new mongoose.Schema({
-    customid:{
+    customId:{
         type:String,
         default:'abc'
     },

@@ -18,8 +18,8 @@ const createCounter = async (req,res)=>{
 
 const counterGetter = async (req,res)=>{
     try {
-        const {customid} = req.body
-        const getCounter = await counter.findOne({customid:customid})
+        const {customId} = req.body
+        const getCounter = await counter.findOne({customId:customId})
         if(!getCounter){
             console.log("Not Get data from counter")
             return res.status(402).json({message:"Counter not found"})
@@ -33,8 +33,8 @@ const counterGetter = async (req,res)=>{
 }
 const updateCounter = async (req,res)=>{
     try {
-        const {customid}= req.body
-        const updateCounter = await counter.findOneAndUpdate({customid:customid},{$inc:{sequence:1}},{new:true})
+        const {customId}= req.body
+        const updateCounter = await counter.findOneAndUpdate({customId:customId},{$inc:{sequence:1}},{new:true})
         if(!updateCounter){
             console.log('Counter not updated'
             )
