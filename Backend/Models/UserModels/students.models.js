@@ -57,6 +57,10 @@ const studentSchema= new mongoose.Schema({
         enum:['studying','semester Freeze','degree completed','leave university','pending'],
         default:'studying'
     },
+    imageUrl:{
+        type:String,
+        required:true
+    },
     qrCode:{
         type:String,
         
