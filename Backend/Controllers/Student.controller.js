@@ -38,7 +38,7 @@ const studentRegistration = async (req, res) => {
         const id = createStudent._id
         const getYear = new Date().getFullYear()
         let sequenceNo = ''
-        const getCounter = await counter.findOne({ customid: customId })
+        const getCounter = await counter.findOne({ customId: customId })
         if (getCounter) {
             sequenceNo = getCounter.sequence
             // console.log("Counter Found Successfully")
@@ -157,4 +157,34 @@ const updateDataUsingCnic= async (req,res)=>{
     }
 }
 
-module.exports = { studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingId,updateDataUsingCnic }
+const deleteStudent = async (req,res)=>{
+    try {
+        const {id,imageUrl} = req.body
+        console.log(id)
+        const deleteStudent= await studentModel.deleteOne({_id:id})
+        if(deleteStudent.deletedCount<1){
+            console.log("Not able to delete Student")
+            return res.status(400).json({message:"Student not deleted/Student not exist"})
+        }
+        const decodedUrl= decodeURIComponent(imageUrl)
+        const fileName=decodedUrl.substring(decodedUrl.lastIndexOf('/')+1).split('?')[0]
+        const fileId= await fileIdByName(fileName)
+        try {
+            const deleteFile = await imageKitConfig.deleteFile(fileId)
+            console.log(deleteFile)
+            if(!deleteFile){
+                console.log('File Not Deleted')
+            }
+            console.log("File Deleted Successfully")
+        } catch (error) {
+            console.log("Issue in deleting file from imagekit",error)
+        }
+        console.log('Student Deleted Successfully')
+        return res.status(200).json({message:'Student Deleted Succesfully',deleteStudent})
+    } catch (error) {
+        console.log("Error in Delete Student Function",error)
+        return res.status(404).json({message:"Error in Delete Student Function",error})
+    }
+}
+
+module.exports = { studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingId,updateDataUsingCnic,deleteStudent }

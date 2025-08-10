@@ -34,6 +34,7 @@ const counterGetter = async (req,res)=>{
 const updateCounter = async (req,res)=>{
     try {
         const {customId}= req.body
+        console.log(customId)
         const updateCounter = await counter.findOneAndUpdate({customId:customId},{$inc:{sequence:1}},{new:true})
         if(!updateCounter){
             console.log('Counter not updated'

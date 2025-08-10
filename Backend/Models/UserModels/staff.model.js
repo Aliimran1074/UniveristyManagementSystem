@@ -36,7 +36,11 @@ const staffSchema = new mongoose.Schema({
     salary:{
         type:String
     },
-    QRCode:{
+    profilePic:{
         type:String
     }
+
 })
+
+const staffModel = mongoose.model('staffModel',staffSchema)
+module.exports= staffModel
