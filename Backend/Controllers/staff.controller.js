@@ -73,6 +73,10 @@ const getAstaffByCnic= async (req,res)=>{
     try {
         const {cnicNo}= req.body
         console.log("Cnic No : ",cnicNo)
+        if(cnicNo.length!==13){
+            console.log("Length of Cnic No not equal to 13")
+            return res.status(403).json({message:"Please Enter Correct Cnic No"})
+        }
         const staffData = await staffModel.findOne({cnicNo:cnicNo})
         if(!staffData){
             console.log("No staff Found With This CNIC No")
@@ -108,7 +112,7 @@ const updateDataUsingId = async (req,res)=>{
     try {
         const {id} = req.params
         const updatedData= req.body
-        const updatedstaff= await staffModel.findByIdAndUpdate(id,updatedData,{new:true})
+        const updatedstaff= await staffModel.findByIdAndUpdate(id,updatedData,{runValidators:true,new:true})
         if(!updatedstaff){
             console.log('staff Not Updated')
             return res.status(402).json({message:"staff Not Updated"})
@@ -125,7 +129,7 @@ const updateDataUsingCnic= async (req,res)=>{
     try {
         const {cnicNo} = req.params
         const dataToUpdate= req.body
-        const updatedstaff= await staffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{new:true})
+        const updatedstaff= await staffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
         if(!updatedstaff){
             console.log('staff Not Updated')
             return res.status(402).json({message:"staff Not Updated"})

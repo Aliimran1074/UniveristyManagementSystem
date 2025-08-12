@@ -19,9 +19,8 @@ const staffSchema = new mongoose.Schema({
         required:true
     },
     department:{
-        type:String,
-        enum:['None','FCIT','BBA','DFF','DPT','Administration','Security','SWs'],
-        required:true
+        type:mongoose.Schema.ObjectId,
+        ref:'department'
 
     },
     designation:{
@@ -31,12 +30,11 @@ const staffSchema = new mongoose.Schema({
     },
     QRCode:{
         type:String,
-        
     }  ,
     salary:{
         type:String
     },
-    profilePic:{
+    imageUrl:{
         type:String
     }
 
