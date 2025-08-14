@@ -129,7 +129,7 @@ const updateDataUsingCnic= async (req,res)=>{
     try {
         const {cnicNo} = req.params
         const dataToUpdate= req.body
-        const updatedstaff= await staffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
+        const updatedstaff= await zstaffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
         if(!updatedstaff){
             console.log('staff Not Updated')
             return res.status(402).json({message:"staff Not Updated"})

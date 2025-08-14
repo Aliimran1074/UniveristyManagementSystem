@@ -16,4 +16,37 @@ try {
 }
 }
 
-module.exports= departmentCreation
+const departmentDeletion= async(req,res)=>{
+try {
+       const {id} = req.body
+    const deleteDepartment = await department.deleteOne({_id:id})
+    if(!deleteDepartment){
+        console.log('Not able to delete Departement')
+        return res.status(401).json({message:'Department not deleted'})
+    }
+    console.log('Department Deleted Successfully')
+    return res.status(200).json({message:"Department Deleted Successfully",deleteDepartment})
+    } catch (error) {
+    console.log('Error in Department deletion',error)
+    return res.status(404).json({message:"Error in Department function",error})
+}
+}
+
+const updateDepartment = async (req,res)=>{
+    try {
+        const {id} = req.params
+        const data = req.body
+        const updatedData = await department.findByIdAndUpdate(id,data,{new:true})
+        if(!updatedData){
+            console.log("Data not updated")
+            return res.status(401).json({message:"Data not Updated"})
+        }
+        console.log("Data updated Successfully")
+        return res.status(200).json({message:"Data Updated Successfully",updatedData})
+    } catch (error) {
+        console.log("Error in Data updation function",error)
+        return res.status(404).json({message:"Error in Data Updation Function",error})
+    }
+}
+
+module.exports= {departmentCreation,departmentDeletion,updateDepartment}
