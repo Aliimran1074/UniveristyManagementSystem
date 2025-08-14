@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const { staffRegistration, getAstaffByCnic, getAstaffById, updateDataUsingId, updateDataUsingCnic, deletestaff } = require('../Controllers/staff.controller')
+const { staffRegistration, getAstaffByCnic, getAstaffById, updateDataUsingId, updateDataUsingCnic, deletestaff } = require('../Controllers/StaffController/staff.controller')
 
 
 

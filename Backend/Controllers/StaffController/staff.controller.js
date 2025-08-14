@@ -1,8 +1,8 @@
 
 const QRCode = require('qrcode')
-const {imageKitConfig,fileIdByName}= require('../ImageKit.IO Setup/setup')
-const {uploadforStudentPics} = require('../Multer/multer')
-const staffModel = require('../Models/UserModels/staff.model')
+const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
+const {uploadforStudentPics} = require('../../Multer/multer')
+const staffModel = require('../../Models/UserModels/staff.model')
 
 const staffRegistration = async (req, res) => {
     try {

@@ -1,5 +1,5 @@
-const courseModel= require('../Models/CourseModels/course.model')
-const department = require('../Models/Department/deparment.model')
+const courseModel= require('../../Models/CourseModels/course.model')
+const department = require('../../Models/Department/deparment.model')
 
 const courseCreation= async (req,res)=>{
     try {
@@ -37,4 +37,37 @@ const courseCreation= async (req,res)=>{
     }
 }
 
-module.exports={courseCreation} 
+const updationInCourse=async(req,res)=>{
+    try {
+        const {id}= req.params
+        const updateData = req.body
+        const updatedData = await courseModel.findOneAndUpdate({_id:id},updateData,{new:true})
+        if(!updatedData){
+            console.log("Not able to update Data")
+            return res.status(404).json({message:'Not able to update Data'})
+        }
+        console.log('Data updated Successfully')
+        return res.status(200).json({message:"Data updated Successfully",updatedData})
+    } catch (error) {
+        console.log('Error in Updated Data function',error)
+        return res.status(404).json({message:"Error in Updated Data function",error})
+    }
+}
+
+const courseDeletion= async(req,res)=>{
+    try {
+        const {id}= req.body
+        const deleteCourse= await courseModel.findByIdAndDelete(id)
+        if(!deleteCourse){
+            console.log("Not Able to Delete Course")
+            return res.status(402).json({message:"Course Not Deleted"})
+        }
+        console.log("Course Deleted Successfully",deleteCourse)
+        return res.status(200).json({message:"Course Deleted Successfully",deleteCourse})
+    } catch (error) {
+        console.log('Error in Course Deletion Function',error)
+        return res.status(404).json({message:"Course Deleted Successfully",error})
+    }
+}
+
+module.exports={courseCreation,updationInCourse,courseDeletion} 

@@ -1,4 +1,4 @@
-const counter= require('../Models/Counter/counter.model')
+const counter= require('../../Models/Counter/counter.model')
 
 const createCounter = async (req,res)=>{
     try {

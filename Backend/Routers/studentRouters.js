@@ -1,5 +1,5 @@
 const router = require ('express').Router()
-const {studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingCnic,updateDataUsingId, deleteStudent}= require('../Controllers/Student.controller')
+const {studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingCnic,updateDataUsingId, deleteStudent}= require('../Controllers/studentController/Student.controller')
 
 router.route('/studentRegistration').post(studentRegistration)
 router.route('/getStudentByCnicNo').get(getAStudentByCnic)

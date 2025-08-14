@@ -1,8 +1,8 @@
-const studentModel = require('../Models/UserModels/students.models')
-const counter = require('../Models/Counter/counter.model')
+const studentModel = require('../../Models/UserModels/students.models')
+const counter = require('../../Models/Counter/counter.model')
 const QRCode = require('qrcode')
-const {imageKitConfig,fileIdByName}= require('../ImageKit.IO Setup/setup')
-const {uploadforStudentPics} = require('../Multer/multer')
+const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
+const {uploadforStudentPics} = require('../../Multer/multer')
 
 const studentRegistration = async (req, res) => {
     try {
