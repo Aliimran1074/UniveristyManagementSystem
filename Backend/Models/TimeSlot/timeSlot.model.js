@@ -7,12 +7,26 @@
             required:true
         },
         startTime:{
-            type:time,
-            required:true
+            hours:{
+                type:Number,
+                required:true
+            },
+            minutes:{
+                type:Number,
+                required:true
+            },
+            
         },
         endTime:{
-            type:String,
-            required:true
+             hours:{
+                type:Number,
+                required:true
+            },
+            minutes:{
+                type:Number,
+                required:true
+            },
+            
         }
     },{timestamps:true})
     const timeSlotModel= mongoose.model('timeSlotModel',timeSlotSchema)

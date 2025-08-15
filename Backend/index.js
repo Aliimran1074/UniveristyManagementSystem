@@ -7,6 +7,7 @@ const departmentRoutes = require('./Routers/departmentRouter')
 const studentsRoutes = require('./Routers/studentRouters')
 const staffRoutes=require('./Routers/staffRoutes')
 const courseRoutes= require('./Routers/courseRoutes')
+const timeSlotRoutes= require('./Routers/timeSlotRoutes')
 const {databaseConnection}=require('./utils/db.connection')
 app.use(express.json())
 app.use(cors())
@@ -14,7 +15,8 @@ app.use('/api',counterRoutes)
 app.use('/api',departmentRoutes)
 app.use('/api',studentsRoutes)
 app.use('/api',staffRoutes)
-app.use('/api',courseRoutes)
+app.use('/api',courseRoutes) 
+app.use('/api',timeSlotRoutes)
 const port=process.env.Port
 
 
