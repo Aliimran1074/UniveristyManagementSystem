@@ -8,6 +8,7 @@ const instructorSchema = new mongoose.Schema({
     coursesTeached:[
         {
             type:mongoose.Schema.ObjectId,
+            ref:'courseModel'
              
         }
     ],
@@ -18,4 +19,7 @@ const instructorSchema = new mongoose.Schema({
         type:String,
 
     }
-})
+},{timestamps:true})
+
+const instructorModel= mongoose.model('instructorModel',instructorSchema)
+module.exports=instructorModel

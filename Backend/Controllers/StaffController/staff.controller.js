@@ -2,6 +2,7 @@
 const QRCode = require('qrcode')
 const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
 const {uploadforStudentPics} = require('../../Multer/multer')
+const instructorModel= require('../../Models/UserModels/instructor.model')
 const staffModel = require('../../Models/UserModels/staff.model')
 
 const staffRegistration = async (req, res) => {
@@ -55,6 +56,17 @@ const staffRegistration = async (req, res) => {
                 createStaff.imageUrl=imageKitUrl
                 await createStaff.save()
             }
+            if(designation==='Instructor'){
+                const createInstructor= await instructorModel.create({personalData:id})
+                if(!createInstructor){
+                    console.log("Issue in Creating Instructor")
+            return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
+
+                }
+                console.log("Instructor Created Successfully",createInstructor)
+            return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
+            }
+
             return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
         // console.log('staff Created Successfully')
         } catch (error) {
@@ -144,15 +156,41 @@ const updateDataUsingCnic= async (req,res)=>{
 
 const deletestaff = async (req,res)=>{
     try {
-        const {id} = req.params
+        const {id,imageUrl} = req.body
         console.log(id)
-        const deletestaff= await staffModel.deleteOne({_id:id})
-        if(deletestaff.deletedCount<1){
+        const deleteStaff= await staffModel.findByIdAndDelete(id)
+        if(!deleteStaff){
+            console.log("Issue in Deleting Staff")
+            return res.status(402).json({message:'Issue in Deleting Staff'})
+        }
+        if(deleteStaff.deletedCount<1){
             console.log("Not able to delete staff")
             return res.status(400).json({message:"staff not deleted/staff not exist"})
         }
-        console.log('staff Deleted Successfully')
-        return res.status(200).json({message:'staff Deleted Succesfully',deletestaff})
+        
+        const decodedUrl= decodeURIComponent(imageUrl)
+                const fileName=decodedUrl.substring(decodedUrl.lastIndexOf('/')+1).split('?')[0]
+                const fileId= await fileIdByName(fileName)
+                try {
+                    const deleteFile = await imageKitConfig.deleteFile(fileId)
+                    console.log(deleteFile)
+                    if(!deleteFile){
+                        console.log('File Not Deleted')
+                    }
+                    console.log("File Deleted Successfully")
+                } catch (error) {
+                    console.log("Issue in deleting file from imagekit",error)
+                }
+        if(deleteStaff.designation==="Instructor"){
+            const deleteInstructor = await instructorModel.findOneAndDelete({personalData:id})
+            if(!deleteInstructor){
+                console.log("Instructor not deleted ")
+            }
+            console.log('Instructor / Staff Deleted Successfully')
+            return res.status(201).json({message:"Instructor /Staff Deleted Successfully ",deleteStaff,deleteInstructor})
+        }
+                console.log('staff Deleted Successfully')
+        return res.status(200).json({message:'staff Deleted Succesfully',deleteStaff})
     } catch (error) {
         console.log("Error in Delete staff Function",error)
         return res.status(404).json({message:"Error in Delete staff Function",error})

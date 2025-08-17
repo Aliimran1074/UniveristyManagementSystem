@@ -9,5 +9,5 @@ router.route('/getStaffByCnic').get(getAstaffByCnic)
 router.route('/getStaffById/:staffId').get(getAstaffById)
 router.route('/updateStaffUsingId/:id').put(updateDataUsingId)
 router.route('/updateStaffUsingCnic/:cnicNo').put(updateDataUsingCnic)
-router.route('/deleteStaff/:id').delete(deletestaff)
+router.route('/deleteStaff').delete(deletestaff)
 module.exports= router
