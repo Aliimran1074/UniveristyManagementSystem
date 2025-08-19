@@ -56,16 +56,17 @@ const staffRegistration = async (req, res) => {
                 createStaff.imageUrl=imageKitUrl
                 await createStaff.save()
             }
-            if(designation==='Instructor'){
-                const createInstructor= await instructorModel.create({personalData:id})
-                if(!createInstructor){
-                    console.log("Issue in Creating Instructor")
-            return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
+            // if(designation==='Instructor'){
+            //     const createInstructor= await instructorModel.create({personalData:id})
+            //     if(!createInstructor){
+            //         console.log("Issue in Creating Instructor")
+            // return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
 
-                }
-                console.log("Instructor Created Successfully",createInstructor)
-            return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
-            }
+            //     }
+            //     console.log("Instructor Created Successfully",createInstructor)
+            // return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
+            // } 
+            // avoiding instructor schema
 
             return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
         // console.log('staff Created Successfully')
@@ -181,14 +182,14 @@ const deletestaff = async (req,res)=>{
                 } catch (error) {
                     console.log("Issue in deleting file from imagekit",error)
                 }
-        if(deleteStaff.designation==="Instructor"){
-            const deleteInstructor = await instructorModel.findOneAndDelete({personalData:id})
-            if(!deleteInstructor){
-                console.log("Instructor not deleted ")
-            }
-            console.log('Instructor / Staff Deleted Successfully')
-            return res.status(201).json({message:"Instructor /Staff Deleted Successfully ",deleteStaff,deleteInstructor})
-        }
+        // if(deleteStaff.designation==="Instructor"){
+        //     const deleteInstructor = await instructorModel.findOneAndDelete({personalData:id})
+        //     if(!deleteInstructor){
+        //         console.log("Instructor not deleted ")
+        //     }
+        //     console.log('Instructor / Staff Deleted Successfully')
+        //     return res.status(201).json({message:"Instructor /Staff Deleted Successfully ",deleteStaff,deleteInstructor})
+        // }
                 console.log('staff Deleted Successfully')
         return res.status(200).json({message:'staff Deleted Succesfully',deleteStaff})
     } catch (error) {

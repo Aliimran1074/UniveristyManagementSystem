@@ -17,7 +17,6 @@ const instructorSchema = new mongoose.Schema({
     },
     freeDay:{
         type:String,
-
     }
 },{timestamps:true})
 

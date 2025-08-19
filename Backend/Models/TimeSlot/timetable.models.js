@@ -1,5 +1,4 @@
 const mongoose= require('mongoose')
-const department = require('../deparment.model')
 
 const timeTableSchema= new mongoose.Schema({
     department:{
