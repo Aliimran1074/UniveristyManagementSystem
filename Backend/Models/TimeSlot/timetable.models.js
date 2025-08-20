@@ -19,3 +19,7 @@ const timeTableSchema= new mongoose.Schema({
     }]
 
 },{timestamps:true})
+
+const timeTableModel = mongoose.model('timeTableModel',timeTableSchema)
+
+module.exports= timeTableModel
