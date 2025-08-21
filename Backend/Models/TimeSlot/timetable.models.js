@@ -9,10 +9,10 @@ const timeTableSchema= new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'courseModel'
     }],
-    instructors:[{
-        type:mongoose.Schema.ObjectId,
-        ref:'instructorModel'
-    }],
+    // instructors:[{
+    //     type:mongoose.Schema.ObjectId,
+    //     ref:'instructorModel'
+    // }],
     timeSlots:[{
         type:mongoose.Schema.ObjectId,
         ref:'timeSlotModel'
