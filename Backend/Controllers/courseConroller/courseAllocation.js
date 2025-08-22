@@ -8,6 +8,12 @@ const courseAllocation = async(req,res)=>{
         const {selectorId}  = req.params
         const {instructorId,coursesIds}= req.body
 
+        const instructorOrNot = await staffModel.findById(instructorId)
+        if(instructorOrNot.designation!=='Instructor'){
+            console.log('Not a Instructor')
+            return res.status(404).json({message:"Not a Instructor",instructorOrNot})
+        }
+
         if(coursesIds.length>3){
             console.log("One Instructor can Only Register In Three Courses")
             return res.status(404).json({message:"One Instructor can Only register in Three Courses"})
@@ -33,7 +39,8 @@ const courseAllocation = async(req,res)=>{
             console.log("No Instructor Available with this Id")
             return res.status(404).json({message:"No Instructor Available with this id"})
         }
-        const departmentIdOfInstructor = findInstructorDepartment._id
+        const departmentIdOfInstructor = findInstructorDepartment.department.toString()
+        console.log('Department Id of Instructor',departmentIdOfInstructor)
         const findCourses  =await courseModel.find({_id:{$in:coursesIds}})
         if(!findCourses){
             console.log("No Course Found")
@@ -42,32 +49,38 @@ const courseAllocation = async(req,res)=>{
         const arrayOfDepartmentId = findCourses.map((currentElement)=>{
                 return currentElement.department
             })
-            let flagVariable=true
+            let sameDepartment = true
     for(let i=0;i<arrayOfDepartmentId.length;i++){
-        if(i!==departmentIdOfInstructor){
+            console.log(arrayOfDepartmentId[i]._id.toString())
+        if(departmentIdOfInstructor!==arrayOfDepartmentId[i]._id.toString()){
             console.log("Department of Both Is Different")
-            flagVariable=false
+            sameDepartment=false
             break
         }
         console.log("Same Department")
     }
-        return res.status(200).json({message:"Courses Found",arrayOfDepartmentId,departmentIdOfInstructor,flagVariable})
+    if(!sameDepartment)
+     {
+        console.log("Department of Instructor and Course is Different ")
+        return res.status(404).json({message:"Department of Instructor and Course is Different",sameDepartment})
+     }
+        // return res.status(200).json({message:"Courses Found",arrayOfDepartmentId,departmentIdOfInstructor})
         
         // check no of Courses already registered by instructor
-        // const alreadyRegisteredCourse = await courseModel.find({instructorTeached:instructorId}) 
-        // const registerCoursesLength =alreadyRegisteredCourse.length
-        // const coursesLength=coursesIds.length
-        // if(registerCoursesLength+coursesLength>3){
-        //     console.log(`Can Only Register in ${3-registerCoursesLength}`)
-        //     return res.status(202).json({message:`Can Only Register in ${3-registerCoursesLength}`})
-        // }
-        // const assignInstructor = await courseModel.updateMany({_id:{$in:coursesIds}},{instructorTeached:instructorId},{new:true})
-        // if(!assignInstructor){
-        //     console.log("Issue in Assigning Course")
-        //     return res.status(401).json({message:"Issue in Assigning Course"})
-        // }
-        // console.log('Instructor Assign Successfully')
-        // return res.status(200).json({message:"Instructor Assign Successfully",assignInstructor})
+        const alreadyRegisteredCourse = await courseModel.find({instructorTeached:instructorId}) 
+        const registerCoursesLength =alreadyRegisteredCourse.length
+        const coursesLength=coursesIds.length
+        if(registerCoursesLength+coursesLength>3){
+            console.log(`Can Only Register in ${3-registerCoursesLength}`)
+            return res.status(202).json({message:`Can Only Register in ${3-registerCoursesLength}`})
+        }
+        const assignInstructor = await courseModel.updateMany({_id:{$in:coursesIds}},{instructorTeached:instructorId},{new:true})
+        if(!assignInstructor){
+            console.log("Issue in Assigning Course")
+            return res.status(401).json({message:"Issue in Assigning Course"})
+        }
+        console.log('Instructor Assign Successfully')
+        return res.status(200).json({message:"Instructor Assign Successfully",assignInstructor})
     } catch (error) {
         console.log("Issue in Course Allocation Function",error)
         return res.status(404).json({message:"Issue in course Allocation Function",error})
