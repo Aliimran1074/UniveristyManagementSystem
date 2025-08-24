@@ -68,11 +68,14 @@ const courseAllocation = async(req,res)=>{
         
         // check no of Courses already registered by instructor
         const alreadyRegisteredCourse = await courseModel.find({instructorTeached:instructorId}) 
+        const namesOfRegisteredCourses= alreadyRegisteredCourse.map((currentElement,currentIndex)=>{
+            return currentElement.name
+        })
         const registerCoursesLength =alreadyRegisteredCourse.length
         const coursesLength=coursesIds.length
         if(registerCoursesLength+coursesLength>3){
             console.log(`Can Only Register in ${3-registerCoursesLength}`)
-            return res.status(202).json({message:`Can Only Register in ${3-registerCoursesLength}`})
+            return res.status(202).json({message:`You Can Only Register in ${3-registerCoursesLength} and Name of Already Register Courese is ${namesOfRegisteredCourses}`})
         }
         const assignInstructor = await courseModel.updateMany({_id:{$in:coursesIds}},{instructorTeached:instructorId},{new:true})
         if(!assignInstructor){
@@ -87,4 +90,40 @@ const courseAllocation = async(req,res)=>{
     }
 }
 
-module.exports={courseAllocation}
+const getNonSelectedCoursesOfParticularDepartment = async (req,res)=>{
+    try {
+        const {departmentId} =req.params
+        const courses = await courseModel.find({instructorTeached:null,department:departmentId})
+        if(!courses){
+            console.log("No Course Found")
+            return res.status(402).json({message:"Issue in Getting Courses"})
+        }
+        const noOfCourses = courses.length
+        console.log("Detail of Unselected Courses",courses)
+        return res.status(200).json({message:`No of Unselected Courses ${noOfCourses} and Courses: `,courses})
+        } 
+        catch (error) {
+        console.log("Issue in getting non selected Courses",error)
+        return res.status(404).json({message:"These are the main non selected courses",error})
+    }
+}
+
+const selectiveTeacherCourses =async (req,res)=>{
+    try {
+        const {instructorId}= req.body
+        console.log(instructorId)
+        const getCourses= await courseModel.find({instructorTeached:instructorId})
+        if(!getCourses){
+            console.log("No course by this instructor")
+            return res.status(404).json({message:"No Course by this instructor"})
+        }
+        console.log("Courses registered by this instructor")
+        const noOfCourses = getCourses.length
+        return res.status(200).json({message:`No of Courses =${noOfCourses} and  Courses by this Instructor`,getCourses})
+    } catch (error) {
+        console.log("Error in Selective Teacher Courses Function",error)
+        return res.status(404).json({message:"Error in Selective Teacher Courses Function",error})
+    }
+    
+}
+module.exports={courseAllocation,getNonSelectedCoursesOfParticularDepartment,selectiveTeacherCourses}
