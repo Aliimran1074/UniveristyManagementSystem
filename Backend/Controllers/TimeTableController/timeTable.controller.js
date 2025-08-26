@@ -38,19 +38,75 @@ const timeTableCreation = async(req,res)=>{
             "friday":5,
             "saturday":6
         }
-        // sorting of Time Slot According to Day
-        for (let i=0;i<allTimeSlot.length;i++){
-            for(j=i+1;j<allTimeSlot.length;j++){
-                if(dayNumber[allTimeSlot[i].day.toLowerCase()]> dayNumber[allTimeSlot[j].day.toLowerCase()]){
-                    let temp = allTimeSlot[i]
-                    allTimeSlot[i]=allTimeSlot[j]
-                    allTimeSlot[j]=temp
-                }
-            }
-        }
-// now want to arrange with time 
+
+// 10-1=9
+// 10-1-1=8
+
+for (let pass = 0; pass < allTimeSlot.length - 1; pass++) {   // multiple passes 
+  for (let i = 0; i < allTimeSlot.length - 1 - pass; i++) {   // inner comparison
+    let dayI = dayNumber[allTimeSlot[i].day.toLowerCase()];
+    let dayJ = dayNumber[allTimeSlot[i + 1].day.toLowerCase()];
+
+    let shouldSwap = false;  //flag variable
+
+    // Compare by day
+    if (dayI > dayJ) {
+      shouldSwap = true;
+    }
+    // If same day → compare startTime
+    else if (dayI === dayJ) {
+      if (Number(allTimeSlot[i].startTime) > Number(allTimeSlot[i + 1].startTime)) {
+        shouldSwap = true;
+      }
+    }
+
+    if (shouldSwap) {
+      let temp = allTimeSlot[i];
+      allTimeSlot[i] = allTimeSlot[i + 1];
+      allTimeSlot[i + 1] = temp;
+    }
+  }
+}
+
         return res.status(200).json({message:"Array Sorted Successfully",allTimeSlot})
 
+        //         for (let i=0;i<allTimeSlot.length;i++){
+//             for(j=i+1;j<allTimeSlot.length;j++){
+               
+//                 if(Number(allTimeSlot[i].startTime)>Number(allTimeSlot[j].startTime)){
+//                     let temp=allTimeSlot[i]
+//                     allTimeSlot[i]=allTimeSlot[j]
+//                     allTimeSlot[j]=temp 
+                
+//                 }
+//                 if(dayNumber[allTimeSlot[i].day.toLowerCase()]> dayNumber[allTimeSlot[j].day.toLowerCase()]){
+                 
+//                     let temp = allTimeSlot[i]
+//                     allTimeSlot[i]=allTimeSlot[j]
+//                     allTimeSlot[j]=temp
+                
+//                     if(Number(allTimeSlot[i].startTime)>Number(allTimeSlot[j].startTime)){
+//                     let temp=allTimeSlot[i]
+//                     allTimeSlot[i]=allTimeSlot[j]
+//                     allTimeSlot[j]=temp 
+                
+//                 }
+//                 }
+        
+        
+//             }
+//         }
+// // Arrange according to time
+//         for (let i =0;i<allTimeSlot.length;i++){
+//             for(j=i+1;j<allTimeSlot.length;j++){
+//                 if(Number(allTimeSlot[i].startTime)>Number(allTimeSlot[j].startTime)){
+//                     let temp=allTimeSlot[i]
+//                     allTimeSlot[i]=allTimeSlot[j]
+//                     allTimeSlot[j]=temp 
+                
+//                 }
+//             }
+//         }
       
     } catch (error) {
     console.log("Issue in Time Table Creation Function",error)
