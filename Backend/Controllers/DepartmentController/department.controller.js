@@ -49,4 +49,19 @@ const updateDepartment = async (req,res)=>{
     }
 }
 
-module.exports= {departmentCreation,departmentDeletion,updateDepartment}
+const getAllDepartment = async(req,res)=>{
+    try {
+        const gettingAllDepartment = await department.find()
+        if(!gettingAllDepartment){
+            console.log("Issue in Getting All Department")
+            return res.status(404).json({message:"Issue in Getting All Department"})
+        }
+        console.log('Department Found Successfully')
+        return res.status(200).json({message:"Departments Found Successfully",gettingAllDepartment})
+    } catch (error) {
+        console.log("Error in Getting All Department",error)
+        return res.status(400).json({message:"Error in Getting All Department",error})
+    }
+}
+
+module.exports= {departmentCreation,departmentDeletion,updateDepartment,getAllDepartment}
