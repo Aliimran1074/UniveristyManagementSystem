@@ -1,12 +1,14 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import apiUrl from "../../ApiUrl/apiUrl"
 
 function departmentAddition() {
 
     const [availableDepartment, setAvailableDepartment] = useState([])
     const [nameOfDepartment,setNameOfDepartment]=useState('')
+    const[addModalVisible,setAddModalVisible]=useState(false)
+    const [addButton,setAddButton]=useState(true)
     useEffect(() => {
         getAvailableDepartment()
     }, [])
@@ -59,14 +61,48 @@ function departmentAddition() {
         }
     }
     return (
-        <View style={{ flex: 1, flexDirection: 'column', marginVertical: 30 }}>
+<View style={{ flex: 1, flexDirection: 'column', marginVertical: 30 }}>
+
+        {
+            addButton?
+           <View style={{width:"40%",borderRadius:'2%',left:'60%',marginTop:10}}>
+            <TouchableOpacity style={{backgroundColor:'blue',height:'25%'}} onPress={()=>{
+                console.warn('Add Button Clicked')
+                setAddModalVisible(true)
+                setAddButton(false)
+            }}>
+                <Text style={{fontSize:16,color:'white',fontWeight:'bold',textAlign:'center'}}>Add Department +</Text>
+            </TouchableOpacity>
+           </View>:''
+        }
+
+{
+    addModalVisible?
+    <View style={{ flex: 1, alignItems: 'center',justifyContent:'center',borderWidth:3,borderColor:'black',margin:'10%' }}>
+        <TouchableOpacity style={{position:'absolute',top:0,right:0}} onPress={()=>{
+            setAddModalVisible(false)
+            setAddButton(true)
+        }}>
+                <MaterialIcons name="cancel" size={30} color='red' style={{marginLeft:5}}/>
+        </TouchableOpacity>
+                
+                <TextInput value={nameOfDepartment} placeholder="Enter Department Name" style={{fontSize:16,borderWidth:1,borderColor:'black',padding:3,width:'70%'}} onChangeText={(text)=>{
+                    setNameOfDepartment(text)
+                }}/>
+                
+                <TouchableOpacity style={{ backgroundColor: 'blue',width:'70%',marginTop:5 }} onPress={() => addDepartmentFunction()}>
+                    <Text style={{ color: 'white',textAlign:'center',fontSize:16 }}>Add +</Text>
+                </TouchableOpacity>
+            </View>:''
+}   
+           <ScrollView>
             <View style={{ flex: 1, justifyContent: 'center' }}>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginVertical: 10 }}>Department Information</Text>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', marginVertical: 10 }}>Department Information</Text>
                 </View>
                 {availableDepartment ? availableDepartment.map((currentElement, currentIndex) => {
                     return (
-                        <View style={{  flexDirection: 'row',padding:5,justifyContent:'space-between',marginTop:10 }} key={currentIndex}>
+                        <View style={{  flexDirection: 'row',padding:5,justifyContent:'space-between',marginTop:20 }} key={currentIndex}>
                             <Text style={style.text}>{currentIndex + 1}</Text>
                             <Text style={style.text}>{currentElement.name}</Text>
                         <TouchableOpacity  onPress={()=>{
@@ -90,14 +126,15 @@ function departmentAddition() {
                     )
                 }) : ""}
             </View>
-            <View style={{ flex: 1, alignItems: 'center' }}>
+            </ScrollView>
+            {/* <View style={{ flex: 1, alignItems: 'center' }}>
                 <TextInput value={nameOfDepartment} placeholder="Enter Department Name" onChangeText={(text)=>{
                     setNameOfDepartment(text)
                 }}/>
                 <TouchableOpacity style={{ backgroundColor: 'blue' }} onPress={() => addDepartmentFunction()}>
                     <Text style={{ color: 'white' }}>Add +</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </View>
     )
 }
