@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import apiUrl from "../../ApiUrl/apiUrl"
 
 function departmentAddition() {
@@ -62,6 +62,11 @@ function departmentAddition() {
     }
     return (
 <View style={{ flex: 1, flexDirection: 'column', marginVertical: 30 }}>
+       
+        <Modal style={{width:'50%',height:'50%'}}>
+            <Text>Hi I Am A Modal</Text>
+        <TextInput placeholder="Click Me" />
+        </Modal>
 
         {
             addButton?
@@ -96,9 +101,9 @@ function departmentAddition() {
             </View>:''
 }   
            <ScrollView>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 30, fontWeight: 'bold', marginVertical: 10 }}>Department Information</Text>
+            <View style={{ flex: 1}}>
+                <View style={{alignItems: 'center' }}>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 10 }}>Department Information</Text>
                 </View>
                 {availableDepartment ? availableDepartment.map((currentElement, currentIndex) => {
                     return (

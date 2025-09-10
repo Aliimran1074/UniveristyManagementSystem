@@ -3,7 +3,15 @@ const department = require('../../Models/Department/deparment.model')
 const departmentCreation= async(req,res)=>{
 try {
     const {name} = req.body
-    const departmentCreation = await department.create({name:name})
+    let nameToUpperCase = name.toUpperCase()
+    console.log(nameToUpperCase)
+    const checkDepartmentExistanceByName = await department.find({name:nameToUpperCase})
+    // console.log(checkDepartmentExistanceByName)
+    if(checkDepartmentExistanceByName.length>0){
+        console.log("Department Already Exist ")
+        return res.status(400).json({message:"Department Already Exist",checkDepartmentExistanceByName})
+    }
+    const departmentCreation = await department.create({name:nameToUpperCase})
     if(!departmentCreation){
         console.log("Department Creation Failed")
         return res.status(401).json({message:"Issue in Creating Deparment"})
