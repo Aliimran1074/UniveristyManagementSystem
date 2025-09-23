@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { useEffect, useState } from "react"
-import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import apiUrl from "../../ApiUrl/apiUrl"
 
 function departmentAddition() {
@@ -9,6 +9,7 @@ function departmentAddition() {
     const [nameOfDepartment,setNameOfDepartment]=useState('')
     const[addModalVisible,setAddModalVisible]=useState(false)
     const [addButton,setAddButton]=useState(true)
+    const [editModal,setEditModal]=useState(true)
     useEffect(() => {
         getAvailableDepartment()
     }, [])
@@ -63,17 +64,62 @@ function departmentAddition() {
     return (
 <View style={{ flex: 1, flexDirection: 'column', marginVertical: 30 }}>
        
-        <Modal style={{width:'50%',height:'50%'}}>
-            <Text>Hi I Am A Modal</Text>
-        <TextInput placeholder="Click Me" />
-        </Modal>
+       <Modal visible={editModal} transparent={true} animationType="fade">
+   
+        <Pressable
+          onPress={() => setEditModal(false)} // close when touch outside
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
+        >
+          <Pressable
+            style={{
+              width: "50%",
+              height: "50%",
+              backgroundColor: "#fff",
+              borderRadius: 10,
+              padding: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {}} // stops modal from closing when tapping inside
+          >
+            {/* Cancel Button */}
+            <TouchableOpacity
+              onPress={() => setEditModal(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>X</Text>
+            </TouchableOpacity>
+
+            <Text style={{ fontSize: 18, marginBottom: 20, textAlign: "center" }}>
+              Hi I Am A Modal
+            </Text>
+            <TextInput
+              placeholder="Click Me"
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                padding: 10,
+                borderRadius: 5,
+              }}
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
 
         {
             addButton?
            <View style={{width:"40%",borderRadius:'2%',left:'60%',marginTop:10}}>
             <TouchableOpacity style={{backgroundColor:'blue',height:'25%'}} onPress={()=>{
                 console.warn('Add Button Clicked')
-                setAddModalVisible(true)
+                setEditModal(true)
                 setAddButton(false)
             }}>
                 <Text style={{fontSize:16,color:'white',fontWeight:'bold',textAlign:'center'}}>Add Department +</Text>
@@ -85,7 +131,7 @@ function departmentAddition() {
     addModalVisible?
     <View style={{ flex: 1, alignItems: 'center',justifyContent:'center',borderWidth:3,borderColor:'black',margin:'10%' }}>
         <TouchableOpacity style={{position:'absolute',top:0,right:0}} onPress={()=>{
-            setAddModalVisible(false)
+            setEditModal(false)
             setAddButton(true)
         }}>
                 <MaterialIcons name="cancel" size={30} color='red' style={{marginLeft:5}}/>
