@@ -4,6 +4,7 @@ const department = require('../../Models/Department/deparment.model')
 const courseCreation= async (req,res)=>{
     try {
         const {name,departmentId,forSemester,code,creditHours}=req.body
+        console.log("Course Name ",name)
         const checkCourseByName= await courseModel.findOne({name:name})
         if(checkCourseByName){
             console.log('Course Already Registered With This Name')
