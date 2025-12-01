@@ -12,7 +12,9 @@ const courseAllocationRoutes= require('./Routers/courseAllocation')
 const timeTableRoutes= require('./Routers/timeTableRouter')
 const huggingFaceRoutes = require('./Routers/huggingFaceTestingRoute')
 const assignmentRoutes= require('./Routers/assignmentRoutes')
+const assignmentTopicRoutes=require('./Routers/assignmentTopicRoutes')
 const {databaseConnection}=require('./utils/db.connection')
+// const assignmentCreationAgent = require('./Automation/assignmentCreationAgentCall')
 app.use(express.json())
 app.use(cors())
 app.use('/api',counterRoutes)
@@ -24,10 +26,11 @@ app.use('/api',timeSlotRoutes)
 app.use('/api',courseAllocationRoutes)
 app.use('/api',timeTableRoutes)
 app.use('/api',assignmentRoutes)
+app.use('/api',assignmentTopicRoutes)
 app.use('/huggingFace',huggingFaceRoutes)
 const port=process.env.Port
 
-
+// assignmentCreationAgent()
 app.listen(port,async()=>{
     await databaseConnection()
     console.log("App Listen on Port ",port)

@@ -31,7 +31,6 @@ document.end()
 return document
     }
     else{
-
     
     const document = new pdfDocument()
     document.pipe(fs.createWriteStream(fileName))
@@ -74,11 +73,16 @@ return error.message
 }
 }
 
+// auto assignment setting remain
+
+
 
 
 
 const createAssignment=async(req,res)=>{
 try {
+    
+
 
     const {assignmentFile,course,createdBy,duration,topic,fileName}=req.body
     
@@ -100,7 +104,20 @@ try {
     }
     console.log("Assignment also created Successfully ",assignment)
     return res.status(200).json({message:"Successfully Create Assignment",assignmentCreate })
-    // let today= new Date().getTime()
+    
+} catch (error) {
+    console.log("Error in Assignment Creation Function ",error)
+    return res.status(404).json({message:'Issue in Create Assignement Function ',error})
+
+}
+}
+
+module.exports = {createAssignment,assignmentFileCreation}
+
+
+
+
+// let today= new Date().getTime()
     // let endDate = new Date()
     // endDate.setDate(endDate.getDate()+duration)
     // endDate.setHours(23,59,59,999)
@@ -130,11 +147,3 @@ try {
 
     // console.log("No of assignment Found Of Particular Subject",checkNoOfAssignmentofParticularCourse)
     // return res.status(200).json({message:"Assignment Found of this Course",checkNoOfAssignmentofParticularCourse})
-} catch (error) {
-    console.log("Error in Assignment Creation Function ",error)
-    return res.status(404).json({message:'Issue in Create Assignement Function ',error})
-
-}
-}
-
-module.exports = {createAssignment,assignmentFileCreation}
