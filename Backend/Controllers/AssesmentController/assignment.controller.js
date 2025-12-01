@@ -1,8 +1,61 @@
 const assignmentModel = require('../../Models/Assignment/assignment.model')
 const {uploadforAssessment}= require('../../Multer/multer')
 const fs = require('fs')
+const pdfDocument= require('pdfkit')
 
-const assignmentFileCreation = (topic)=>{
+// pdf file creating function
+
+const createPdf = (fileName,text)=>{
+try {
+    console.log("Text is ",text[0].question)
+    console.log("Text length:",text.length)
+    if(text.length>3){
+        console.log("I am entering in if condition")
+        const newArray = text.slice(0,3)
+        console.log("I am new Array",newArray)
+    const document = new pdfDocument()
+    document.pipe(fs.createWriteStream(fileName))
+    // pdf formatting 
+    document.fontSize(20).text("Maryam Ali Amaaz Institute",{align:'center',underline:true})
+    document.moveDown(2)
+
+    document.fontSize(16).text('Assignment',{align:'center'})
+    document.moveDown(1)
+
+    newArray.forEach((data,index)=>{
+    document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
+    document.moveDown(0.5)
+    
+})
+document.end()
+return document
+    }
+    else{
+
+    
+    const document = new pdfDocument()
+    document.pipe(fs.createWriteStream(fileName))
+    // pdf formatting 
+    document.fontSize(20).text("Maryam Ali Amaaz Institute",{align:'center',underline:true})
+    document.moveDown(2)
+
+    document.fontSize(16).text('Assignment',{align:'center'})
+    document.moveDown(1)
+
+    text.forEach((data,index)=>{
+    document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
+    document.moveDown(0.5)
+})
+    document.end()
+    return document}
+} catch (error) {
+    console.log("Error in creating Pdf",error)
+
+}
+}
+
+
+const assignmentFileCreation = (topic,fileName)=>{
 try {
     // const {topic}=req.body
     const raw =fs.readFileSync('./Question Answer JSON/biology.json',"utf8")
@@ -11,7 +64,9 @@ try {
     const filtered = data.questions.filter((response)=>{
         return response.question.includes(topic)    })        
         // return res.status(200).json({message:"Data get successfully",filtered})
-        return filtered
+        const pdfFile = createPdf(fileName,filtered) 
+        return pdfFile
+        // return filtered
 } catch (error) {
 console.log("Error in topic getting function ",error)  
 return error.message  
@@ -25,10 +80,10 @@ return error.message
 const createAssignment=async(req,res)=>{
 try {
 
-    const {assignmentFile,course,createdBy,duration}=req.body
+    const {assignmentFile,course,createdBy,duration,topic,fileName}=req.body
     
     // Auto Assignment Agent Functionality
-
+    const assignment = assignmentFileCreation(topic,fileName)
     
     // check existing assignment of particular subject
     const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
@@ -43,7 +98,8 @@ try {
         console.log("Issue in Creating Assignment ")
         return res.status(400).json({message:"Issue in Creating Assignment"})
     }
-    return res.status(200).json({message:"Successfully Create Assignment",assignmentCreate})
+    console.log("Assignment also created Successfully ",assignment)
+    return res.status(200).json({message:"Successfully Create Assignment",assignmentCreate })
     // let today= new Date().getTime()
     // let endDate = new Date()
     // endDate.setDate(endDate.getDate()+duration)
