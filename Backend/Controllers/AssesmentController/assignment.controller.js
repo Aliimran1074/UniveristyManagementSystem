@@ -55,25 +55,61 @@ return document
 
 
 const assignmentFileCreation = (topic,fileName)=>{
-try {
-    // const {topic}=req.body
-    const raw =fs.readFileSync('./Question Answer JSON/biology.json',"utf8")
-    const data = JSON.parse(raw)
+    try {
+        // const {topic}=req.body
+        const raw =fs.readFileSync('./Question Answer JSON/biology.json',"utf8")
+        const data = JSON.parse(raw)
+        
+        const filtered = data.questions.filter((response)=>{
+            return response.question.includes(topic)    })        
+            // return res.status(200).json({message:"Data get successfully",filtered})
+            const pdfFile = createPdf(fileName,filtered) 
+            return pdfFile
+            // return filtered
+        } catch (error) {
+            console.log("Error in topic getting function ",error)  
+            return error.message  
+            // return res.status(404).json({message:"Error in File Creation function"})
+        }
+    }
     
-    const filtered = data.questions.filter((response)=>{
-        return response.question.includes(topic)    })        
-        // return res.status(200).json({message:"Data get successfully",filtered})
-        const pdfFile = createPdf(fileName,filtered) 
-        return pdfFile
-        // return filtered
-} catch (error) {
-console.log("Error in topic getting function ",error)  
-return error.message  
-// return res.status(404).json({message:"Error in File Creation function"})
-}
-}
+    // auto assignment setting remain
+    const assignmentDateCalculator=async(course)=>{
+        try {
+            console.log('course',course) 
+            // const topic = "Hello"
+            // const course = "693053cd5b0657e541e3b925"
+            // check last assignment creation date of same course assignment 
+            const assignment = await assignmentModel.find({course:course})
+            if(!assignment || assignment.length<1){
+                console.log("No Assignment Found")
+                return {message:true}
+            }
+            let assignmentLength = assignment.length
+            // console.log(assignmentLength)
+            const generatedDate= assignment[assignmentLength-1].generatedDate 
+            // console.log(assignment[assignmentLength-1].generatedDate)
 
-// auto assignment setting remain
+            const generateTime = generatedDate.getTime()
+            // console.log(generateTime)
+
+            const currentTime = Date.now()
+            // console.log(currentTime)
+            // if()
+
+            const totalMiliSecondCountingInMonth = (30*24*60*60*1000)
+            // console.log(currentTime-generateTime)
+            if(currentTime-generateTime<totalMiliSecondCountingInMonth){
+                return {message:false}
+            }
+            else{
+                return {message:true}
+            }
+
+        } catch (error) {
+            console.log("Error in assignment Date checker",error)
+        }
+    }
 
 
 
@@ -81,10 +117,7 @@ return error.message
 
 const createAssignment=async(req,res)=>{
 try {
-    
-
-
-    const {assignmentFile,course,createdBy,duration,topic,fileName}=req.body
+        const {assignmentFile,course,createdBy,duration,topic,fileName}=req.body
     
     // Auto Assignment Agent Functionality
     const assignment = assignmentFileCreation(topic,fileName)
@@ -109,10 +142,19 @@ try {
     console.log("Error in Assignment Creation Function ",error)
     return res.status(404).json({message:'Issue in Create Assignement Function ',error})
 
-}
+} 
 }
 
-module.exports = {createAssignment,assignmentFileCreation}
+// const createAutoAssignment = async(req,res)=>{
+//     try {
+        
+//     } catch (error) {
+        
+//     }
+// }
+
+
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator}
 
 
 

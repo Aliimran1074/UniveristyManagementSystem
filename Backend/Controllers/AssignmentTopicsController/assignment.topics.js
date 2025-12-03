@@ -31,7 +31,7 @@ const assignmentTopicHandling= async(req,res)=>{
         console.log("Topic Created Successfully")
         return res.status(200).json({message:"Assignment Topic Created Succesfully",createTopic})
     } catch (error) {
-        console.log("Error in Assignment Creating Function",error)
+        console.log("Error in Assignment Creating Function",error) 
         res.status(400).json({message:"Error in Assignment Creating Function",error})
     }
 }
