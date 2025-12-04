@@ -1,12 +1,56 @@
 const assignmentModel = require('../../Models/Assignment/assignment.model')
+const assignmentTopicModel = require('../../Models/AssignmentInputModel/assignment.input.model')
 const {uploadforAssessment}= require('../../Multer/multer')
 const fs = require('fs')
 const pdfDocument= require('pdfkit')
+// const { checkAssignmentInput } = require('./AssesmentInputQueue')
 
 // pdf file creating function
 
+const checkAssignmentInput =async()=>{
+    try {
+        const getPendingAssignment = await assignmentTopicModel.find({status:'pending'})
+        // console.log(getPendingAssignment)
+       
+       const pendingAssignemntCourse= getPendingAssignment.map((currentElement,currentIndex)=>{
+                return [currentElement.course.toString(),currentElement]
+       })
+
+       const uniquePendingCourse = [
+        ... new Map(pendingAssignemntCourse).values() //confused (dry run needed)
+       ]
+
+    //  running loop of every unique course and match date first and get only allowed courses
+    const allowedCourse=[]
+    
+       for (const currentElement of uniquePendingCourse){
+        const result = await assignmentDateCalculator(currentElement.course)
+        // console.log(result)
+        if(result.message==true){
+            allowedCourse.push(currentElement)
+        } 
+       }
+
+       console.log("Allowed Array", allowedCourse)
+       for(const currentObject of allowedCourse){
+        const message = await autoAssignmentCreation(currentObject)
+        console.log(message)
+       }
+       return {message:'Work Completed'}
+    
+    //  now will push this array into reddis /or if array small will apply function directly
+    
+    }
+     catch (error) {
+    console.log('Error in Check Assignment Input ',error)    
+    return {message:"Error in check Assignment Input",error}   
+    }
+}
+
+
 const createPdf = (fileName,text)=>{
 try {
+    console.log("Text is",text)
     console.log("Text is ",text[0].question)
     console.log("Text length:",text.length)
     if(text.length>3){
@@ -57,11 +101,14 @@ return document
 const assignmentFileCreation = (topic,fileName)=>{
     try {
         // const {topic}=req.body
+        let topicToLowerCase = topic.toLowerCase()
+        console.log("Lower case topic :",topicToLowerCase)
         const raw =fs.readFileSync('./Question Answer JSON/biology.json',"utf8")
         const data = JSON.parse(raw)
         
+        console.log("Here data is ",data)
         const filtered = data.questions.filter((response)=>{
-            return response.question.includes(topic)    })        
+            return response.question.includes(topicToLowerCase)    })        
             // return res.status(200).json({message:"Data get successfully",filtered})
             const pdfFile = createPdf(fileName,filtered) 
             return pdfFile
@@ -73,13 +120,10 @@ const assignmentFileCreation = (topic,fileName)=>{
         }
     }
     
-    // auto assignment setting remain
-    const assignmentDateCalculator=async(course)=>{
+    // auto assignment setting remain 
+    async function assignmentDateCalculator(course){
         try {
             console.log('course',course) 
-            // const topic = "Hello"
-            // const course = "693053cd5b0657e541e3b925"
-            // check last assignment creation date of same course assignment 
             const assignment = await assignmentModel.find({course:course})
             if(!assignment || assignment.length<1){
                 console.log("No Assignment Found")
@@ -97,7 +141,8 @@ const assignmentFileCreation = (topic,fileName)=>{
             // console.log(currentTime)
             // if()
 
-            const totalMiliSecondCountingInMonth = (30*24*60*60*1000)
+            // const totalMiliSecondCountingInMonth = (30*24*60*60*1000) //will uncomment after testing
+            const totalMiliSecondCountingInMonth= 12
             // console.log(currentTime-generateTime)
             if(currentTime-generateTime<totalMiliSecondCountingInMonth){
                 return {message:false}
@@ -112,15 +157,61 @@ const assignmentFileCreation = (topic,fileName)=>{
     }
 
 
+const autoAssignmentCreation=async(inputObject)=>{
+try
+    {
+        // console.log("Input Object is :",inputObject)
+        const topic = inputObject.assignmentTopic
+        // console.log("Topic is:",topic)
+        const course = inputObject.course
+        const fileName = topic+'file.pdf'
+        const createdBy = inputObject.instructor
+        const assignmentFile = 'abc'
+        const duration = 7
+const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
+    if(checkNoOfAssignmentofParticularCourse.length>10){ //will change to 3
+        console.log("Already Four Assignment Uplaoded of Particular Subject")
+        return {message:'Already 4 assignments uploaded '}
+    }
+    
+    const assignment = assignmentFileCreation(topic,fileName)
+    const assignmentCreate= await assignmentModel.create({assignmentFile:assignmentFile,course:course,createdBy,duration})
 
+    if(!assignmentCreate){
+        console.log("Issue in Creating Assignment ")
+        return {message:"Issue in Creating Assignment"}
+    }
+    const changeInputStatus = await assignmentTopicModel.updateOne({course:course,assignmentTopic:topic},{status:'uploaded'})
+        console.log('ChangeInputStatus',changeInputStatus) 
+    // console.log("Assignment also created Successfully ",assignment)
+    return {message:"Successfully Create Assignment",assignmentCreate }
+    
+} catch (error) {
+    console.log("Error in Assignment Creation Function ",error)
+    return {message:'Issue in Create Assignement Function ',error}
 
+} 
+
+}
+
+const assignmentQueueCalling =async (req,res)=>{
+try {
+    const message = await checkAssignmentInput()
+    if(!message){
+        return res.status(400).json({message:'Assignment Queue Calling Function having some issue'})
+    }
+    return res.status(200).json({message:"Done and Dusted",message})
+} catch (error) {
+    console.log('Issue in Assignment Queue Function',error)
+    return res.status(404).json({message:"Issue in Assignment Queue Function",error})
+}
+}
 
 const createAssignment=async(req,res)=>{
 try {
         const {assignmentFile,course,createdBy,duration,topic,fileName}=req.body
     
     // Auto Assignment Agent Functionality
-    const assignment = assignmentFileCreation(topic,fileName)
     
     // check existing assignment of particular subject
     const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
@@ -128,7 +219,8 @@ try {
         console.log("Already Four Assignment Uplaoded of Particular Subject")
         return res.status(201).json({message:'Already 4 assignments uploaded '})
     }
-
+    
+    const assignment = assignmentFileCreation(topic,fileName)
     const assignmentCreate= await assignmentModel.create({assignmentFile:assignmentFile,course:course,createdBy,duration})
 
     if(!assignmentCreate){
@@ -154,8 +246,7 @@ try {
 // }
 
 
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator}
-
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput}
 
 
 

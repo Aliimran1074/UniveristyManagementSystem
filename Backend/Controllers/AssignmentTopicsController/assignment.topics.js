@@ -9,7 +9,7 @@ const assignmentTopicHandling= async(req,res)=>{
             console.log("No Assignment Topic Found of This Course")
             return res.status(404).json({message:'Assignment Not found of This Course'})
         }
-        if(checkNoOfTopicsOfParticularCourse.length>3){
+        if(checkNoOfTopicsOfParticularCourse.length>9){
             console.log("Already Four Topics Assigned")
             return res.status(201).json({message:"Already 4 Topics Assigned "})
         }
