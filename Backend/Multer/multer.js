@@ -13,7 +13,7 @@ const fileFilterforStudentPics = (req,file,cb)=>{
 }
 
 const fileFilterForAssessment = (req,file,cb)=>{
-    const allowedType= ['file/pdf']
+    const allowedType= ['application/pdf']
     if(allowedType.includes(file.mimetype)){
         cb(null,true)
     }
@@ -21,14 +21,15 @@ const fileFilterForAssessment = (req,file,cb)=>{
         cb(new Error('only Pdf file will accepted for Assignment Uploading'))
     }
 }
+const uploadforAssessment=multer({
+    storage:storage,
+    fileFilter:fileFilterForAssessment
+}).single('pdf')
+
 const uploadforStudentPics=multer({
     storage:storage,
     fileFilter:fileFilterforStudentPics
 }).single('image')
 
-const uploadforAssessment=multer({
-    storage:storage,
-    fileFilter:fileFilterForAssessment
-}).single('file')
 
 module.exports={uploadforStudentPics,uploadforAssessment}

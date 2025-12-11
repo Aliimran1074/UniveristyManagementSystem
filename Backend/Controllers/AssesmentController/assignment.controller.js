@@ -3,9 +3,44 @@ const assignmentTopicModel = require('../../Models/AssignmentInputModel/assignme
 const {uploadforAssessment}= require('../../Multer/multer')
 const fs = require('fs')
 const pdfDocument= require('pdfkit')
-// const { checkAssignmentInput } = require('./AssesmentInputQueue')
-
+const multer =require('multer')
+const FormData = require('form-data')
+const axios =require('axios')
 // pdf file creating function
+
+// MUlter Storage setting
+
+const getAssignmentData = async(req,res)=>{
+    try {
+        console.log('Function Running')
+        if(!req.file){
+            console.log("PDF not Found")
+            return res.status(203).json({message:"PDF not Found"})
+        }
+        const formData = new FormData()
+        formData.append('pdf',req.file.buffer,req.file.originalname)
+    
+        // const response = await fetch("http://localhost:4000/setup/generate-assignment-from-pdf",{
+        //     method:"POST",
+        //     body:formData,
+        //     headers:formData.getHeaders() 
+        // })
+        const response = await axios.post("http://localhost:4000/setup/generate-assignment-from-pdf",formData,{headers:formData.getHeaders()})
+        console.log("Response is: ",response)
+        if(!response){
+            console.log("Issue in API calling From Hugging Face Server")
+            return res.status(400).json({message:"Request Failed Here"})
+        }
+            const data = response.data
+        return res.status(200).json({message:"Data retreive Successfully",data})
+        // const result = await response.json()
+        // return res.status(200).json({message:"Data retrieve Successfully",result})
+    } catch (error) {
+        console.log("Error in Get Assignment Data function",error)
+        return res.status(404).json({message:"Error in Get Assignment Data Function"})
+    }
+}
+
 
 const checkAssignmentInput =async()=>{
     try {
@@ -219,7 +254,8 @@ try {
         console.log("Already Four Assignment Uplaoded of Particular Subject")
         return res.status(201).json({message:'Already 4 assignments uploaded '})
     }
-    
+
+    // Date Calculation work remain??
     const assignment = assignmentFileCreation(topic,fileName)
     const assignmentCreate= await assignmentModel.create({assignmentFile:assignmentFile,course:course,createdBy,duration})
 
@@ -237,16 +273,35 @@ try {
 } 
 }
 
-// const createAutoAssignment = async(req,res)=>{
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// }
 
 
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput}
+const createAutoAssignmentByUploadingFile = async(req,res)=>{
+    try {
+        const {course} =req.body
+
+        // check already uploaded assignment of that particular course
+        const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
+        if(checkNoOfAssignmentofParticularCourse.length>3){
+        console.log("Already Four Assignment Uplaoded of Particular Subject")
+        return res.status(201).json({message:'Already 4 assignments uploaded '})
+    }
+    const assignmentDateChecker = await assignmentDateCalculator(course)
+    console.log('Assignment Date Message',assignmentDateChecker)
+    if(!assignmentDateChecker){
+        console.log("Not 30 Days Completed")
+        return res.status(202).json({message:"30 Days not Completed"})
+    }
+
+
+
+    } catch (error) {
+        console.log("Error in Create AutoAssignment By File Uploading",error)
+        return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
+    }
+}
+
+
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,createAutoAssignmentByUploadingFile,getAssignmentData}
 
 
 
