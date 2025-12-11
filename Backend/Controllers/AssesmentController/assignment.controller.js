@@ -6,35 +6,74 @@ const pdfDocument= require('pdfkit')
 const multer =require('multer')
 const FormData = require('form-data')
 const axios =require('axios')
+const data = require('../../data.json')
 // pdf file creating function
 
 // MUlter Storage setting
 
-const getAssignmentData = async(req,res)=>{
+const checking=async(req,res)=>{
+try{
+    const{fileName}= req.body
+    const document= createPdf(fileName,data)
+    if(!document){
+        console.log("Issue in Creating Document")
+    return res.status(400).json({message:"Issue in Creating Document"})
+    }
+    return res.status(200).json({message:"Document Created Successfully"})
+}
+catch(error){
+    console.log("Issue in Creating Pdf ",error)
+    return res.status(404).json({message:"Issue in Creating Pdf"})
+}
+}
+
+
+const createAutoAssignmentByGivingFile = async(req,res)=>{
     try {
+        
         console.log('Function Running')
+        // const {course} =req.body
         if(!req.file){
             console.log("PDF not Found")
             return res.status(203).json({message:"PDF not Found"})
         }
+
+        // will done committed work  
+    //     const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
+    //     if(checkNoOfAssignmentofParticularCourse.length>3){
+    //     console.log("Already Four Assignment Uplaoded of Particular Subject")
+    //     return res.status(201).json({message:'Already 4 assignments uploaded '})
+    // }
+    // const assignmentDateChecker = await assignmentDateCalculator(course)
+    // console.log('Assignment Date Message',assignmentDateChecker)
+    // if(!assignmentDateChecker){
+    //     console.log("Not 30 Days Completed")
+    //     return res.status(202).json({message:"30 Days not Completed"})
+    // }
+
         const formData = new FormData()
         formData.append('pdf',req.file.buffer,req.file.originalname)
     
-        // const response = await fetch("http://localhost:4000/setup/generate-assignment-from-pdf",{
-        //     method:"POST",
-        //     body:formData,
-        //     headers:formData.getHeaders() 
-        // })
-        const response = await axios.post("http://localhost:4000/setup/generate-assignment-from-pdf",formData,{headers:formData.getHeaders()})
+
+        // const response = await axios.post("http://localhost:4000/setup/generate-assignment-from-pdf",formData,{headers:formData.getHeaders()})
+        const response = await axios.post("https://huggingface-configuration.vercel.app/setup/generate-assignment-from-pdf",formData,{headers:formData.getHeaders()})
         console.log("Response is: ",response)
         if(!response){
             console.log("Issue in API calling From Hugging Face Server")
             return res.status(400).json({message:"Request Failed Here"})
+        } 
+        const data = response.data
+        const parseData =JSON.parse(data.assignment)
+        console.log(parseData)
+        const fileName = `${Date.now()}file.pdf`
+        const document=createPdf(fileName,parseData)
+        if(!document){
+            console.log("Issue in Creating Document")
+            return res.status(402).json({message:"Issue in Creating Assignment"})
         }
-            const data = response.data
-        return res.status(200).json({message:"Data retreive Successfully",data})
-        // const result = await response.json()
-        // return res.status(200).json({message:"Data retrieve Successfully",result})
+
+        return res.status(200).json({message:"Document Created Successfully"})
+        
     } catch (error) {
         console.log("Error in Get Assignment Data function",error)
         return res.status(404).json({message:"Error in Get Assignment Data Function"})
@@ -85,13 +124,15 @@ const checkAssignmentInput =async()=>{
 
 const createPdf = (fileName,text)=>{
 try {
-    console.log("Text is",text)
-    console.log("Text is ",text[0].question)
-    console.log("Text length:",text.length)
-    if(text.length>3){
-        console.log("I am entering in if condition")
-        const newArray = text.slice(0,3)
-        console.log("I am new Array",newArray)
+    // console.log("Working on Create Pdf Function")
+    const questions= text.questions
+    // console.log("Text is",text)
+    // console.log("Text is ",text[0].question)
+    // console.log("Text length:",text.length)
+    // if(text.length>3){
+        // console.log("I am entering in if condition")
+        // const newArray = text.slice(0,3)
+        // console.log("I am new Array",newArray)
     const document = new pdfDocument()
     document.pipe(fs.createWriteStream(fileName))
     // pdf formatting 
@@ -101,31 +142,40 @@ try {
     document.fontSize(16).text('Assignment',{align:'center'})
     document.moveDown(1)
 
-    newArray.forEach((data,index)=>{
-    document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
-    document.moveDown(0.5)
-    
-})
-document.end()
-return document
+    document.fontSize(16).text(`${text.title}`,{align:'center'})
+    document.moveDown(1)
+
+    for(let i=0;i<questions.length;i++){
+       document.fontSize(12).text(`Q${i+1} ${questions[i]}`,{align:'left'})
+       document.moveDown(0.5)
     }
-    else{
+    // newArray.forEach((data,index)=>{
+    // document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
+    // document.moveDown(0.5)
     
-    const document = new pdfDocument()
-    document.pipe(fs.createWriteStream(fileName))
-    // pdf formatting 
-    document.fontSize(20).text("Maryam Ali Amaaz Institute",{align:'center',underline:true})
-    document.moveDown(2)
+// })
+document.end()
+console.log("PDF created Successfully")
+return document
+//     }
+//     else{
+    
+//     const document = new pdfDocument()
+//     document.pipe(fs.createWriteStream(fileName))
+//     // pdf formatting 
+//     document.fontSize(20).text("Maryam Ali Amaaz Institute",{align:'center',underline:true})
+//     document.moveDown(2)
 
-    document.fontSize(16).text('Assignment',{align:'center'})
-    document.moveDown(1)
+//     document.fontSize(16).text('Assignment',{align:'center'})
+//     document.moveDown(1)
 
-    text.forEach((data,index)=>{
-    document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
-    document.moveDown(0.5)
-})
-    document.end()
-    return document}
+//     text.forEach((data,index)=>{
+//     document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
+//     document.moveDown(0.5)
+// })
+//     document.end()
+//     return document
+// }
 } catch (error) {
     console.log("Error in creating Pdf",error)
 
@@ -275,33 +325,22 @@ try {
 
 
 
-const createAutoAssignmentByUploadingFile = async(req,res)=>{
-    try {
-        const {course} =req.body
+// const createAutoAssignmentByUploadingFile = async(req,res)=>{
+//     try {
+//         const {course} =req.body
 
-        // check already uploaded assignment of that particular course
-        const checkNoOfAssignmentofParticularCourse = await assignmentModel.find({course:course}) 
-        if(checkNoOfAssignmentofParticularCourse.length>3){
-        console.log("Already Four Assignment Uplaoded of Particular Subject")
-        return res.status(201).json({message:'Already 4 assignments uploaded '})
-    }
-    const assignmentDateChecker = await assignmentDateCalculator(course)
-    console.log('Assignment Date Message',assignmentDateChecker)
-    if(!assignmentDateChecker){
-        console.log("Not 30 Days Completed")
-        return res.status(202).json({message:"30 Days not Completed"})
-    }
+//         // check already uploaded assignment of that particular course
+        
 
 
+//     } catch (error) {
+//         console.log("Error in Create AutoAssignment By File Uploading",error)
+//         return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
+//     }
+// }
 
-    } catch (error) {
-        console.log("Error in Create AutoAssignment By File Uploading",error)
-        return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
-    }
-}
 
-
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,createAutoAssignmentByUploadingFile,getAssignmentData}
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile}
 
 
 

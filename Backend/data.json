@@ -1,0 +1,8 @@
+{
+        "title": "Information Security Assignment",
+        "questions": [
+            "Explain the key concepts of symmetric encryption and its importance in information security.",
+            "Discuss the requirements for the secure use of symmetric encryption and the implications of key secrecy.",
+            "Differentiate between substitution and transposition in encryption techniques and provide examples of each."
+        ]
+    }
