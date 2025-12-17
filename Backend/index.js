@@ -13,11 +13,11 @@ const timeTableRoutes= require('./Routers/timeTableRouter')
 const huggingFaceRoutes = require('./Routers/huggingFaceTestingRoute')
 const assignmentRoutes= require('./Routers/assignmentRoutes')
 const assignmentTopicRoutes=require('./Routers/assignmentTopicRoutes')
+const quizRoutes= require('./Routers/quizRoutes')
 const {databaseConnection}=require('./utils/db.connection')
-const { autoAssignmentCreation } = require('./Controllers/AssesmentController/assignment.controller')
-const { checkAssignmentInput } = require('./Controllers/AssesmentController/AssesmentInputQueue')
-// const {run}= require('./utils/temporaryconnection')
-// const assignmentCreationAgent = require('./Automation/assignmentCreationAgentCall')
+
+
+
 app.use(express.json())
 app.use(cors())
 app.use('/api',counterRoutes)
@@ -31,6 +31,7 @@ app.use('/api',timeTableRoutes)
 app.use('/api',assignmentRoutes)
 app.use('/api',assignmentTopicRoutes)
 app.use('/huggingFace',huggingFaceRoutes)
+app.use('/huggingFace',quizRoutes)
 const port=process.env.Port
 
 // assignmentCreationAgent()
