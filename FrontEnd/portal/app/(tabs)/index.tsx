@@ -1,9 +1,21 @@
-import { Text, TouchableOpacity, View } from "react-native"
+import KausarCalculator from "./KausarCalculator";
+import SanaCalculator from "./SanaCalculator";
 
+// import MaryamCalculator from "./AmaazCalculator";
 export default function HomeScreen() {
   return (
-
-<View style={{flex:1,justifyContent:'center',alignItems:'center' }}>
+<KausarCalculator/>
+  // <SanaCalculator/>
+  // <SabaCalculator/>    
+      // <Calculator/>
+    // <SyedAmaazCalculator/>
+    // <SabaCalculator/>
+    // <SanaCalculator/> 
+    // <KausarCalculator/>
+    // <MaryamCalculator/>
+    // <SabaCalculator/>
+// {
+  /* <View style={{flex:1,justifyContent:'center',alignItems:'center' }}>
      
       <Text style={{fontSize:22}}>Abc</Text>
     <TouchableOpacity onPress={()=>{
@@ -12,8 +24,10 @@ export default function HomeScreen() {
 
       <Text>Click Me</Text>
     </TouchableOpacity>
-    </View>
-
+    </View> */
+  // }
+ )
+}
     // <>
     // <Login/>
     // </>
@@ -63,8 +77,7 @@ export default function HomeScreen() {
     //     </ThemedText>
     //   </ThemedView>
     // </ParallaxScrollView>
-  )
-}
+ 
 
 // const styles = StyleSheet.create({
 //   titleContainer: {

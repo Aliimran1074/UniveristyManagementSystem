@@ -1,6 +1,7 @@
 const mongoose= require('mongoose')
 
 const studentSchema= new mongoose.Schema({
+    
     name:{
             type:String,
             required:true
@@ -21,7 +22,10 @@ const studentSchema= new mongoose.Schema({
     password:{
         type:String,
     },
-
+    instituteId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'institute'
+    },
     semesterNo:{
      type: Number,
      enum:[1,2,3,4,5,6,7,8,9,10],

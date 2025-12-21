@@ -136,7 +136,7 @@ try {
     const document = new pdfDocument()
     document.pipe(fs.createWriteStream(fileName))
     // pdf formatting 
-    document.fontSize(20).text("Maryam Ali Amaaz Institute",{align:'center',underline:true})
+    document.fontSize(20).text("MAA Institute",{align:'center',underline:true})
     document.moveDown(2)
 
     document.fontSize(16).text('Assignment',{align:'center'})

@@ -16,7 +16,7 @@ const quizChecker = async(req,res)=>{
 
         const response = await axios.post("https://huggingface-configuration.vercel.app/quiz/quizChecker",formData,{headers:formData.getHeaders()})
         // const response  = await axios.post("http://localhost:4000/quiz/quizChecker",formData,{headers:formData.getHeaders()})
-        // console.log("Response:",response)
+
         if(!response){
             console.log("Issue in make request from another Server")
             return res.status(404).json({message:"Issue in make request from another Server"})
