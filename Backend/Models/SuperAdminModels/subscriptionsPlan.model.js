@@ -1,49 +1,37 @@
-const mongoose= require('mongoose')
+const mongoose = require('mongoose')
 
-const subscriptionPlanSchema= new mongoose.Schema({
-    subscriptionName:{
+const subscriptionSchema = new mongoose.Schema({
+    scopeId:{                               //institute/Batch/Class Id
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'InstituteModel'
+    },
+    planId:{
+        type:mongoose.Schema.Types.ObjectId,
+        required:true,
+        ref:'subscriptionPlanModel'
+    },
+    scopeType:{
         type:String,
+        enum:["Institute","Batch","Class"],
+        required:true
+        },
+    startDate:{
+        type:Date,
         required:true
     },
-    allowedScopes :{
-        type:[String],
-        enum:["Institute",'Batch','Class'],
-        requried:true
+    endDate:{
+        type:Date,
+        required:true
     },
-    features:{
-       lms:{
-        type:Boolean,
-        default:false
-       },
-       assignments:{
-        type:Boolean,
-        default:false
-       },
-       quizzes:{
-        type:Boolean,
-        default:false
-       },
-       agents:{
-        type:Boolean,
-        default:false
-       }
-    },
-    limits:{
-        maxAssignmnetLimit:Number,
-        maxQuizzesLimit:Number,
-        maxBatches : Number,         //{null = unlimited
-        maxClasses:Number                   //} 
-    },
-    price:Number,
-    durationInDays:Number,
-
-    isActive:{
-        type:Boolean,
-        default:true
+    status:{
+        type:String,
+        enum:['Active','Expired','Cancelled'],
+        default:'Active'
     }
+
 })
 
+const subscriptionModel = mongoose.model('subscriptionModel',subscriptionSchema)
 
-const subscriptionPlanModel= mongoose.model('subscriptionModel',subscriptionPlanSchema)
-
-module.exports= subscriptionPlanModel
+module.exports= subscriptionModel
