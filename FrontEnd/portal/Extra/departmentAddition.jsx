@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { useEffect, useState } from "react"
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
-import apiUrl from "../../ApiUrl/apiUrl"
+import apiUrl from "../ApiUrl/apiUrl"
 
 function departmentAddition() {
 

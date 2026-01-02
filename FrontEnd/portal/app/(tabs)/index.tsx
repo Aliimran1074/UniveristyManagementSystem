@@ -1,99 +1,75 @@
-import KausarCalculator from "./KausarCalculator";
-import SanaCalculator from "./SanaCalculator";
+import React, { useState } from "react";
+import { Alert, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import IlsaCalculator from "./IlsaCalculator"; // make sure the path is correct
 
-// import MaryamCalculator from "./AmaazCalculator";
-export default function HomeScreen() {
+export default function HomePage() {
+  const [showCalculator, setShowCalculator] = useState(false);
+
+  const handleUseCalculator = () => {
+    Alert.alert(
+      "Info",
+      "I excited to create my first calculator of course mobile application development taught by Miss Halima Sadia Khan",
+      [
+        {
+          text: "OK",
+          onPress: () => setShowCalculator(true), // navigate to calculator
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  // If showCalculator is true, render the calculator page
+  if (showCalculator) {
+    return <IlsaCalculator />;
+  }
+
+  // Otherwise, render the home page
   return (
-<KausarCalculator/>
-  // <SanaCalculator/>
-  // <SabaCalculator/>    
-      // <Calculator/>
-    // <SyedAmaazCalculator/>
-    // <SabaCalculator/>
-    // <SanaCalculator/> 
-    // <KausarCalculator/>
-    // <MaryamCalculator/>
-    // <SabaCalculator/>
-// {
-  /* <View style={{flex:1,justifyContent:'center',alignItems:'center' }}>
-     
-      <Text style={{fontSize:22}}>Abc</Text>
-    <TouchableOpacity onPress={()=>{
-      console.warn('Hello')
-    }}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <Text style={styles.name}>Ilsa Naeem</Text>
+      <Text style={styles.info}>
+        Hi, I am Ilsa. This calculator was built under the supervision of Miss Halima Sadiya
+      </Text>
 
-      <Text>Click Me</Text>
-    </TouchableOpacity>
-    </View> */
-  // }
- )
+      <TouchableOpacity style={styles.button} onPress={handleUseCalculator}>
+        <Text style={styles.buttonText}>Use Calculator</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
-    // <>
-    // <Login/>
-    // </>
-    
-    
-    // <ParallaxScrollView
-    //   headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-    //   headerImage={
-    //     <Image
-    //       source={require('@/assets/images/partial-react-logo.png')}
-    //       style={styles.reactLogo}
-    //     />
-    //   }>
-    //   <ThemedView style={styles.titleContainer}>
-    //     <ThemedText type="title">Welcome!</ThemedText>
-    //     <HelloWave />
-    //   </ThemedView>
-    //   <ThemedView style={styles.stepContainer}>
-    //     <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-    //     <ThemedText>
-    //       Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-    //       Press{' '}
-    //       <ThemedText type="defaultSemiBold">
-    //         {Platform.select({
-    //           ios: 'cmd + d',
-    //           android: 'cmd + m',
-    //           web: 'F12',
-    //         })}
-    //       </ThemedText>{' '}
-    //       to open developer tools.
-    //     </ThemedText>
-    //   </ThemedView>
-    //   <ThemedView style={styles.stepContainer}>
-    //     <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-    //     <ThemedText>
-    //       {`Tap the Explore tab to learn more about what's included in this starter app.`}
-    //     </ThemedText>
-    //   </ThemedView>
-    //   <ThemedView style={styles.stepContainer}>
-    //     <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-    //     <ThemedText>
-    //       {`When you're ready, run `}
-    //       <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-    //       <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-    //       <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-    //       <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-    //     </ThemedText>
-    //   </ThemedView>
-    // </ParallaxScrollView>
- 
 
-// const styles = StyleSheet.create({
-//   titleContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     gap: 8,
-//   },
-//   stepContainer: {
-//     gap: 8,
-//     marginBottom: 8,
-//   },
-//   reactLogo: {
-//     height: 178,
-//     width: 290,
-//     bottom: 0,
-//     left: 0,
-//     position: 'absolute',
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === "android" ? 30 : 50,
+  },
+  name: {
+    color: "#fff",
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  info: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#f5b400",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 35,
+  },
+  buttonText: {
+    color: "#000",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});

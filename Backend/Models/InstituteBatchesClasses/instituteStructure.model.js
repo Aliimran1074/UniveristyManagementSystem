@@ -12,12 +12,13 @@ const instituteStructureSchema= new mongoose.Schema({
     noOfClasses:{
         type:Number
     },
+    noOfDepartments:{
+        type:Number
+  },
     noOfSections:{
         type:Number
-  } ,
-  noOfDepartments:{
-        type:Number
   } 
+   
 },{timestamps:true})
 
 const instituteStructureModel = mongoose.model('instituteStructureModel',instituteStructureSchema)

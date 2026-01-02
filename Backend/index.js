@@ -14,6 +14,7 @@ const huggingFaceRoutes = require('./Routers/huggingFaceTestingRoute')
 const assignmentRoutes= require('./Routers/assignmentRoutes')
 const assignmentTopicRoutes=require('./Routers/assignmentTopicRoutes')
 const quizRoutes= require('./Routers/quizRoutes')
+const instituteRoutes = require('./Routers/instituteRoutes')
 const {databaseConnection}=require('./utils/db.connection')
 
 
@@ -32,6 +33,7 @@ app.use('/api',assignmentRoutes)
 app.use('/api',assignmentTopicRoutes)
 app.use('/huggingFace',huggingFaceRoutes)
 app.use('/huggingFace',quizRoutes)
+app.use('/api',instituteRoutes)
 const port=process.env.Port
 
 // assignmentCreationAgent()
