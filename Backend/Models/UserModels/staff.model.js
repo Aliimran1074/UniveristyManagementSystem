@@ -17,6 +17,11 @@ const staffSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    instituteId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'instituteModel',
+        required:true
+    },
     department:{
         type:mongoose.Schema.ObjectId,
         ref:'department'

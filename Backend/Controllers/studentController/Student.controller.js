@@ -22,7 +22,7 @@ const studentRegistration = async (req, res) => {
             }
             // console.log(req.file)
      try {
-        const { name, personalEmail, department, contactNo, cnicNo } = req.body
+        const { name, personalEmail, department, contactNo, cnicNo,instituteId } = req.body
         const emailPrefix = '@lms.indus.edu.pk'
         const customId = 'abc'                       //abc is custom id which will form by default        
         const checkRegistrationByCNIC = await studentModel.findOne({ cnicNo: cnicNo })
@@ -30,7 +30,7 @@ const studentRegistration = async (req, res) => {
             console.log("Student Already Registered")
             return res.status(401).json({ message: 'Student Already Registered' })
         }
-        const createStudent = await studentModel.create({ name: name, personalEmail: personalEmail, contactNo: contactNo, cnicNo: cnicNo, department: department, password: cnicNo })         //by default every student has cnicNo in their password
+        const createStudent = await studentModel.create({ name: name, personalEmail: personalEmail, contactNo: contactNo, cnicNo: cnicNo, department: department, password: cnicNo,instituteId:instituteId })         //by default every student has cnicNo in their password
         if (!createStudent) {
             // console.log("Student Not Created ")
             return res.status(400).json({ message: "Student Not Created" })

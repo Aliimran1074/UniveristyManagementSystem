@@ -13,6 +13,11 @@ const CourseSchema=new mongoose.Schema({
     deprtmentName:{
         type:String
     },
+    instituteId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'instituteModel',
+        required:true
+    },
     ForSemester:{
         type:Number,
         enum:[1,2,3,4,5,6,7,8,9,10],

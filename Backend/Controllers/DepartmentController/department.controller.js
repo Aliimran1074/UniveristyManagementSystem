@@ -2,7 +2,7 @@ const department = require('../../Models/Department/deparment.model')
 
 const departmentCreation= async(req,res)=>{
 try {
-    const {name} = req.body
+    const {name,instituteId} = req.body
     let nameToUpperCase = name.toUpperCase()
     console.log(nameToUpperCase)
     const checkDepartmentExistanceByName = await department.find({name:nameToUpperCase})
@@ -11,7 +11,7 @@ try {
         console.log("Department Already Exist ")
         return res.status(400).json({message:"Department Already Exist",checkDepartmentExistanceByName})
     }
-    const departmentCreation = await department.create({name:nameToUpperCase})
+    const departmentCreation = await department.create({name:nameToUpperCase,instituteId:instituteId})
     if(!departmentCreation){
         console.log("Department Creation Failed")
         return res.status(401).json({message:"Issue in Creating Deparment"})
@@ -72,4 +72,21 @@ const getAllDepartment = async(req,res)=>{
     }
 }
 
-module.exports= {departmentCreation,departmentDeletion,updateDepartment,getAllDepartment}
+const getAllDepartmentOfSameInstitute= async(req,res)=>{
+    try{
+        const {instituteId}=req.body
+        const getAllDepartment= await department.find({instituteId:instituteId})
+        if(!getAllDepartment){
+            console.log("Issue in Getting All Department using instituteId")
+            return res.status(400).json({message:'Issue in Getting All Department using instituteId'})
+        }
+        console.log("All Department Found",getAllDepartment)
+        return res.status(200).json({message:"All Department Found"})
+    }
+catch(error){
+    console.log("Error in Function of All Department Found Using Institute Id",error)
+    return res.status(404).json({message:"Error in Function of All Department Found Using Institute Id"})
+
+}
+}
+module.exports= {departmentCreation,departmentDeletion,updateDepartment,getAllDepartment,getAllDepartmentOfSameInstitute}

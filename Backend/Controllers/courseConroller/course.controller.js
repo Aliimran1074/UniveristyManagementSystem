@@ -3,7 +3,7 @@ const department = require('../../Models/Department/deparment.model')
 
 const courseCreation= async (req,res)=>{
     try {
-        const {name,departmentId,forSemester,code,creditHours}=req.body
+        const {name,departmentId,forSemester,code,creditHours,instituteId}=req.body
         console.log("Course Name ",name)
         const checkCourseByName= await courseModel.findOne({name:name})
         if(checkCourseByName){
@@ -14,7 +14,8 @@ const courseCreation= async (req,res)=>{
                 department:departmentId,
                 ForSemester:forSemester,
                 code:code,
-                creditHours:creditHours
+                creditHours:creditHours,
+                instituteId:instituteId
         }
         console.log("Data Object",dataObject)
         const createCourse = await courseModel.create(dataObject)

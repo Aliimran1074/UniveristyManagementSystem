@@ -1,4 +1,5 @@
 // in this file we will create batches semester class on given input by institute admin just like he wants to create 10 classes each class with 2 sections by using instituteStructureSchema
+const department = require('../../Models/Department/deparment.model')
 const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
 const instituteStructureModel= require('../../Models/InstituteBatchesClasses/instituteStructure.model')
 const autoCreationByInput = async(req,res)=>{
@@ -11,6 +12,8 @@ const autoCreationByInput = async(req,res)=>{
             console.log("Sorry we couldn't Find Institute with this ID")
             return res.status(400).json({message:"Sorry we couldn't find institute with this Id"})
         }
+    
+
 // check already structure exist or not
         const checkInstituteInStructureModel= await instituteStructureModel.find({instituteId:instituteId})
 
@@ -31,6 +34,13 @@ const autoCreationByInput = async(req,res)=>{
             console.log("Institute Not Created Yet")
             return res.status(400).json({message:"Institute Not Created Yet or issue in Creating Institute"})
         }
+        for(let i=0;i<noOfDepartments;i++){
+        const createDepartments = await department.create({instituteId:instituteId,name:`Department${i+1}`})
+        if(!createDepartments){
+            console.log(`Found Issue in Creating Department Iteration No ${i+1}`)
+        }
+        }
+
         console.log('Institute Created Successfully',createInstituteStructure)
         return res.status(200).json({message:"Institute Structure Created Successfully"})
         
@@ -41,6 +51,12 @@ const autoCreationByInput = async(req,res)=>{
                 console.log("Batch Not Created Yet")
                 return res.status(400).json({message:"Batch not Created Yet or issue in Creating Batch"})
             }
+                    for(let i=0;i<noOfDepartments;i++){
+        const createDepartments = await department.create({instituteId:instituteId,name:`Department${i+1}`})
+        if(!createDepartments){
+            console.log(`Found Issue in Creating Department Iteration No ${i+1}`)
+        }
+        }
             console.log("Batch Created Successfully")
             return res.status(200).json({message:"Batch Structure Created Successfully"})
         }

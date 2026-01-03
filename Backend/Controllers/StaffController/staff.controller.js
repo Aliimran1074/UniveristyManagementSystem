@@ -23,13 +23,13 @@ const staffRegistration = async (req, res) => {
             }
             // console.log(req.file)
      try {
-        const { name,cnicNo,mobileNo,address,department,designation } = req.body
+        const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
         const checkRegistrationByCNIC = await staffModel.findOne({ cnicNo: cnicNo })
         if (checkRegistrationByCNIC) {
             console.log("Staff Already Registered")
             return res.status(401).json({ message: 'Staff Already Registered' })
         }
-        const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation })        
+        const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation,instituteId })        
         if (!createStaff) {
             // console.log("staff Not Created ")
             return res.status(400).json({ message: "staff Not Created" })
@@ -142,7 +142,7 @@ const updateDataUsingCnic= async (req,res)=>{
     try {
         const {cnicNo} = req.params
         const dataToUpdate= req.body
-        const updatedstaff= await zstaffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
+        const updatedstaff= await staffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
         if(!updatedstaff){
             console.log('staff Not Updated')
             return res.status(402).json({message:"staff Not Updated"})
@@ -198,4 +198,20 @@ const deletestaff = async (req,res)=>{
     }
 }
 
-module.exports = { staffRegistration,getAstaffByCnic,getAstaffById,updateDataUsingId,updateDataUsingCnic,deletestaff }
+const getAllStaffOfSameInstitute= async(req,res)=>{
+try {
+    const {instituteId}= req.body
+    const getAllStaff = await staffModel.find({instituteId})
+    if(!getAllStaff){
+        console.log('Issue in Getting All Staff')
+        return res.status(400).json({message:"Issue in Getting All Staff"})
+    } 
+    console.log("All Staff of Institute Found Successfully",getAllStaff)
+    return res.status(200).json({message:"Staff Found Successfully",getAllStaff})
+} catch (error) {
+    console.log("Issue in Getting All Staff",error)
+    return res.status(404).json({message:"Error in Getting All staff info Function",error})
+}
+
+}
+module.exports = { staffRegistration,getAstaffByCnic,getAstaffById,updateDataUsingId,updateDataUsingCnic,deletestaff ,getAllStaffOfSameInstitute}
