@@ -9,6 +9,10 @@ const createManualCourseContent = async(req,res)=>{
             console.log("File not Found in Manual Assignment Creation")
             return res.status(400).json({message:"File Not Found in Manual Assignment"})
         }
+
+// yaha aik kaam karna baki hai jo instructor course ko teach kar raha hai uske according cours content create hoga matlab agr hum pehle check karenge k register teacher for course agr teacher ki match karegi to hi teacher course content create kar sake ga
+
+
         const {contentTitle,courseId,instituteId}= req.body
         
         // check total already uploaded content of courseId

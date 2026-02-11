@@ -8,7 +8,7 @@ const CourseSchema=new mongoose.Schema({
     department:{
         type:mongoose.Schema.ObjectId,
         ref:'departmentModel',
-        required:true
+        // sirf wo institute department id pass karenge jinho ne department create kare honge
     },
     deprtmentName:{
         type:String
