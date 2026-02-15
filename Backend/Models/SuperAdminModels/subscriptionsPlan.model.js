@@ -1,42 +1,66 @@
 const mongoose = require('mongoose')
 
 const subscriptionPlansSchema = new mongoose.Schema({
-    subscriptionName:{
-        type:String,
-        required:true
+    subscriptionName: {
+        type: String,
+        required: true
     },
-        
-        description:{
-            type:String,
-            required:true
+
+    description: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: String,
+        enum: ['individual', 'batch', 'institute'],
+        required: 'true'
+    },
+    maxClasses: {
+        type: Number,
+        default: 1
+    },
+    maxDepartments: {
+        type: Number,
+        default: 0
+    },
+    aiFeatures: {
+        enabled: {
+            type: Boolean,
+            default: false
         },
-        type:{
-            type:String,
-            enum:['individual','batch','institute'],
-            required:'true'
-        },
-        maxClasses:{
-            type:Number,
-            default:1
-        },
-        maxDepartments:{
-            type:Number,
-            default:0
-        },
-        aiFeatures:{
-            enabled:{type:Boolean,default:false},
-            features:[{type:String}],
-            limits:{type:Map , of:Number}
-        },
-        manualFeatures:[{type:String}],
-        price:{type:Number,default:0},
-        durationDays:{type:Number,default:356}
+        features: [
+            {
+                type: String
+            }
+        ],
+        limits:
+        {
+            type: Map,
+            of: Number
+        }
+    },
+    manualFeatures:
+        [
+            {
+                type: String
+            }
+        ],
+    price:
+    {
+        type: Number,
+        default: 0
+    },
+    durationDays:
+    {
+        type: Number,
+        default: 356
+    }
 })
 
 
-const subscriptionPlanModel = mongoose.model('subscriptionPlanModel',subscriptionPlansSchema)
+const subscriptionPlanModel = mongoose.model('subscriptionPlanModel', subscriptionPlansSchema)
 
-module.exports= {subscriptionPlanModel}
+module.exports = { subscriptionPlanModel }
 
 
 // const subscriptionSchema = new mongoose.Schema({

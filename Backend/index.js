@@ -16,6 +16,7 @@ const assignmentTopicRoutes=require('./Routers/assignmentTopicRoutes')
 const quizRoutes= require('./Routers/quizRoutes')
 const instituteRoutes = require('./Routers/instituteRoutes')
 const courseContentRoutes= require('./Routers/contentRoutes')
+const subscriptionPlanRoutes = require('./Routers/subscriptionRoutes')
 const {databaseConnection}=require('./utils/db.connection')
 
 
@@ -36,6 +37,7 @@ app.use('/huggingFace',huggingFaceRoutes)
 app.use('/huggingFace',quizRoutes)
 app.use('/api',instituteRoutes)
 app.use('/api',courseContentRoutes)
+app.use('/api',subscriptionPlanRoutes)
 const port=process.env.Port
 
 // assignmentCreationAgent()
