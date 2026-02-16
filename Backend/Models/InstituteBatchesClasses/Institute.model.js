@@ -1,15 +1,18 @@
 const mongoose =require('mongoose')
 
+// Working karni hai thori confusion hai (16/2/2026)
+
 const instituteSchema = new mongoose.Schema({
     name:{
         type:String,
         required:true
     },
-    scope:{
-        type:String,
-        enum:['Institute','Batch','Class'],
-        required:true
-    },
+    // scope:{
+    //     type:String,
+    //     enum:['Institute','Batch','Class'],
+    //     required:true
+    // }
+    
     address:{
         type:String,
         required:true
