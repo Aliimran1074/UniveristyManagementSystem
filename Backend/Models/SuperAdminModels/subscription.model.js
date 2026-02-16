@@ -28,6 +28,14 @@ const subscriptionSchema = new mongoose.Schema({
         type:String,
         enum:['Active','Expired','Cancelled'],
         default:'Active'
+    },
+     aiUsage:{
+        assignmentGeneratorUsed:{ type:Number, default:0 },
+        quizGeneratorUsed:{ type:Number, default:0 },
+        examGeneratorUsed:{ type:Number, default:0 },
+        contentGeneratorUsed:{ type:Number, default:0 },
+        autoCheckerUsed:{ type:Number, default:0 },
+        totalAiRequests:{ type:Number, default:0 }
     }
 
 })

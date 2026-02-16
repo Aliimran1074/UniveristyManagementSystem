@@ -4,9 +4,15 @@ const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.m
 const instituteCreation  = async (req,res)=>{
 try {
     const {instituteName,scope,address,contactNo}=req.body
-    const createInstitute= await instituteModel.create({name:instituteName,scope,address,contactNo})
 
- 
+    // check institute already exist by name 
+    const checkInstitute = await instituteModel.find({name:instituteName})
+    if(checkInstitute){
+        console.log("Institute Already Exist",checkInstitute)
+        return res.status(201).json({message:'Institute Already Exist',checkInstitute})
+    }
+
+    const createInstitute= await instituteModel.create({name:instituteName,scope,address,contactNo})
     if(!createInstitute)  return res.status(400).json({message:"Institute Not Created"})
     console.log("Institute Created Successfully")
     return res.status(200).json({message:"Institute Created Successfully",createInstitute})

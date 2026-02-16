@@ -1,12 +1,11 @@
 // in this file we will create SuperAdmin Monthly Report Schema Structure
 
-
 // We will re check this schema 
 const mongoose = require('mongoose');
 
 const monthlyReportSchema = new mongoose.Schema({
   
-  // 🏫 Institute / User
+  // Institute / User
   instituteId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Institute',
@@ -14,20 +13,17 @@ const monthlyReportSchema = new mongoose.Schema({
     index: true
   },
 
-  // 🔖 Subscription Plan Reference
+  // Subscription Plan Reference
   subscriptionPlanId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'subscriptionPlanModel',
     required: true
   },
 
-  // 📆 Month & Year of report
   reportMonth: { type: Number, required: true }, // 1-12
   reportYear: { type: Number, required: true },
 
-  // =========================
-  // 1️⃣ Subscription Snapshot
-  // =========================
+
   subscriptionSnapshot: {
     planName: { type: String, required: true },
     price: { type: Number, default: 0 },
@@ -42,10 +38,7 @@ const monthlyReportSchema = new mongoose.Schema({
     }
   },
 
-  // =========================
-  // 2️⃣ AI Usage Analytics
-  // =========================
-  aiUsage: {
+   aiUsage: {
     enabled: { type: Boolean, default: false },
     assignmentGeneratorUsed: { type: Number, default: 0 },
     quizGeneratorUsed: { type: Number, default: 0 },
@@ -55,9 +48,7 @@ const monthlyReportSchema = new mongoose.Schema({
     totalAiRequests: { type: Number, default: 0 }
   },
 
-  // =========================
-  // 3️⃣ Institute / Activity Stats
-  // =========================
+
   activityStats: {
     totalClassesCreated: { type: Number, default: 0 },
     totalStudents: { type: Number, default: 0 },
@@ -67,18 +58,14 @@ const monthlyReportSchema = new mongoose.Schema({
     attendanceRecords: { type: Number, default: 0 }
   },
 
-  // =========================
-  // 4️⃣ Billing Info
-  // =========================
+ 
   billing: {
     amountPaid: { type: Number, default: 0 },
     billingCycle: { type: String, enum: ['monthly', 'yearly', 'multi-year'], default: 'yearly' },
     paymentStatus: { type: String, enum: ['paid', 'pending', 'failed'], default: 'paid' }
   },
 
-  // =========================
-  // 5️⃣ Alerts / Notifications
-  // =========================
+ 
   alerts: {
     nearingExpiry: { type: Boolean, default: false },
     aiLimitReached: { type: Boolean, default: false },
@@ -86,9 +73,7 @@ const monthlyReportSchema = new mongoose.Schema({
     overUsageDetected: { type: Boolean, default: false }
   },
 
-  // =========================
-  // 6️⃣ Recommended Actions
-  // =========================
+
   recommendedActions: [{
     type: {
       type: String,
@@ -98,9 +83,7 @@ const monthlyReportSchema = new mongoose.Schema({
     message: { type: String }
   }],
 
-  // =========================
-  // 7️⃣ Report meta
-  // =========================
+
   generatedAt: { type: Date, default: Date.now }
 
 }, { timestamps: true });
