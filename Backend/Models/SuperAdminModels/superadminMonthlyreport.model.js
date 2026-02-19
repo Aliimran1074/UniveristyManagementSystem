@@ -14,6 +14,7 @@ const monthlyReportSchema = new mongoose.Schema({
   },
 
   // Subscription Plan Reference
+  
   subscriptionPlanId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'subscriptionPlanModel',

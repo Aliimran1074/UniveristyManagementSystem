@@ -17,6 +17,7 @@ const quizRoutes= require('./Routers/quizRoutes')
 const instituteRoutes = require('./Routers/instituteRoutes')
 const courseContentRoutes= require('./Routers/contentRoutes')
 const subscriptionPlanRoutes = require('./Routers/subscriptionRoutes')
+const superAdminRoutes= require('./Routers/superAdminRoutes')
 const {databaseConnection}=require('./utils/db.connection')
 
 
@@ -38,6 +39,7 @@ app.use('/huggingFace',quizRoutes)
 app.use('/api',instituteRoutes)
 app.use('/api',courseContentRoutes)
 app.use('/api',subscriptionPlanRoutes)
+app.use('/api',superAdminRoutes)
 const port=process.env.Port
 
 // assignmentCreationAgent()

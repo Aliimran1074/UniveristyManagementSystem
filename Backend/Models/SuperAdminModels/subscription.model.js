@@ -1,11 +1,17 @@
 const mongoose = require('mongoose')
 
 const subscriptionSchema = new mongoose.Schema({
-    scopeId:{                               //institute/Batch/Class Id
+    // scopeId:{                               //institute/Batch/Class Id
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     required:true,
+    //     ref:'InstituteModel'
+    // }
+    instituteId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'InstituteModel'
-    },
+    }
+    ,
     planId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
