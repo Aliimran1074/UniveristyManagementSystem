@@ -6,6 +6,7 @@ const subscriptionSchema = new mongoose.Schema({
     //     required:true,
     //     ref:'InstituteModel'
     // }
+    
     instituteId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
@@ -19,7 +20,7 @@ const subscriptionSchema = new mongoose.Schema({
     },
     scopeType:{
         type:String,
-        enum:["Institute","Batch","Class"],
+        enum:['individual', 'batch', 'institute'],
         // required:true
         },
     startDate:{
