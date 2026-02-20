@@ -18,6 +18,10 @@ const subscriptionSchema = new mongoose.Schema({
         required:true,
         ref:'subscriptionPlanModel'
     },
+    subscriptionPlanName:{
+        type:String,
+        required:true
+    },
     scopeType:{
         type:String,
         enum:['individual', 'batch', 'institute'],

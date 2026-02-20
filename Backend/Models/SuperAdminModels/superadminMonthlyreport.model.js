@@ -1,6 +1,3 @@
-// in this file we will create SuperAdmin Monthly Report Schema Structure
-
-// We will re check this schema 
 const mongoose = require('mongoose');
 
 const monthlyReportSchema = new mongoose.Schema({
@@ -13,14 +10,17 @@ const monthlyReportSchema = new mongoose.Schema({
     index: true
   },
 
-  // Subscription Plan Reference
-  
-  subscriptionPlanId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'subscriptionPlanModel',
-    required: true
+  instituteName:{
+    type:String,
+    required:true
   },
+  // Subscription Plan Reference
+  subscriptionId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'subscriptionModel',
+    required: true
 
+  },
   reportMonth: { type: Number, required: true }, // 1-12
   reportYear: { type: Number, required: true },
 
@@ -53,6 +53,7 @@ const monthlyReportSchema = new mongoose.Schema({
   activityStats: {
     totalClassesCreated: { type: Number, default: 0 },
     totalStudents: { type: Number, default: 0 },
+    totalStaff:{type:Number,default:0},
     totalAssignmentsUploaded: { type: Number, default: 0 },
     totalQuizzesUploaded: { type: Number, default: 0 },
     totalExamsUploaded: { type: Number, default: 0 },

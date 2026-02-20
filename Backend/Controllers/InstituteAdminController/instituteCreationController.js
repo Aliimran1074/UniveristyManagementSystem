@@ -20,7 +20,9 @@ const instituteCreation = async (req, res) => {
         console.log("Institute Created Successfully")
 
         const getSubscriptionDetails = await subscriptionPlanModel.findById(subscriptionPlanId)
-            const startDate = Date.now()
+            
+        const getSubscriptionName = getSubscriptionDetails.subscriptionName
+        const startDate = Date.now()
             // console.log("Start Date :", startDate)
             const getDuration = getSubscriptionDetails.durationDays
             // console.log('Duration :', getDuration)
@@ -42,7 +44,7 @@ const instituteCreation = async (req, res) => {
         const getSubscriptionPlanId= getSubscriptionDetails._id
         const getScopeOfSubscription = getSubscriptionDetails.type
         
-        const createSubscriptionOfIndividualInstitute= await subscriptionModel.create({instituteId:getInstituteId,planId:getSubscriptionPlanId,scopeType:getScopeOfSubscription,startDate:startDate,endDate:endDateInMiliSecond})
+        const createSubscriptionOfIndividualInstitute= await subscriptionModel.create({instituteId:getInstituteId,planId:getSubscriptionPlanId,scopeType:getScopeOfSubscription,startDate:startDate,endDate:endDateInMiliSecond,subscriptionPlanName:getSubscriptionName})
         
         if(!createSubscriptionOfIndividualInstitute){
             console.log("Issue in Creating Subscription of Individual Institute")

@@ -5,19 +5,26 @@ const subscriptionModel = require("../../Models/SuperAdminModels/subscription.mo
 
 const createReport = async(req,res)=>{
     try{
-        const {instituteId,subscriptionPlanId,reportMonth,reportYear}= req.body
+        const {instituteId,subscriptionId,reportMonth,reportYear}= req.body
         const instituteInformation = await instituteModel.findById(instituteId)
-        if(instituteInformation){
+        
+        if(!instituteInformation){
             console.log("Institute Info :",instituteInformation)
-            // return res.status(200).json({message:"This is Institute Information",instituteInformation})
-        const subscriptionPlan =await subscriptionModel.findOne({instituteId:instituteId})
+            return res.status(200).json({message:"Institute not Found "})
+        }
+       
+          const subscriptionPlan =await subscriptionModel.findById(subscriptionId)
         if(!subscriptionPlan){
-            console.log("Subscription Plan not Found")
-            return res.status(200).json({message:"Subscription Plan not Found"})
+            console.log("Subscription not Found")
+            return res.status(200).json({message:"Subscription not Found"})
         }
-        return res.status(200).json({message:"Subscription Plan Found",subscriptionPlan})
-        }
-        return res.status(400).json({message:'Sorry we are unable to find Institute Information'})
+        return res.status(200).json({message:"Subscription Found",subscriptionPlan})
+
+
+        // Now to work on snapshot and other calculation  20/2/26
+        
+
+        // return res.status(400).json({message:'Sorry we are unable to find Institute Information'})
     }
     catch(error){
         console.log("Error in Create Report Function",error)
