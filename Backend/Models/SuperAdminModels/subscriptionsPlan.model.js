@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const subscriptionPlansSchema = new mongoose.Schema({
+    
     subscriptionName: {
         type: String,
         required: true

@@ -20,7 +20,7 @@ const subscriptionSchema = new mongoose.Schema({
     scopeType:{
         type:String,
         enum:["Institute","Batch","Class"],
-        required:true
+        // required:true
         },
     startDate:{
         type:Date,
