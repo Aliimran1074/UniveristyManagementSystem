@@ -12,8 +12,15 @@ const createReport = async(req,res)=>{
             console.log("Institute Info :",instituteInformation)
             return res.status(200).json({message:"Institute not Found "})
         }
-       
-          const subscriptionPlan =await subscriptionModel.findById(subscriptionId)
+
+        // here we will calcualte report month if current month is feburaray obviously it will generate report of Jan
+        const month = Date.now()
+        
+        // institute Name for report
+        const instituteName = instituteInformation.name
+        const instituteContactNo = instituteInformation.contactNo
+        
+        const subscriptionPlan =await subscriptionModel.findById(subscriptionId)
         if(!subscriptionPlan){
             console.log("Subscription not Found")
             return res.status(200).json({message:"Subscription not Found"})
