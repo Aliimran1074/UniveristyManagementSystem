@@ -28,6 +28,8 @@ const createReport = async(req,res)=>{
         return res.status(200).json({message:"Subscription Found",subscriptionPlan})
 
 
+        // want to work on product snapshot
+
         // Now to work on snapshot and other calculation  20/2/26
         
 

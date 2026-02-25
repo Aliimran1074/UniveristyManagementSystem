@@ -27,7 +27,7 @@ const monthlyReportSchema = new mongoose.Schema({
 
   subscriptionSnapshot: {
     planName: { type: String, required: true },
-    price: { type: Number, default: 0 },
+    price: { type: Number, default  : 0 },
     durationDays: { type: Number, default: 365 },
     startDate: { type: Date, required: true },
     expiryDate: { type: Date, required: true },
