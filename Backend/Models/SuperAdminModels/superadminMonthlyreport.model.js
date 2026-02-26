@@ -45,7 +45,8 @@ const monthlyReportSchema = new mongoose.Schema({
     quizGeneratorUsed: { type: Number, default: 0 },
     examGeneratorUsed: { type: Number, default: 0 },
     contentGeneratorUsed: { type: Number, default: 0 },
-    autoCheckerUsed: { type: Number, default: 0 },
+    assignmentCheckerUsed:{type:Number,default:0},
+    quizCheckerUsed:{type:Number,default:0},
     totalAiRequests: { type: Number, default: 0 }
   },
 

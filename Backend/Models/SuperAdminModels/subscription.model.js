@@ -6,51 +6,52 @@ const subscriptionSchema = new mongoose.Schema({
     //     required:true,
     //     ref:'InstituteModel'
     // }
-    
-    instituteId:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'InstituteModel'
+
+    instituteId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'InstituteModel'
     }
     ,
-    planId:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref:'subscriptionPlanModel'
+    planId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'subscriptionPlanModel'
     },
     // subscriptionPlanName:{
     //     type:String,
     //     required:true
     // },
-    scopeType:{
-        type:String,
-        enum:['individual', 'batch', 'institute'],
+    scopeType: {
+        type: String,
+        enum: ['individual', 'batch', 'institute'],
         // required:true
-        },
-    startDate:{
-        type:Date,
-        required:true
     },
-    endDate:{
-        type:Date,
-        required:true
+    startDate: {
+        type: Date,
+        required: true
     },
-    status:{
-        type:String,
-        enum:['Active','Expired','Cancelled'],
-        default:'Active'
+    endDate: {
+        type: Date,
+        required: true
     },
-     aiUsage:{
-        assignmentGeneratorUsed:{ type:Number, default:0 },
-        quizGeneratorUsed:{ type:Number, default:0 },
-        examGeneratorUsed:{ type:Number, default:0 },
-        contentGeneratorUsed:{ type:Number, default:0 },
-        autoCheckerUsed:{ type:Number, default:0 },
-        totalAiRequests:{ type:Number, default:0 }
+    status: {
+        type: String,
+        enum: ['Active', 'Expired', 'Cancelled'],
+        default: 'Active'
+    },
+    aiUsage: {
+        assignmentGeneratorUsed: { type: Number, default: 0 },
+        quizGeneratorUsed: { type: Number, default: 0 },
+        examGeneratorUsed: { type: Number, default: 0 },
+        contentGeneratorUsed: { type: Number, default: 0 },
+        assignmentCheckerUsed: { type: Number, default: 0 },
+        quizCheckerUsed: { type: Number, default: 0 },
+        totalAiRequests: { type: Number, default: 0 }
     }
 
 })
 
-const subscriptionModel = mongoose.model('subscriptionModel',subscriptionSchema)
+const subscriptionModel = mongoose.model('subscriptionModel', subscriptionSchema)
 
-module.exports= subscriptionModel
+module.exports = subscriptionModel
