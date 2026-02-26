@@ -2,6 +2,7 @@
 
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
+const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
 
 const createReport = async(req,res)=>{
     try{
@@ -20,15 +21,63 @@ const createReport = async(req,res)=>{
         const instituteName = instituteInformation.name
         const instituteContactNo = instituteInformation.contactNo
         
-        const subscriptionPlan =await subscriptionModel.findById(subscriptionId)
-        if(!subscriptionPlan){
+        const subscription =await subscriptionModel.findById(subscriptionId)
+        if(!subscription){
             console.log("Subscription not Found")
             return res.status(200).json({message:"Subscription not Found"})
         }
-        return res.status(200).json({message:"Subscription Found",subscriptionPlan})
+        // return res.status(200).json({message:"Subscription Found",subscriptionPlan})
+// 
+        // get subscriptionPlan 
+        const subscriptionPlanId= subscription.planId
 
+        // get Plan Info 
+        const getPlanInfo= await subscriptionPlanModel.findById(subscriptionPlanId)
+        const subscriptionName = getPlanInfo.subscriptionName
+        const getPrice = getPlanInfo.price
+        const getDuration= getPlanInfo.durationDays
+        const getStartDate =subscription.startDate
+        const getEndDate=subscription.endDate
 
+        // readable dates 
+        const readableStartDate = new Date(getStartDate).toLocaleDateString()
+        const readableEndDate = new Date(getEndDate).toLocaleDateString()
+        const currentDate = new Date()
+        const currentDateToReadableForm = new Date(currentDate).toLocaleDateString()
+        // const endDate = new Date(getEndDate)
+        getEndDate.setHours(0,0,0,0)
+        currentDate.setHours(0,0,0,0)
+        const calculateRemainingDays = getEndDate-currentDate
+        // change remaining days into a number
+        
+        const remainingDaysinNumber =Math.ceil (calculateRemainingDays/( 24 * 60 * 60 * 1000))
+        // console.log(remainingDaysinNumber)
+        // console.log(currentDateToReadableForm)
+        // console.log(readableStartDate)
+        // console.log(readableEndDate)
+    
+        //set status after generating report on behave of days left 
+        // if(remainingDaysinNumber<30){
+            
+        // }
+
+        // get ai status 
+        const getAiStatus = getPlanInfo.aiFeatures.enabled
+        console.log(getAiStatus)
+
+        if(getAiStatus){
+            const getAiUsage = subscription.aiUsage
+        }
+        // const makeFalse = !getAiStatus
+        // console.log(makeFalse)
+        // console.log("true")
+        // console.log(calculateRemainingDays)
+        // console.log(getPlanInfo)
+
+        return res.status(200).json({message:"This is Plan Information",getPlanInfo})
         // want to work on product snapshot
+
+
 
         // Now to work on snapshot and other calculation  20/2/26
         
