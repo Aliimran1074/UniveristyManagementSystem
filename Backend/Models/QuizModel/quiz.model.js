@@ -1,10 +1,14 @@
 const mongoose = require('mongoose')
 
-const assignmentSchema = new mongoose.Schema({
+const quizSchema = new mongoose.Schema({
 
-// will add institute id here
+instituteId:{
+        type:mongoose.Schema.ObjectId,
+        ref:"instituteModel",
+        required:true
+    },
 
-    assignmentFile :{
+    quizFile :{
         type:String,
         // type:file
         // required:true
@@ -34,7 +38,7 @@ const assignmentSchema = new mongoose.Schema({
    }},
    duration:{
     type:Number,
-    required:true
+    default:7
    },
    endDate:{
     type:Date,
@@ -59,5 +63,5 @@ const assignmentSchema = new mongoose.Schema({
 
 })
 
-const assignmentModel = mongoose.model('assignmentModel',assignmentSchema)
-module.exports = assignmentModel
+const quizModel = mongoose.model('quizModel',quizSchema)
+module.exports = quizModel

@@ -1,6 +1,12 @@
 const mongoose=require('mongoose')
 
 const CourseSchema=new mongoose.Schema({
+   
+    instituteId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'instituteModel',
+        required:true
+    },
     name:{
         type:String,
         required:true
@@ -13,15 +19,11 @@ const CourseSchema=new mongoose.Schema({
     deprtmentName:{
         type:String
     },
-    instituteId:{
-        type:mongoose.Schema.ObjectId,
-        ref:'instituteModel',
-        required:true
-    },
+    
     ForSemester:{
         type:Number,
         enum:[1,2,3,4,5,6,7,8,9,10],
-        required:true
+        // required:true
     },
     code:{
         type:Number,
@@ -31,10 +33,11 @@ const CourseSchema=new mongoose.Schema({
     creditHours:{
         type:Number,
         enum:[1,2,3],
-        required:true
+
     },
     instructorTeached:{
-        type:mongoose.Schema.ObjectId
+        type:mongoose.Schema.ObjectId,
+        ref:"staffModel"
     }
 },{timestamps:true})
 

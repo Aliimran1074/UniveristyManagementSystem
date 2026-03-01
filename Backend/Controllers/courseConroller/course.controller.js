@@ -1,10 +1,16 @@
 const courseModel= require('../../Models/CourseModels/course.model')
 const department = require('../../Models/Department/deparment.model')
 
+
+
+// wants to work little bit in it
 const courseCreation= async (req,res)=>{
     try {
         const {name,departmentId,forSemester,code,creditHours,instituteId}=req.body
         console.log("Course Name ",name)
+
+
+        // here we can check course with institute Id , if one course in a institute stored with a name so not allowed to create course with this name 
         const checkCourseByName= await courseModel.findOne({name:name})
         if(checkCourseByName){
             console.log('Course Already Registered With This Name')
@@ -23,14 +29,17 @@ const courseCreation= async (req,res)=>{
             console.log("Not Able to Create Course")
             return res.status(404).json({message:"Not able to create Course"})
         }
-        const findDepartment = await department.findById(departmentId)
-        if(!findDepartment){
-            console.log("Department not Found")
-            return res.status(404).json({message:"Department not Found"})
+        if(departmentId){
+
+            const findDepartment = await department.findById(departmentId)
+            if(!findDepartment){
+                console.log("Department not Found")
+                return res.status(404).json({message:"Department not Found"})
+            }
+                const departmentName= findDepartment.name
+                createCourse.deprtmentName=departmentName
+                await createCourse.save()
         }
-            const departmentName= findDepartment.name
-            createCourse.deprtmentName=departmentName
-            await createCourse.save()
         return res.status(200).json({message:"Course Registration Successfully",createCourse})
 
     } catch (error) {
