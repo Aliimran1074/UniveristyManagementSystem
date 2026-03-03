@@ -4,77 +4,97 @@ const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
 const {uploadforStudentPics} = require('../../Multer/multer')
 const instructorModel= require('../../Models/UserModels/instructor.model')
 const staffModel = require('../../Models/UserModels/staff.model')
+const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
+const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
+const { subscriptionPlanModel } = require('../../Models/SuperAdminModels/subscriptionsPlan.model')
 
 const staffRegistration = async (req, res) => {
     try {
-        uploadforStudentPics(req,res,async(error)=>{
-        if(error){
-                console.log('Error in uploading File',error)
-                // return res.status(402).json({message:"Error in Uploading Picture"})}
-             if(error.message=='Only image with allowed types can upload'){
-                console.log('File Type Error')
-                return  res.status(401).json({message:"Image is not of correct type",error})
-             }
-                 return res.status(404).json({message:"Error in file Uplaoding",error})
-            }
-            if(!req.file){
-                console.log('file is not found')
-                 return res.status(402).json({message:'File not Found'})
-            }
-            // console.log(req.file)
-     try {
-        const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
-        const checkRegistrationByCNIC = await staffModel.findOne({ cnicNo: cnicNo })
-        if (checkRegistrationByCNIC) {
-            console.log("Staff Already Registered")
-            return res.status(401).json({ message: 'Staff Already Registered' })
-        }
-        const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation,instituteId })        
-        if (!createStaff) {
-            // console.log("staff Not Created ")
-            return res.status(400).json({ message: "staff Not Created" })
-        }
-        const id = createStaff._id
-        let idToStoreInQrCode = id.toString()
-        const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
+        // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
+        const { subscriptionId } = req.body
+
+
+        // first check Institute ID if institute is of basic plan then only one staff can register
+        const checkSubscription= await subscriptionModel.findById(subscriptionId)
+        
+            // const checkInstiute = await instituteModel.findById(instituteId)
+        //  console.log(checkSubscription)
+         
+         const subscriptionPlanId= checkSubscription.planId
+         const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
+        console.log("This is Subscription Plan ",subscriptionPlan)
+         
+         return res.status(200).json({message:"This is Subscription Plan",subscriptionPlan})
+
+
+        
+    //     uploadforStudentPics(req,res,async(error)=>{
+    //     if(error){
+    //             console.log('Error in uploading File',error)
+    //             // return res.status(402).json({message:"Error in Uploading Picture"})}
+    //          if(error.message=='Only image with allowed types can upload'){
+    //             console.log('File Type Error')
+    //             return  res.status(401).json({message:"Image is not of correct type",error})
+    //          }
+    //              return res.status(404).json({message:"Error in file Uplaoding",error})
+    //         }
+    //         if(!req.file){
+    //             console.log('file is not found')
+    //              return res.status(402).json({message:'File not Found'})
+    //         }
+    //         // console.log(req.file)
+    //  try {
+    //     const checkRegistrationByCNIC = await staffModel.findOne({ cnicNo: cnicNo })
+    //     if (checkRegistrationByCNIC) {
+    //         console.log("Staff Already Registered")
+    //         return res.status(401).json({ message: 'Staff Already Registered' })
+    //     }
+    //     const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation,instituteId })        
+    //     if (!createStaff) {
+    //         // console.log("staff Not Created ")
+    //         return res.status(400).json({ message: "staff Not Created" })
+    //     }
+    //     const id = createStaff._id
+    //     let idToStoreInQrCode = id.toString()
+    //     const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
     
-        // University Email and QR Code save here
-        createStaff.QRCode = makeQrCode
-        await createStaff.save()
+    //     // University Email and QR Code save here
+    //     createStaff.QRCode = makeQrCode
+    //     await createStaff.save()
     
-        // const fileName = `${Date.now()}_${req.file.originalname}`
-            const fileName = `${Date.now()}_${name}`
+    //     // const fileName = `${Date.now()}_${req.file.originalname}`
+    //         const fileName = `${Date.now()}_${name}`
 
-            const imageKitResponse= await imageKitConfig.upload({
-                file:req.file.buffer,
-                fileName:fileName
-            })
-            // console.log("Image kit response",imageKitResponse)
-            const imageKitUrl= imageKitResponse.url
-            console.log('Image kit url ', imageKitResponse.url)
-            if(imageKitUrl.length>0 || imageKitUrl){
-                createStaff.imageUrl=imageKitUrl
-                await createStaff.save()
-            }
-            // if(designation==='Instructor'){
-            //     const createInstructor= await instructorModel.create({personalData:id})
-            //     if(!createInstructor){
-            //         console.log("Issue in Creating Instructor")
-            // return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
+    //         const imageKitResponse= await imageKitConfig.upload({
+    //             file:req.file.buffer,
+    //             fileName:fileName
+    //         })
+    //         // console.log("Image kit response",imageKitResponse)
+    //         const imageKitUrl= imageKitResponse.url
+    //         console.log('Image kit url ', imageKitResponse.url)
+    //         if(imageKitUrl.length>0 || imageKitUrl){
+    //             createStaff.imageUrl=imageKitUrl
+    //             await createStaff.save()
+    //         }
+    //         // if(designation==='Instructor'){
+    //         //     const createInstructor= await instructorModel.create({personalData:id})
+    //         //     if(!createInstructor){
+    //         //         console.log("Issue in Creating Instructor")
+    //         // return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
 
-            //     }
-            //     console.log("Instructor Created Successfully",createInstructor)
-            // return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
-            // } 
-            // avoiding instructor schema
+    //         //     }
+    //         //     console.log("Instructor Created Successfully",createInstructor)
+    //         // return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
+    //         // } 
+    //         // avoiding instructor schema
 
-            return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
-        // console.log('staff Created Successfully')
-        } catch (error) {
-            console.log("Facing Error in staff Registration",error)
-             res.status(403).json({message:"Facing Issue in staff Registration",error})
-        }
-        })    
+    //         return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
+    //     // console.log('staff Created Successfully')
+    //     } catch (error) {
+    //         console.log("Facing Error in staff Registration",error)
+    //          res.status(403).json({message:"Facing Issue in staff Registration",error})
+    //     }
+    //     })    
     } 
     catch (error) {
     console.log("Issue in Registrating staff ",error)

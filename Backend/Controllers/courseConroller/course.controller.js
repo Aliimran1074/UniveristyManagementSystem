@@ -1,14 +1,11 @@
 const courseModel= require('../../Models/CourseModels/course.model')
 const department = require('../../Models/Department/deparment.model')
 
-
-
 // wants to work little bit in it
 const courseCreation= async (req,res)=>{
     try {
         const {name,departmentId,forSemester,code,creditHours,instituteId}=req.body
         console.log("Course Name ",name)
-
 
         // here we can check course with institute Id , if one course in a institute stored with a name so not allowed to create course with this name 
         const checkCourseByName= await courseModel.findOne({name:name})
