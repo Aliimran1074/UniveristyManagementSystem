@@ -8,7 +8,7 @@ import Counseling from './components/Counseling';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  
+
   // Mock student data
   const [studentData, setStudentData] = useState({
     name: 'Alex Johnson',
@@ -25,7 +25,7 @@ export default function App() {
   // Calculate average percentage
   const calculateAverage = () => {
     const total = studentData.grades.reduce(
-      (sum, grade) => sum + (grade.score / grade.total) * 100, 
+      (sum, grade) => sum + (grade.score / grade.total) * 100,
       0
     );
     return total / studentData.grades.length;
@@ -54,19 +54,33 @@ export default function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-gray-900">Student Portal</h1>
-              <p className="text-gray-600">{studentData.name} - {studentData.studentId}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="text-right">
-                <p className="text-gray-600">Average Score</p>
-                <p className={`${averagePercentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
-                  {averagePercentage.toFixed(1)}%
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-gray-900">Student Portal</h1>
+            <p className="text-gray-600">
+              {studentData.name} - {studentData.studentId}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <button
+              style={{
+                cursor: 'pointer',
+                backgroundColor: 'black',
+                color: 'white',
+                padding: '6px 12px',
+                borderRadius: '4px',
+              }}
+              onClick={() => {
+                window.location.href = "https://super-admin-dashboard-frontend.vercel.app/";
+              }}
+            >
+              Next Dashboard
+            </button>
+            <div className="text-right">
+              <p className="text-gray-600">Average Score</p>
+              <p className={`${averagePercentage >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                {averagePercentage.toFixed(1)}%
+              </p>
             </div>
           </div>
         </div>
@@ -75,7 +89,8 @@ export default function App() {
       {/* Navigation */}
       <nav className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1">
+          {/* Added overflow-x-auto and hide scrollbar */}
+          <div className="flex gap-1 overflow-x-auto no-scrollbar">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (

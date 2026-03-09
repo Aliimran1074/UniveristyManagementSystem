@@ -125,62 +125,84 @@ export default function App() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
         <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
-          <div className="px-4 lg:px-6 py-4">
-            <div className="flex items-center justify-between gap-4">
-              {/* Left side - Mobile menu + Session filter */}
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <button 
-                  onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden text-gray-600 hover:text-gray-900"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
+  <div className="px-4 lg:px-6 py-4">
+    <div className="flex items-center justify-between gap-4 flex-wrap">
+      
+      {/* Left side - Mobile menu + Session filter */}
+      <div className="flex items-center gap-4 flex-1 min-w-0 flex-wrap">
+        
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="lg:hidden text-gray-600 hover:text-gray-900 flex-shrink-0"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
 
-                {/* Session Filter Dropdown */}
-                <div className="relative">
-                  <label className="block text-xs text-gray-600 mb-1">Academic Session</label>
-                  <div className="relative">
-                    <select
-                      value={selectedSession}
-                      onChange={(e) => setSelectedSession(e.target.value)}
-                      className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-gray-900 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
-                    >
-                      {sessions.map((session) => (
-                        <option key={session} value={session}>{session}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-
-                <div className="hidden md:block flex-1 min-w-0">
-                  <h1 className="text-lg font-bold text-gray-900 truncate">
-                    Massachusetts Institute of Technology
-                  </h1>
-                  <p className="text-xs text-gray-600 truncate">Multi-Agent Learning Management System</p>
-                </div>
-              </div>
-
-              {/* Right side - Alert + Notifications */}
-              <div className="flex items-center gap-3">
-                {/* Counselling Alert Badge */}
-                <div className="flex items-center gap-2 bg-red-50 border-2 border-red-500 rounded-lg px-3 py-2">
-                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-xs font-medium text-red-900 uppercase hidden sm:block">Counseling Alert</p>
-                    <p className="text-xs sm:text-sm font-bold text-red-600">{flaggedStudentsCount} Students &lt;50%</p>
-                  </div>
-                </div>
-
-                {/* Notification Bell */}
-                <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-                </button>
-              </div>
-            </div>
+        {/* Session Filter Dropdown */}
+        <div className="relative flex-shrink-0">
+          <label className="block text-xs text-gray-600 mb-1">Academic Session</label>
+          <div className="relative">
+            <select
+              value={selectedSession}
+              onChange={(e) => setSelectedSession(e.target.value)}
+              className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-gray-900 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+            >
+              {sessions.map((session) => (
+                <option key={session} value={session}>{session}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
           </div>
-        </header>
+        </div>
+
+        {/* Institute Info - hidden on small screens */}
+        <div className="hidden md:flex flex-col flex-1 min-w-0 truncate">
+          <h1 className="text-lg font-bold text-gray-900 truncate">
+            Massachusetts Institute of Technology
+          </h1>
+          <p className="text-xs text-gray-600 truncate">
+            Multi-Agent Learning Management System
+          </p>
+        </div>
+      </div>
+
+      {/* Right side - Alerts + Notifications + Next Dashboard */}
+      <div className="flex items-center gap-3 flex-wrap justify-end mt-2 lg:mt-0">
+        
+        {/* Counselling Alert Badge */}
+        <div className="flex items-center gap-2 bg-red-50 border-2 border-red-500 rounded-lg px-3 py-2 flex-shrink-0">
+          <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          <div className="truncate">
+            <p className="text-xs font-medium text-red-900 uppercase hidden sm:block truncate">Counseling Alert</p>
+            <p className="text-xs sm:text-sm font-bold text-red-600 truncate">
+              {flaggedStudentsCount} Students &lt;50%
+            </p>
+          </div>
+        </div>
+
+        {/* Notification Bell */}
+        <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+        </button>
+
+        {/* Move to Teacher Dashboard */}
+        <div className="flex-shrink-0">
+          <button
+            style={{ cursor: 'pointer', backgroundColor: "black", color: "white", padding: '6px 12px', borderRadius: '4px' }}
+            onClick={() => {
+              window.location.href = "https://teacher-dashboard-frontend.vercel.app/";
+            }}
+          >
+            Next Dashboard
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">

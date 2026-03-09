@@ -38,7 +38,11 @@ export default function App() {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">
+              <div>
+              <button style={{cursor:'pointer',backgroundColor:"black",color:"white"}} onClick={()=>{
+                   window.location.href="https://student-dashboard-frontend-black.vercel.app/"
+              }}>Next Dashboard</button>
+            </div>                <p className="text-sm font-medium text-gray-900">
                   {teacherData.subjects.length} Classes
                 </p>
                 <p className="text-xs text-gray-600">

@@ -86,9 +86,17 @@ export default function App() {
                 <p className="text-sm font-medium text-gray-900">Admin User</p>
                 <p className="text-xs text-gray-500">admin@dashboard.com</p>
               </div>
+              
               <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
                 A
               </div>
+{/* will remove this div in future */}
+
+            <div>
+              <button style={{cursor:'pointer',backgroundColor:"black",color:"white"}} onClick={()=>{
+                   window.location.href="https://institute-admin-dashboard.vercel.app/"
+              }}>Move To Institute Admin</button>
+            </div>
             </div>
           </div>
         </header>
