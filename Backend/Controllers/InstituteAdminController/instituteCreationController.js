@@ -17,7 +17,7 @@ const instituteCreation = async (req, res) => {
         const createInstitute = await instituteModel.create({ name: instituteName, address, contactNo })
        
         if (!createInstitute) return res.status(400).json({ message: "Institute Not Created" })
-        console.log("Institute Created Successfully")
+        // console.log("Institute Created Successfully")
 
         const getSubscriptionDetails = await subscriptionPlanModel.findById(subscriptionPlanId)
             
@@ -44,16 +44,16 @@ const instituteCreation = async (req, res) => {
         const getSubscriptionPlanId= getSubscriptionDetails._id
         const getScopeOfSubscription = getSubscriptionDetails.type
         
-        const createSubscriptionOfIndividualInstitute= await subscriptionModel.create({instituteId:getInstituteId,planId:getSubscriptionPlanId,scopeType:getScopeOfSubscription,startDate:startDate,endDate:endDateInMiliSecond,subscriptionPlanName:getSubscriptionName})
+        const createSubscriptionOfInstitute= await subscriptionModel.create({instituteId:getInstituteId,planId:getSubscriptionPlanId,scopeType:getScopeOfSubscription,startDate:startDate,endDate:endDateInMiliSecond,subscriptionPlanName:getSubscriptionName})
         
-        if(!createSubscriptionOfIndividualInstitute){
+        if(!createSubscriptionOfInstitute){
             console.log("Issue in Creating Subscription of Individual Institute")
             return res.status(400).json({message:"Issue in Creating Subscription of Individual Institute"})
         }
 
-        console.log("Institute Created Successfully and Subscription Also Done")
+        // console.log("Institute Created Successfully and Subscription Also Done")
 
-        return res.status(200).json({ message: "Institute Created and Subscription Done Succesfully", createInstitute,createSubscriptionOfIndividualInstitute })
+        return res.status(200).json({ message: "Institute Created and Subscription Done Succesfully", createInstitute,createSubscriptionOfInstitute })
 
 
         // will work on subscription when start working on superadmin 
@@ -66,4 +66,5 @@ const instituteCreation = async (req, res) => {
 }
 
 
+// update and delete institute functions are remaining (10/3/26)
 module.exports = { instituteCreation }

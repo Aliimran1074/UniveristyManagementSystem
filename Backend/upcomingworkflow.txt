@@ -1,3 +1,8 @@
 sab se pehle institute create karna hai simple wala phr us me uski functionalities laga kar check karni hai jese humne banaye hai without Ai features wala aik student aik teacher phr hum kaam karenge single class with AI features isi tarhan 6 insitute banaein ge or har tarhan ki practice karke check kiya jayega, departmenets or or HOD wagera ke role assign kiye jayenge or phr hum is sab ko final karke superadmin ki report me jo features reh gye hai un per kaam karenge
 
 iske baad hum automation per kaam karenge agents pore setup bana kardenge khud se quiz assignment genrate or checking ka kaam karenge marks denge wagera wagera
+
+
+
+10/3/26
+Staff creation per kaam kar raha tha yeh complete karke basic individual institute ko test karna hoga

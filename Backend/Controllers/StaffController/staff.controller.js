@@ -11,8 +11,7 @@ const { subscriptionPlanModel } = require('../../Models/SuperAdminModels/subscri
 const staffRegistration = async (req, res) => {
     try {
         // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
-        const { subscriptionId } = req.body
-
+        const { subscriptionId,instituteId } = req.body
 
         // first check Institute ID if institute is of basic plan then only one staff can register
         const checkSubscription= await subscriptionModel.findById(subscriptionId)
@@ -22,9 +21,28 @@ const staffRegistration = async (req, res) => {
          
          const subscriptionPlanId= checkSubscription.planId
          const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
-        console.log("This is Subscription Plan ",subscriptionPlan)
+        // console.log("This is Subscription Plan ",subscriptionPlan)
+
+        const subscriptionPlanName =subscriptionPlan.subscriptionName
          
-         return res.status(200).json({message:"This is Subscription Plan",subscriptionPlan})
+        if(subscriptionPlanName=="Basic Individual"){
+            // check no of admins in institute
+            const checkNoOfStaff = await staffModel.find({instituteId:instituteId})
+            console.log(checkNoOfStaff)
+            if(checkNoOfStaff.length<1){
+                console.log("You can Create Staff")
+                return res.status(200).json({message:"This is No of Staff",checkNoOfStaff})
+
+            }
+            console.log("Already have a staff , no more staff can created on this Subscription")
+                return res.status(200).json({message:"Already have a staff , no more staff can created on this Subscription",checkNoOfStaff})
+            
+        }
+
+    
+         return res.status(200).json({message:"This is Subscription Plan",subscriptionPlanName})
+
+        
 
 
         
