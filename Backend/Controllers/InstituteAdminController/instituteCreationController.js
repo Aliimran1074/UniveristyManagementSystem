@@ -3,6 +3,8 @@ const subscriptionModel = require("../../Models/SuperAdminModels/subscription.mo
 const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
 
 
+// working on institute creation
+
 const instituteCreation = async (req, res) => {
     try {
         const { instituteName, address, contactNo, subscriptionPlanId } = req.body
