@@ -29,8 +29,9 @@ const staffRegistration = async (req, res) => {
             
                 // console.log(req.file)
         // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
-        const { subscriptionId,instituteId,name,cnicNo,mobileNo,address,department,designation } = req.body
-
+        const { subscriptionId,name,cnicNo,mobileNo,address,department,designation } = req.body
+            console.log("Name :",name)
+            console.log("Subscription Id :",subscriptionId)
         // first check Institute ID if institute is of basic plan then only one staff can register
         const checkSubscription= await subscriptionModel.findById(subscriptionId)
         
@@ -38,6 +39,7 @@ const staffRegistration = async (req, res) => {
         //  console.log(checkSubscription)
          
          const subscriptionPlanId= checkSubscription.planId
+         const instituteId =checkSubscription.instituteId
          const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
         // console.log("This is Subscription Plan ",subscriptionPlan)
 
