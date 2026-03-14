@@ -24,9 +24,9 @@ const staffRegistration = async (req, res) => {
                 if(!req.file){
                     console.log('file is not found')
                      return res.status(402).json({message:'File not Found'})
-                }
-     } )
-            
+
+                    //  Image kit.IO work Remaining
+                }         
                 // console.log(req.file)
         // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
         const { subscriptionId,name,cnicNo,mobileNo,address,department,designation } = req.body
@@ -34,24 +34,19 @@ const staffRegistration = async (req, res) => {
             console.log("Subscription Id :",subscriptionId)
         // first check Institute ID if institute is of basic plan then only one staff can register
         const checkSubscription= await subscriptionModel.findById(subscriptionId)
-        
-            // const checkInstiute = await instituteModel.findById(instituteId)
-        //  console.log(checkSubscription)
-         
+      
          const subscriptionPlanId= checkSubscription.planId
          const instituteId =checkSubscription.instituteId
          const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
-        // console.log("This is Subscription Plan ",subscriptionPlan)
-
         const subscriptionPlanName =subscriptionPlan.subscriptionName
          
-        if(subscriptionPlanName=="Basic Individual"){
+        if(subscriptionPlanName=="Basic Individual" || subscriptionPlanName=="AI Individual Pro" ){
             // check no of admins in institute
-            const checkNoOfStaff = await staffModel.find({instituteId:instituteId})
+            const checkNoOfStaff = await staffModel.find({instituteId:instituteId}).countDocuments()
             console.log(checkNoOfStaff)
             if(checkNoOfStaff.length>=1){
                 console.log("Not able to create Staff")
-                return res.status(200).json({message:"Already have 1 Staff",checkNoOfStaff})
+                return res.status(200).json({message:"Already have 1 Staff",checkNoOfStaff}) 
             }
             console.log("Name is:",name)
             const createAStaff = await staffModel.create({name:name,cnicNo:cnicNo,mobileNo:mobileNo,address:address,designation:designation,instituteId:instituteId})
@@ -59,14 +54,22 @@ const staffRegistration = async (req, res) => {
             console.log("Staff Created Succesfully",createAStaff)
             // console.log("Already have a staff , no more staff can created on this Subscription")
                 return res.status(200).json({message:"Staff Created Successfully",createAStaff})
+     
+            }         
+            else{
+
+                const createAStaff = await staffModel.create({name:name,cnicNo:cnicNo,mobileNo:mobileNo,address:address,designation:designation,instituteId:instituteId})
             
-        }
+            console.log("Staff Created Succesfully",createAStaff)
+            // console.log("Already have a staff , no more staff can created on this Subscription")
+                return res.status(200).json({message:"Staff Created Successfully",createAStaff})
 
-    
-         return res.status(200).json({message:"This is Subscription Plan",subscriptionPlanName})
-    }
+            }
         
+            
 
+            return res.status(200).json({message:"This is Subscription Plan",subscriptionPlanName})
+            
 
         
     //  try {
@@ -121,7 +124,8 @@ const staffRegistration = async (req, res) => {
     //          res.status(403).json({message:"Facing Issue in staff Registration",error})
     //     }
     //     })    
-    
+            } )
+        }
     catch (error) {
     console.log("Issue in Registrating staff ",error)
     return res.status(404).json({message:"Issue in Registrating staff"})
