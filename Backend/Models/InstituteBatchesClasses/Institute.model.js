@@ -12,7 +12,6 @@ const instituteSchema = new mongoose.Schema({
     //     enum:['Institute','Batch','Class'],
     //     required:true
     // }
-    
     address:{
         type:String,
         required:true

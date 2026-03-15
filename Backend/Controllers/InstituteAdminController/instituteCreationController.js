@@ -1,8 +1,8 @@
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model.js")
 const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
-
-
+const studentModel = require("../../Models/UserModels/students.models.js")
+const staffModel = require('../../Models/UserModels/staff.model')
 // working on institute creation
 
 const instituteCreation = async (req, res) => {
@@ -67,6 +67,29 @@ const instituteCreation = async (req, res) => {
 
 }
 
+const getInstituteInfo =async(req,res)=>{
+    try {
+        const {instituteId}= req.body
+        console.log("Institute Id : ",instituteId)
+        const instituteInfo = await instituteModel.findById(instituteId)
+        console.log("Institute Info :",instituteInfo)
+        if(!instituteInfo){
+            console.log("Wrong Id , Institute not Register with This Id")
+            return res.status(400).json({message:"Wrong Id , Institute not Register with This Id"})
+        }
+        const getInfoOfSubscription = await subscriptionModel.find({instituteId:instituteId})
+        console.log("Info of Subscription : ",getInfoOfSubscription)
+
+        const getCountOfNoOfStudentsInAnInstitute= await studentModel.find({instituteId:instituteId}).countDocuments()
+
+        const getCountNoOfStaffInAnInstitute= await staffModel.find({instituteId:instituteId}).countDocuments()
+
+        return res.status(200).json({mesage:"Institute Info :",instituteInfo,getInfoOfSubscription,getCountOfNoOfStudentsInAnInstitute,getCountNoOfStaffInAnInstitute})
+    } catch (error) {
+     console.log("Error in Getting Institute Information ",error)
+     return res.status(400).json({message:"Error in Getting Institute Information"})   
+    }
+}
 
 // update and delete institute functions are remaining (10/3/26)
-module.exports = { instituteCreation }
+module.exports = { instituteCreation,getInstituteInfo}

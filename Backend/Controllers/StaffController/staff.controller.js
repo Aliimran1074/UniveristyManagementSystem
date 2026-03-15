@@ -1,8 +1,8 @@
 
 const QRCode = require('qrcode')
-const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
-const {uploadforStudentPics} = require('../../Multer/multer')
-const instructorModel= require('../../Models/UserModels/instructor.model')
+const { imageKitConfig, fileIdByName } = require('../../ImageKit.IO Setup/setup')
+const { uploadforStudentPics } = require('../../Multer/multer')
+const instructorModel = require('../../Models/UserModels/instructor.model')
 const staffModel = require('../../Models/UserModels/staff.model')
 const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
 const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
@@ -10,228 +10,238 @@ const { subscriptionPlanModel } = require('../../Models/SuperAdminModels/subscri
 
 const staffRegistration = async (req, res) => {
     try {
-            uploadforStudentPics(req,res,async(error)=>
-                {
-            if(error){
-                    console.log('Error in uploading File',error)
-                    // return res.status(402).json({message:"Error in Uploading Picture"})}
-                 if(error.message=='Only image with allowed types can upload'){
+        uploadforStudentPics(req, res, async (error) => {
+            if (error) {
+                console.log('Error in uploading File', error)
+                // return res.status(402).json({message:"Error in Uploading Picture"})}
+                if (error.message == 'Only image with allowed types can upload') {
                     console.log('File Type Error')
-                    return  res.status(401).json({message:"Image is not of correct type",error})
-                 }
-                     return res.status(404).json({message:"Error in file Uplaoding",error})
+                    return res.status(401).json({ message: "Image is not of correct type", error })
                 }
-                if(!req.file){
-                    console.log('file is not found')
-                     return res.status(402).json({message:'File not Found'})
-
-                    //  Image kit.IO work Remaining
-                }         
-                // console.log(req.file)
-        // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
-        const { subscriptionId,name,cnicNo,mobileNo,address,department,designation } = req.body
-            console.log("Name :",name)
-            console.log("Subscription Id :",subscriptionId)
-        // first check Institute ID if institute is of basic plan then only one staff can register
-        const checkSubscription= await subscriptionModel.findById(subscriptionId)
-      
-         const subscriptionPlanId= checkSubscription.planId
-         const instituteId =checkSubscription.instituteId
-         const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
-        const subscriptionPlanName =subscriptionPlan.subscriptionName
-         
-        if(subscriptionPlanName=="Basic Individual" || subscriptionPlanName=="AI Individual Pro" ){
-            // check no of admins in institute
-            const checkNoOfStaff = await staffModel.find({instituteId:instituteId}).countDocuments()
-            console.log(checkNoOfStaff)
-            if(checkNoOfStaff.length>=1){
-                console.log("Not able to create Staff")
-                return res.status(200).json({message:"Already have 1 Staff",checkNoOfStaff}) 
+                return res.status(404).json({ message: "Error in file Uplaoding", error })
             }
-            console.log("Name is:",name)
-            const createAStaff = await staffModel.create({name:name,cnicNo:cnicNo,mobileNo:mobileNo,address:address,designation:designation,instituteId:instituteId})
-            
-            console.log("Staff Created Succesfully",createAStaff)
-            // console.log("Already have a staff , no more staff can created on this Subscription")
-                return res.status(200).json({message:"Staff Created Successfully",createAStaff})
-     
-            }         
-            else{
+            if (!req.file) {
+                console.log('file is not found')
+                return res.status(402).json({ message: 'File not Found' })
 
-                const createAStaff = await staffModel.create({name:name,cnicNo:cnicNo,mobileNo:mobileNo,address:address,designation:designation,instituteId:instituteId})
-            
-            console.log("Staff Created Succesfully",createAStaff)
-            // console.log("Already have a staff , no more staff can created on this Subscription")
-                return res.status(200).json({message:"Staff Created Successfully",createAStaff})
+                //  Image kit.IO work Remaining
+            }
+            // console.log(req.file)
+            // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
+            const { subscriptionId, name, cnicNo, mobileNo, address, department, designation } = req.body
+
+            //check staff by CNIC no 
+            console.log("Name :", name)
+            console.log("Subscription Id :", subscriptionId)
+            // first check Institute ID if institute is of basic plan then only one staff can register
+            const checkSubscription = await subscriptionModel.findById(subscriptionId)
+
+            const subscriptionPlanId = checkSubscription.planId
+            const instituteId = checkSubscription.instituteId
+            const checkStaffByCnic = await staffModel.findOne({ instituteId: instituteId, cnicNo: cnicNo })
+            if (checkStaffByCnic) {
+                console.log("Staff Already Register with Same Cnic and Institute")
+                return res.status(200).json({ message: "Staff Already Register with Same Cnic and Institute" })
+            }
+
+            const subscriptionPlan = await subscriptionPlanModel.findById(subscriptionPlanId)
+            const subscriptionPlanName = subscriptionPlan.subscriptionName
+            if (subscriptionPlanName == "AI Individual Pro") {
+                console.log("Hello World")
+            }
+            console.log(subscriptionPlanName)
+            if (subscriptionPlanName == "Basic Individual" || subscriptionPlanName == "AI Individual Pro") {
+                // check no of admins in institute
+                console.log("Entering in if condition")
+                const checkNoOfStaff = await staffModel.find({ instituteId: instituteId }).countDocuments()
+                console.log(checkNoOfStaff)
+                if (checkNoOfStaff >= 1) {
+                    console.log("Not able to create Staff")
+                    return res.status(200).json({ message: "Already have 1 Staff", checkNoOfStaff })
+                }
+
+                console.log("Name is:", name)
+                const createAStaff = await staffModel.create({ name: name, cnicNo: cnicNo, mobileNo: mobileNo, address: address, designation: designation, instituteId: instituteId })
+
+                console.log("Staff Created Succesfully", createAStaff)
+                // console.log("Already have a staff , no more staff can created on this Subscription")
+                return res.status(200).json({ message: "Staff Created Successfully", createAStaff })
+            }
+            else {
+
+                const createAStaff = await staffModel.create({ name: name, cnicNo: cnicNo, mobileNo: mobileNo, address: address, designation: designation, instituteId: instituteId, department: department })
+
+                console.log("Staff Created Succesfully", createAStaff)
+                // console.log("Already have a staff , no more staff can created on this Subscription")
+                return res.status(200).json({ message: "Staff Created Successfully", createAStaff })
 
             }
-        
-            
 
-            return res.status(200).json({message:"This is Subscription Plan",subscriptionPlanName})
-            
 
-        
-    //  try {
-    //     const checkRegistrationByCNIC = await staffModel.findOne({ cnicNo: cnicNo })
-    //     if (checkRegistrationByCNIC) {
-    //         console.log("Staff Already Registered")
-    //         return res.status(401).json({ message: 'Staff Already Registered' })
-    //     }
-    //     const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation,instituteId })        
-    //     if (!createStaff) {
-    //         // console.log("staff Not Created ")
-    //         return res.status(400).json({ message: "staff Not Created" })
-    //     }
-    //     const id = createStaff._id
-    //     let idToStoreInQrCode = id.toString()
-    //     const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
-    
-    //     // University Email and QR Code save here
-    //     createStaff.QRCode = makeQrCode
-    //     await createStaff.save()
-    
-    //     // const fileName = `${Date.now()}_${req.file.originalname}`
-    //         const fileName = `${Date.now()}_${name}`
 
-    //         const imageKitResponse= await imageKitConfig.upload({
-    //             file:req.file.buffer,
-    //             fileName:fileName
-    //         })
-    //         // console.log("Image kit response",imageKitResponse)
-    //         const imageKitUrl= imageKitResponse.url
-    //         console.log('Image kit url ', imageKitResponse.url)
-    //         if(imageKitUrl.length>0 || imageKitUrl){
-    //             createStaff.imageUrl=imageKitUrl
-    //             await createStaff.save()
-    //         }
-    //         // if(designation==='Instructor'){
-    //         //     const createInstructor= await instructorModel.create({personalData:id})
-    //         //     if(!createInstructor){
-    //         //         console.log("Issue in Creating Instructor")
-    //         // return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
 
-    //         //     }
-    //         //     console.log("Instructor Created Successfully",createInstructor)
-    //         // return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
-    //         // } 
-    //         // avoiding instructor schema
 
-    //         return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
-    //     // console.log('staff Created Successfully')
-    //     } catch (error) {
-    //         console.log("Facing Error in staff Registration",error)
-    //          res.status(403).json({message:"Facing Issue in staff Registration",error})
-    //     }
-    //     })    
-            } )
-        }
+
+            //  try {
+            //     const checkRegistrationByCNIC = await staffModel.findOne({ cnicNo: cnicNo })
+            //     if (checkRegistrationByCNIC) {
+            //         console.log("Staff Already Registered")
+            //         return res.status(401).json({ message: 'Staff Already Registered' })
+            //     }
+            //     const createStaff = await staffModel.create({ name: name, cnicNo: cnicNo, department: department,mobileNo:mobileNo,address:address,designation:designation,instituteId })        
+            //     if (!createStaff) {
+            //         // console.log("staff Not Created ")
+            //         return res.status(400).json({ message: "staff Not Created" })
+            //     }
+            //     const id = createStaff._id
+            //     let idToStoreInQrCode = id.toString()
+            //     const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
+
+            //     // University Email and QR Code save here
+            //     createStaff.QRCode = makeQrCode
+            //     await createStaff.save()
+
+            //     // const fileName = `${Date.now()}_${req.file.originalname}`
+            //         const fileName = `${Date.now()}_${name}`
+
+            //         const imageKitResponse= await imageKitConfig.upload({
+            //             file:req.file.buffer,
+            //             fileName:fileName
+            //         })
+            //         // console.log("Image kit response",imageKitResponse)
+            //         const imageKitUrl= imageKitResponse.url
+            //         console.log('Image kit url ', imageKitResponse.url)
+            //         if(imageKitUrl.length>0 || imageKitUrl){
+            //             createStaff.imageUrl=imageKitUrl
+            //             await createStaff.save()
+            //         }
+            //         // if(designation==='Instructor'){
+            //         //     const createInstructor= await instructorModel.create({personalData:id})
+            //         //     if(!createInstructor){
+            //         //         console.log("Issue in Creating Instructor")
+            //         // return res.status(200).json({ message: 'Staff Created Successfully but not Instructor', createStaff })
+
+            //         //     }
+            //         //     console.log("Instructor Created Successfully",createInstructor)
+            //         // return res.status(200).json({ message: 'Staff Created Successfully', createStaff,createInstructor })
+            //         // } 
+            //         // avoiding instructor schema
+
+            //         return res.status(200).json({ message: 'Staff Created Successfully', createStaff })
+            //     // console.log('staff Created Successfully')
+            //     } catch (error) {
+            //         console.log("Facing Error in staff Registration",error)
+            //          res.status(403).json({message:"Facing Issue in staff Registration",error})
+            //     }
+            //     })    
+        })
+    }
     catch (error) {
-    console.log("Issue in Registrating staff ",error)
-    return res.status(404).json({message:"Issue in Registrating staff"})
- }
+        console.log("Issue in Registrating staff ", error)
+        return res.status(404).json({ message: "Issue in Registrating staff" })
+    }
 }
 
-const getAstaffByCnic= async (req,res)=>{
+const getAstaffByCnic = async (req, res) => {
     try {
-        const {cnicNo}= req.body
-        console.log("Cnic No : ",cnicNo)
-        if(cnicNo.length!==13){
+        const { cnicNo } = req.body
+        console.log("Cnic No : ", cnicNo)
+        if (cnicNo.length !== 13) {
             console.log("Length of Cnic No not equal to 13")
-            return res.status(403).json({message:"Please Enter Correct Cnic No"})
+            return res.status(403).json({ message: "Please Enter Correct Cnic No" })
         }
-        const staffData = await staffModel.findOne({cnicNo:cnicNo})
-        if(!staffData){
+        const staffData = await staffModel.findOne({ cnicNo: cnicNo })
+        if (!staffData) {
             console.log("No staff Found With This CNIC No")
-            return res.status(402).json({message:"staff Not Found against this Cnic No"})
+            return res.status(402).json({ message: "staff Not Found against this Cnic No" })
         }
         console.log('staff Found')
-        return res.status(200).json({message:"staff Found",staffData})
+        return res.status(200).json({ message: "staff Found", staffData })
     } catch (error) {
-        console.log("Error in Getting staff with this Cnic No",error)
-        return res.status(404).json({message:"Error in Getting staff with this Cnic No",error})
+        console.log("Error in Getting staff with this Cnic No", error)
+        return res.status(404).json({ message: "Error in Getting staff with this Cnic No", error })
     }
-    
+
 }
 
-const getAstaffById= async (req,res)=>{
+const getAstaffById = async (req, res) => {
     try {
-        const {staffId}= req.params
+        const { staffId } = req.params
         const staffData = await staffModel.findById(staffId)
-        if(!staffData){
+        if (!staffData) {
             console.log("No staff Found With This id")
-            return res.status(402).json({message:"staff Not Found against this id"})
+            return res.status(402).json({ message: "staff Not Found against this id" })
         }
         console.log('staff Found')
-        return res.status(200).json({message:"staff Found",staffData})
+        return res.status(200).json({ message: "staff Found", staffData })
     } catch (error) {
-        console.log("Error in Getting staff with this id",error)
-        return res.status(404).json({message:"Error in Getting staff with this id",error})
+        console.log("Error in Getting staff with this id", error)
+        return res.status(404).json({ message: "Error in Getting staff with this id", error })
     }
-    
+
 }
 
-const updateDataUsingId = async (req,res)=>{
+const updateDataUsingId = async (req, res) => {
     try {
-        const {id} = req.params
-        const updatedData= req.body
-        const updatedstaff= await staffModel.findByIdAndUpdate(id,updatedData,{runValidators:true,new:true})
-        if(!updatedstaff){
+        const { id } = req.params
+        const updatedData = req.body
+        const updatedstaff = await staffModel.findByIdAndUpdate(id, updatedData, { runValidators: true, new: true })
+        if (!updatedstaff) {
             console.log('staff Not Updated')
-            return res.status(402).json({message:"staff Not Updated"})
+            return res.status(402).json({ message: "staff Not Updated" })
         }
-        return res.status(200).json({message:'staff Updated Successfully',updatedstaff})
+        return res.status(200).json({ message: 'staff Updated Successfully', updatedstaff })
     } catch (error) {
-        console.log('staff not updated Successfully',error)
-        return res.status(404).json({message:"Not able to update staff Data",error})
+        console.log('staff not updated Successfully', error)
+        return res.status(404).json({ message: "Not able to update staff Data", error })
 
     }
 }
 
-const updateDataUsingCnic= async (req,res)=>{
+const updateDataUsingCnic = async (req, res) => {
     try {
-        const {cnicNo} = req.params
-        const dataToUpdate= req.body
-        const updatedstaff= await staffModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{runValidators:true,new:true})           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
-        if(!updatedstaff){
+        const { cnicNo } = req.params
+        const dataToUpdate = req.body
+        const updatedstaff = await staffModel.findOneAndUpdate({ cnicNo: cnicNo }, dataToUpdate, { runValidators: true, new: true })           //runValidator help to check model status, a value applicable to change or not(we use due to enum)
+        if (!updatedstaff) {
             console.log('staff Not Updated')
-            return res.status(402).json({message:"staff Not Updated"})
+            return res.status(402).json({ message: "staff Not Updated" })
         }
-        return res.status(200).json({message:'staff Updated Successfully',updatedstaff})
+        return res.status(200).json({ message: 'staff Updated Successfully', updatedstaff })
     } catch (error) {
-        console.log('staff not updated Successfully',error)
-        return res.status(404).json({message:"Not able to update staff Data",error})
+        console.log('staff not updated Successfully', error)
+        return res.status(404).json({ message: "Not able to update staff Data", error })
 
     }
 }
 
-const deletestaff = async (req,res)=>{
+const deletestaff = async (req, res) => {
     try {
-        const {id,imageUrl} = req.body
+        const { id, imageUrl } = req.body
         console.log(id)
-        const deleteStaff= await staffModel.findByIdAndDelete(id)
-        if(!deleteStaff){
+        const deleteStaff = await staffModel.findByIdAndDelete(id)
+        if (!deleteStaff) {
             console.log("Issue in Deleting Staff")
-            return res.status(402).json({message:'Issue in Deleting Staff'})
+            return res.status(402).json({ message: 'Issue in Deleting Staff' })
         }
-        if(deleteStaff.deletedCount<1){
+        if (deleteStaff.deletedCount < 1) {
             console.log("Not able to delete staff")
-            return res.status(400).json({message:"staff not deleted/staff not exist"})
+            return res.status(400).json({ message: "staff not deleted/staff not exist" })
         }
-        
-        const decodedUrl= decodeURIComponent(imageUrl)
-                const fileName=decodedUrl.substring(decodedUrl.lastIndexOf('/')+1).split('?')[0]
-                const fileId= await fileIdByName(fileName)
-                try {
-                    const deleteFile = await imageKitConfig.deleteFile(fileId)
-                    console.log(deleteFile)
-                    if(!deleteFile){
-                        console.log('File Not Deleted')
-                    }
-                    console.log("File Deleted Successfully")
-                } catch (error) {
-                    console.log("Issue in deleting file from imagekit",error)
-                }
+
+        const decodedUrl = decodeURIComponent(imageUrl)
+        const fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/') + 1).split('?')[0]
+        const fileId = await fileIdByName(fileName)
+        try {
+            const deleteFile = await imageKitConfig.deleteFile(fileId)
+            console.log(deleteFile)
+            if (!deleteFile) {
+                console.log('File Not Deleted')
+            }
+            console.log("File Deleted Successfully")
+        } catch (error) {
+            console.log("Issue in deleting file from imagekit", error)
+        }
         // if(deleteStaff.designation==="Instructor"){
         //     const deleteInstructor = await instructorModel.findOneAndDelete({personalData:id})
         //     if(!deleteInstructor){
@@ -240,28 +250,28 @@ const deletestaff = async (req,res)=>{
         //     console.log('Instructor / Staff Deleted Successfully')
         //     return res.status(201).json({message:"Instructor /Staff Deleted Successfully ",deleteStaff,deleteInstructor})
         // }
-                console.log('staff Deleted Successfully')
-        return res.status(200).json({message:'staff Deleted Succesfully',deleteStaff})
+        console.log('staff Deleted Successfully')
+        return res.status(200).json({ message: 'staff Deleted Succesfully', deleteStaff })
     } catch (error) {
-        console.log("Error in Delete staff Function",error)
-        return res.status(404).json({message:"Error in Delete staff Function",error})
+        console.log("Error in Delete staff Function", error)
+        return res.status(404).json({ message: "Error in Delete staff Function", error })
     }
 }
 
-const getAllStaffOfSameInstitute= async(req,res)=>{
-try {
-    const {instituteId}= req.body
-    const getAllStaff = await staffModel.find({instituteId})
-    if(!getAllStaff){
-        console.log('Issue in Getting All Staff')
-        return res.status(400).json({message:"Issue in Getting All Staff"})
-    } 
-    console.log("All Staff of Institute Found Successfully",getAllStaff)
-    return res.status(200).json({message:"Staff Found Successfully",getAllStaff})
-} catch (error) {
-    console.log("Issue in Getting All Staff",error)
-    return res.status(404).json({message:"Error in Getting All staff info Function",error})
-}
+const getAllStaffOfSameInstitute = async (req, res) => {
+    try {
+        const { instituteId } = req.body
+        const getAllStaff = await staffModel.find({ instituteId })
+        if (!getAllStaff) {
+            console.log('Issue in Getting All Staff')
+            return res.status(400).json({ message: "Issue in Getting All Staff" })
+        }
+        console.log("All Staff of Institute Found Successfully", getAllStaff)
+        return res.status(200).json({ message: "Staff Found Successfully", getAllStaff })
+    } catch (error) {
+        console.log("Issue in Getting All Staff", error)
+        return res.status(404).json({ message: "Error in Getting All staff info Function", error })
+    }
 
 }
-module.exports = { staffRegistration,getAstaffByCnic,getAstaffById,updateDataUsingId,updateDataUsingCnic,deletestaff ,getAllStaffOfSameInstitute}
+module.exports = { staffRegistration, getAstaffByCnic, getAstaffById, updateDataUsingId, updateDataUsingCnic, deletestaff, getAllStaffOfSameInstitute }
