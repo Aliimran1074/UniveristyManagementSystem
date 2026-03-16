@@ -61,7 +61,7 @@ const subscriptionPlansSchema = new mongoose.Schema({
 
 const subscriptionPlanModel = mongoose.model('subscriptionPlanModel', subscriptionPlansSchema)
 
-module.exports = { subscriptionPlanModel }
+module.exports =  subscriptionPlanModel 
 
 
 // const subscriptionSchema = new mongoose.Schema({

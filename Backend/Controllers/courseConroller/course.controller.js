@@ -1,43 +1,55 @@
 const courseModel= require('../../Models/CourseModels/course.model')
 const department = require('../../Models/Department/deparment.model')
-
+const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
+const subscriptionPlanModel =  require('../../Models/SuperAdminModels/subscriptionsPlan.model')
 // wants to work little bit in it
 const courseCreation= async (req,res)=>{
     try {
-        const {name,departmentId,forSemester,code,creditHours,instituteId}=req.body
+        const {name,departmentId,forSemester,code,creditHours,subscriptionId}=req.body
         console.log("Course Name ",name)
-
+        // first get institute Id and details of subscription via subscription Id
+                    const checkSubscription = await subscriptionModel.findById(subscriptionId)
+                    const subscriptionPlanId = checkSubscription.planId
+                    const instituteId = checkSubscription.instituteId
+                    console.log("Institute ID:",instituteId)
         // here we can check course with institute Id , if one course in a institute stored with a name so not allowed to create course with this name 
-        const checkCourseByName= await courseModel.findOne({name:name})
+        const checkCourseByName= await courseModel.findOne({instituteId:instituteId,name:name})
+        console.log("Check Course : ",checkCourseByName)
         if(checkCourseByName){
             console.log('Course Already Registered With This Name')
             return res.status(401).json({message:"Course Already Registered",checkCourseByName})
         }
-        const dataObject = {name:name,
-                department:departmentId,
-                ForSemester:forSemester,
-                code:code,
-                creditHours:creditHours,
-                instituteId:instituteId
-        }
-        console.log("Data Object",dataObject)
-        const createCourse = await courseModel.create(dataObject)
-        if(!createCourse){
-            console.log("Not Able to Create Course")
-            return res.status(404).json({message:"Not able to create Course"})
-        }
-        if(departmentId){
+        const getSubscriptionPlanStatus = await subscriptionPlanModel.findById(subscriptionPlanId)
+        console.log("Subscription Plan Id : ",subscriptionPlanId)
 
-            const findDepartment = await department.findById(departmentId)
-            if(!findDepartment){
-                console.log("Department not Found")
-                return res.status(404).json({message:"Department not Found"})
-            }
-                const departmentName= findDepartment.name
-                createCourse.deprtmentName=departmentName
-                await createCourse.save()
-        }
-        return res.status(200).json({message:"Course Registration Successfully",createCourse})
+    console.log("You can Register Course")
+    
+        return res.status(200).json({message:"Check Subscription :",checkSubscription,getSubscriptionPlanStatus})
+    // const dataObject = {name:name,
+        //         department:departmentId,
+        //         ForSemester:forSemester,
+        //         code:code,
+        //         creditHours:creditHours,
+        //         instituteId:instituteId
+        // }
+        // console.log("Data Object",dataObject)
+        // const createCourse = await courseModel.create(dataObject)
+        // if(!createCourse){
+        //     console.log("Not Able to Create Course")
+        //     return res.status(404).json({message:"Not able to create Course"})
+        // }
+        // if(departmentId){
+
+        //     const findDepartment = await department.findById(departmentId)
+        //     if(!findDepartment){
+        //         console.log("Department not Found")
+        //         return res.status(404).json({message:"Department not Found"})
+        //     }
+        //         const departmentName= findDepartment.name
+        //         createCourse.deprtmentName=departmentName
+        //         await createCourse.save()
+        // }
+        // return res.status(200).json({message:"Course Registration Successfully",createCourse})
 
     } catch (error) {
         console.log('Error in Course Registration Function',error)

@@ -27,7 +27,7 @@ const CourseSchema=new mongoose.Schema({
     },
     code:{
         type:Number,
-        required:true,
+        // required:true,
         unique:true
     },
     creditHours:{

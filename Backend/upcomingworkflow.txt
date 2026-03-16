@@ -13,3 +13,6 @@ Staff creation per kaam kar raha tha yeh complete karke basic individual institu
 15/3/26
 Aik Dashboard testing ke baad humay staff registration me image kit .io wala kaam karna parega, sath sath QR code wala kaam bhi baki hai
 
+
+17/3/26
+Hum course controller per kaam kar rahe hai wahan kuch cheezain commet ki hai unhe sahi karna hai
