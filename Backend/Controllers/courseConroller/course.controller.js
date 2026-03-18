@@ -5,26 +5,60 @@ const subscriptionPlanModel =  require('../../Models/SuperAdminModels/subscripti
 // wants to work little bit in it
 const courseCreation= async (req,res)=>{
     try {
-        const {name,departmentId,forSemester,code,creditHours,subscriptionId}=req.body
+        const {name,departmentId,forSemester,forClass,creditHours,subscriptionId,instructorTeached}=req.body
         console.log("Course Name ",name)
         // first get institute Id and details of subscription via subscription Id
                     const checkSubscription = await subscriptionModel.findById(subscriptionId)
                     const subscriptionPlanId = checkSubscription.planId
                     const instituteId = checkSubscription.instituteId
                     console.log("Institute ID:",instituteId)
-        // here we can check course with institute Id , if one course in a institute stored with a name so not allowed to create course with this name 
+        // here we can check course with institute Id , if one course in a institute stored with a name so not allowed to create course with this namec 
         const checkCourseByName= await courseModel.findOne({instituteId:instituteId,name:name})
         console.log("Check Course : ",checkCourseByName)
         if(checkCourseByName){
             console.log('Course Already Registered With This Name')
             return res.status(401).json({message:"Course Already Registered",checkCourseByName})
         }
-        const getSubscriptionPlanStatus = await subscriptionPlanModel.findById(subscriptionPlanId)
-        console.log("Subscription Plan Id : ",subscriptionPlanId)
+        const checkStatusOfSubscription =checkSubscription.status
+        if(checkStatusOfSubscription !=="Active"){
+            console.log("Subscription Status is not Active")
+            return res.status(200).json({message:"Subscription Status is Inactive"})
+        } 
+        const checkScopeOfSubscription = checkSubscription.scopeType
+            console.log(checkScopeOfSubscription)
+        if(checkScopeOfSubscription == "individual"){
+            console.log('Subscription Status is for Individual')
+            const noOfCoursesAlreadyCreatedByAnInstitute = await courseModel.find({instituteId:instituteId})
+            console.log("Already Register Courses : ",noOfCoursesAlreadyCreatedByAnInstitute)
+            if(noOfCoursesAlreadyCreatedByAnInstitute.length>=1){
+                console.log("This Institute can Only Register One Course")
+                return res.status(200).json({message:"Already Register Course :",noOfCoursesAlreadyCreatedByAnInstitute})
+            }
+           const createACourse = await courseModel.create({name:name,instituteId:instituteId,instructorTeached:instructorTeached})
+           if(!createACourse){
+            console.log("Course Creation Unsuccessfull")
+            return res.status(400).json({message:"Course Creation Unsuccessfull"})
+           }
+           console.log("Course Creation Successfully",createACourse)
+           return res.status(200).json({message:"Course Create Successfully",createACourse})
+        }
 
-    console.log("You can Register Course")
+        const createACourse = await courseModel.create({name:name,instituteId:instituteId,department:departmentId,ForSemester:forSemester,ForClass:forClass,creditHours:creditHours})
+
+if(!createACourse){
+            console.log("Course Creation Unsuccessfull")
+            return res.status(400).json({message:"Course Creation Unsuccessfull"})
+           }
+           console.log("Course Creation Successfully",createACourse)
+           return res.status(200).json({message:"Course Create Successfully",createACourse})
+           
+           
+        // const getSubscriptionPlanStatus = await subscriptionPlanModel.findById(subscriptionPlanId)
+        // console.log("Subscription Plan Id : ",subscriptionPlanId)
+
+    // console.log("You can Register Course")
     
-        return res.status(200).json({message:"Check Subscription :",checkSubscription,getSubscriptionPlanStatus})
+        // return res.status(200).json({message:"Check Subscription :",checkSubscription})
     // const dataObject = {name:name,
         //         department:departmentId,
         //         ForSemester:forSemester,

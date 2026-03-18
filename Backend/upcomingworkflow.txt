@@ -16,3 +16,6 @@ Aik Dashboard testing ke baad humay staff registration me image kit .io wala kaa
 
 17/3/26
 Hum course controller per kaam kar rahe hai wahan kuch cheezain commet ki hai unhe sahi karna hai
+
+18/3/26
+Course Creation ka kaam karlia ab assignment or quiz manual upload karke check karne phr auto ki taraf move karna hai

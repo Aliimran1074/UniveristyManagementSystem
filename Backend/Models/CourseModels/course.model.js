@@ -22,14 +22,19 @@ const CourseSchema=new mongoose.Schema({
     
     ForSemester:{
         type:Number,
-        enum:[1,2,3,4,5,6,7,8,9,10],
+        enum:[1,2,3,4,5,6,7,8,9,10]
         // required:true
     },
-    code:{
-        type:Number,
-        // required:true,
-        unique:true
+    ForClass:
+    {
+        type:String,
     },
+    // code:{
+    //     type:Number,
+    //     // required:true,
+    //     // unique:true
+    // }
+    // ,
     creditHours:{
         type:Number,
         enum:[1,2,3],
@@ -37,7 +42,8 @@ const CourseSchema=new mongoose.Schema({
     },
     instructorTeached:{
         type:mongoose.Schema.ObjectId,
-        ref:"staffModel"
+        ref:"staffModel",
+        // required:true
     }
 },{timestamps:true})
 
