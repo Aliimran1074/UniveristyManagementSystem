@@ -7,6 +7,9 @@ const multer =require('multer')
 const FormData = require('form-data')
 const axios =require('axios')
 const data = require('../../data.json')
+const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
+const courseModel = require('../../Models/CourseModels/course.model')
+const staffModel = require('../../Models/UserModels/staff.model')
 // pdf file creating function
 
 // MUlter Storage setting
@@ -325,6 +328,54 @@ try {
 }
 
 
+const manualAssignmentCreationByPdfUploading = async(req,res)=>{
+try{
+    if(!req.file){
+        console.log("File Not Found")
+        return res.status(400).json({message:"File Not Found"})
+    }
+    const {subscriptionId,course,staffId,duration}=req.body
+    const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
+    const instituteId = subscriptionDetails.instituteId
+    console.log("Institute Id :",instituteId)
+
+    const getStaffInfo = await staffModel.findById(staffId)
+    const getInstituteIdFromStaff = getStaffInfo.instituteId
+
+    const courseInfo = await courseModel.findById(course)
+    const getInstituteIdFromCourse = await courseInfo.instituteId
+    
+    console.log("Institute Id from Staff",getInstituteIdFromStaff)
+    console.log("Institute Id from Course",getInstituteIdFromCourse)
+    console.log("Institute Id from Subscription", instituteId)
+    if(instituteId == getInstituteIdFromStaff){
+        console.log("Same Id")
+    }
+    // humay yahan yeh check karwana hai hum usi course ka assignment bana sake jo is institute ka hai , or wahi staff bana sake jo is institute me yeh course parhata ho , matlab koi dosra banda kisi dosre insitute ka id pass karke na bana or na hi isi institute ka koi dosra teacher jo yeh course na parhata ho
+    const checkNoOfAssignmentOfParticularCourse = await assignmentModel.find({course:course}).countDocuments()
+    console.log(checkNoOfAssignmentOfParticularCourse)
+
+    if(checkNoOfAssignmentOfParticularCourse >= 4){
+        console.log("Aleady Four Assignment of Particular Course Uploaded")
+        return res.status(200).json({message:"Aleady Four Assignment of Particular Course Uploaded"})
+        
+    }
+    else{
+        console.log("You can Upload Assignment ")
+        return res.status(200).json({message:"You can Upload Assignment"})
+    }
+
+}
+catch(error){
+    console.log("Error in manual Assignment Creation Function",error)
+    return res.status(400).json({message:"Error in Manual Assignment Creation Function",error})
+}
+}
+
+
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading}
+
+
 
 // const createAutoAssignmentByUploadingFile = async(req,res)=>{
 //     try {
@@ -339,9 +390,6 @@ try {
 //         return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
 //     }
 // }
-
-
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile}
 
 
 
