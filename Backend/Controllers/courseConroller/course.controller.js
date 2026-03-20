@@ -124,4 +124,13 @@ const courseDeletion= async(req,res)=>{
     }
 }
 
+const studentEnrollmentInCourse = async(req,res)=>{
+    try {
+        const {studentId, courseId ,instituteId}=req.body
+        
+    } catch (error) {
+        
+    }
+}
+
 module.exports={courseCreation,updationInCourse,courseDeletion} 

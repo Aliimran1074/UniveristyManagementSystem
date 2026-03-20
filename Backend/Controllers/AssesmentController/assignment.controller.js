@@ -10,6 +10,7 @@ const data = require('../../data.json')
 const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
 const courseModel = require('../../Models/CourseModels/course.model')
 const staffModel = require('../../Models/UserModels/staff.model')
+const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
 // pdf file creating function
 
 // MUlter Storage setting
@@ -334,7 +335,7 @@ try{
         console.log("File Not Found")
         return res.status(400).json({message:"File Not Found"})
     }
-    const {subscriptionId,course,staffId,duration}=req.body
+    const {subscriptionId,courseId,staffId,duration}=req.body
     const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
     const instituteId = subscriptionDetails.instituteId
     console.log("Institute Id :",instituteId)
@@ -342,33 +343,79 @@ try{
     const getStaffInfo = await staffModel.findById(staffId)
     const getInstituteIdFromStaff = getStaffInfo.instituteId
 
-    const courseInfo = await courseModel.findById(course)
-    const getInstituteIdFromCourse = await courseInfo.instituteId
+    const courseInfo = await courseModel.findById(courseId)
+    const getInstituteIdFromCourse = courseInfo.instituteId
+    // const getInstructorIdFromCourse = courseInfo.instructorTeached
+    const courseName = courseInfo.name
     
     console.log("Institute Id from Staff",getInstituteIdFromStaff)
     console.log("Institute Id from Course",getInstituteIdFromCourse)
     console.log("Institute Id from Subscription", instituteId)
-    if(instituteId == getInstituteIdFromStaff){
-        console.log("Same Id")
-    }
-    // humay yahan yeh check karwana hai hum usi course ka assignment bana sake jo is institute ka hai , or wahi staff bana sake jo is institute me yeh course parhata ho , matlab koi dosra banda kisi dosre insitute ka id pass karke na bana or na hi isi institute ka koi dosra teacher jo yeh course na parhata ho
-    const checkNoOfAssignmentOfParticularCourse = await assignmentModel.find({course:course}).countDocuments()
+    
+    if(
+    instituteId.toString() === getInstituteIdFromStaff.toString() &&
+    instituteId.toString() === getInstituteIdFromCourse.toString() 
+){
+    const checkNoOfAssignmentOfParticularCourse = await assignmentModel.find({course:courseId}).countDocuments()
     console.log(checkNoOfAssignmentOfParticularCourse)
-
+    
     if(checkNoOfAssignmentOfParticularCourse >= 4){
         console.log("Aleady Four Assignment of Particular Course Uploaded")
         return res.status(200).json({message:"Aleady Four Assignment of Particular Course Uploaded"})
         
     }
     else{
-        console.log("You can Upload Assignment ")
-        return res.status(200).json({message:"You can Upload Assignment"})
+        const createManualAssignment = await assignmentModel.create({instituteId:instituteId,course:courseId,createdBy:staffId,duration:duration})
+
+        console.log("Manual Assignment Created Successfully",createManualAssignment)
+       if(!createManualAssignment){
+        console.log("Issue in Creating Manual Assignment ")
+        return res.status(400).json({message:"Issue in Creating Manual Assignment"})
+       }
+
+        const fileName = `${courseName}_${Date.now()}`
+        
+                    const imageKitResponse= await imageKitConfig.upload({
+                        file:req.file.buffer,
+                        fileName:fileName
+                    })
+                    // console.log("Image kit response",imageKitResponse)
+                    const imageKitUrl= imageKitResponse.url
+                    console.log('Image kit url ', imageKitResponse.url)
+                    if(imageKitUrl.length>0 || imageKitUrl){
+                        createManualAssignment.assignmentFile=imageKitUrl
+                        await createManualAssignment.save()
+                    }
+       
+        return res.status(200).json({message:"Assignment Created Successfully",createManualAssignment})
+        // console.log("You can Upload Assignment ")
+        // return res.status(200).json({message:"You can Upload Assignment"})
+
+
+       
     }
+    // console.log("Same Id")
+}
+
+    console.log("Institute Or Instructor ID mismatched")
+    return res.status(400).json({message:"Institute Or Instructor ID mismatched"})
+    // humay yahan yeh check karwana hai hum usi course ka assignment bana sake jo is institute ka hai , or wahi staff bana sake jo is institute me yeh course parhata ho , matlab koi dosra banda kisi dosre insitute ka id pass karke na bana or na hi isi institute ka koi dosra teacher jo yeh course na parhata ho
 
 }
 catch(error){
     console.log("Error in manual Assignment Creation Function",error)
     return res.status(400).json({message:"Error in Manual Assignment Creation Function",error})
+}
+}
+
+const uploadingManualAssignmentFileByStudents = async(req,res)=>{
+try {
+    const {studentId,assignmentId,instituteId}=req.body
+
+    // sab se pehle yeh check karna hai k jo student upload kar raha hai wo is institute ka hai ya nhi or is course me enroll hai ya nhi 
+    
+} catch (error) {
+    
 }
 }
 

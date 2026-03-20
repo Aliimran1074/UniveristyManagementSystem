@@ -3,6 +3,7 @@ const counter = require('../../Models/Counter/counter.model')
 const QRCode = require('qrcode')
 const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
 const {uploadforStudentPics} = require('../../Multer/multer')
+const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
 
 const studentRegistration = async (req, res) => {
     try {
@@ -187,4 +188,23 @@ const deleteStudent = async (req,res)=>{
     }
 }
 
-module.exports = { studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingId,updateDataUsingCnic,deleteStudent }
+
+
+// 21/3/26
+const newStudentRegistration = async (req,res)=>{
+    try {
+        const {name,instituteId,cnicNo,contactNo} =req.body
+        // do multiple checking in this function later
+        const createNewStudent = await studentRegistrationModel.create({name,instituteId,cnicNo,contactNo})
+        if(!createNewStudent){
+            console.log("Issue in Creating New Students")
+        }
+        console.log("Student Created Succesfully",createNewStudent)
+        return res.status(200).json({message:"Student Created Successfully"})
+    } catch (error) {
+        console.log("Error in New Student Registration Function",error)
+        return res.status(400).json({message:"Error in New Student Registration Function",error})
+    }
+}
+
+module.exports = { studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingId,updateDataUsingCnic,deleteStudent,newStudentRegistration }
