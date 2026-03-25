@@ -1,210 +1,224 @@
 const studentModel = require('../../Models/UserModels/students.models')
 const counter = require('../../Models/Counter/counter.model')
 const QRCode = require('qrcode')
-const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
-const {uploadforStudentPics} = require('../../Multer/multer')
+const { imageKitConfig, fileIdByName } = require('../../ImageKit.IO Setup/setup')
+const { uploadforStudentPics } = require('../../Multer/multer')
 const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
+const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
 
 const studentRegistration = async (req, res) => {
     try {
-        uploadforStudentPics(req,res,async(error)=>{
-        if(error){
-                console.log('Error in uploading File',error)
+        uploadforStudentPics(req, res, async (error) => {
+            if (error) {
+                console.log('Error in uploading File', error)
                 // return res.status(402).json({message:"Error in Uploading Picture"})}
-             if(error.message=='Only image with allowed types can upload'){
-                console.log('File Type Error')
-                return  res.status(401).json({message:"Image is not of correct type",error})
-             }
-                 return res.status(404).json({message:"Error in file Uplaoding",error})
+                if (error.message == 'Only image with allowed types can upload') {
+                    console.log('File Type Error')
+                    return res.status(401).json({ message: "Image is not of correct type", error })
+                }
+                return res.status(404).json({ message: "Error in file Uplaoding", error })
             }
-            if(!req.file){
+            if (!req.file) {
                 console.log('file is not found')
-                 return res.status(402).json({message:'File not Found'})
+                return res.status(402).json({ message: 'File not Found' })
             }
             // console.log(req.file)
-     try {
-        const { name, personalEmail, department, contactNo, cnicNo,instituteId } = req.body
-        const emailPrefix = '@lms.indus.edu.pk'
-        const customId = 'abc'                       //abc is custom id which will form by default        
-        const checkRegistrationByCNIC = await studentModel.findOne({ cnicNo: cnicNo })
-        if (checkRegistrationByCNIC) {
-            console.log("Student Already Registered")
-            return res.status(401).json({ message: 'Student Already Registered' })
-        }
-        const createStudent = await studentModel.create({ name: name, personalEmail: personalEmail, contactNo: contactNo, cnicNo: cnicNo, department: department, password: cnicNo,instituteId:instituteId })         //by default every student has cnicNo in their password
-        if (!createStudent) {
-            // console.log("Student Not Created ")
-            return res.status(400).json({ message: "Student Not Created" })
-        }
-        const id = createStudent._id
-        const getYear = new Date().getFullYear()
-        let sequenceNo = ''
-        const getCounter = await counter.findOne({ customId: customId })
-        if (getCounter) {
-            sequenceNo = getCounter.sequence
-            // console.log("Counter Found Successfully")
-        }
-        else if (!getCounter) {
-            const createCounter = await counter.create({})
-            console.log("Counter Created Successfully")
-            sequenceNo = createCounter.sequence
-        }
-        getCounter.sequence = Number(sequenceNo) + 1
-        await getCounter.save()             //save the counter with 1 increment
-        let sequenceNoForStudent = Number(sequenceNo) + 1
-        let createStudentEmail = sequenceNoForStudent + '-' + getYear + emailPrefix
-        let idToStoreInQrCode = id.toString()
-        const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
-    
-        // University Email and QR Code save here
-        createStudent.universityEmail = createStudentEmail
-        createStudent.qrCode = makeQrCode
-        await createStudent.save()
-    
-        // const fileName = `${Date.now()}_${req.file.originalname}`
-            const fileName = `${Date.now()}_${createStudentEmail}`
+            try {
+                const { name, personalEmail, department, contactNo, cnicNo, instituteId } = req.body
+                const emailPrefix = '@lms.indus.edu.pk'
+                const customId = 'abc'                       //abc is custom id which will form by default        
+                const checkRegistrationByCNIC = await studentModel.findOne({ cnicNo: cnicNo })
+                if (checkRegistrationByCNIC) {
+                    console.log("Student Already Registered")
+                    return res.status(401).json({ message: 'Student Already Registered' })
+                }
+                const createStudent = await studentModel.create({ name: name, personalEmail: personalEmail, contactNo: contactNo, cnicNo: cnicNo, department: department, password: cnicNo, instituteId: instituteId })         //by default every student has cnicNo in their password
+                if (!createStudent) {
+                    // console.log("Student Not Created ")
+                    return res.status(400).json({ message: "Student Not Created" })
+                }
+                const id = createStudent._id
+                const getYear = new Date().getFullYear()
+                let sequenceNo = ''
+                const getCounter = await counter.findOne({ customId: customId })
+                if (getCounter) {
+                    sequenceNo = getCounter.sequence
+                    // console.log("Counter Found Successfully")
+                }
+                else if (!getCounter) {
+                    const createCounter = await counter.create({})
+                    console.log("Counter Created Successfully")
+                    sequenceNo = createCounter.sequence
+                }
+                getCounter.sequence = Number(sequenceNo) + 1
+                await getCounter.save()             //save the counter with 1 increment
+                let sequenceNoForStudent = Number(sequenceNo) + 1
+                let createStudentEmail = sequenceNoForStudent + '-' + getYear + emailPrefix
+                let idToStoreInQrCode = id.toString()
+                const makeQrCode = await QRCode.toDataURL(idToStoreInQrCode)
 
-            const imageKitResponse= await imageKitConfig.upload({
-                file:req.file.buffer,
-                fileName:fileName
-            })
-            // console.log("Image kit response",imageKitResponse)
-            const imageKitUrl= imageKitResponse.url
-            console.log('Image kit url ', imageKitResponse.url)
-            if(imageKitUrl.length>0 || imageKitUrl){
-                createStudent.imageUrl=imageKitUrl
+                // University Email and QR Code save here
+                createStudent.universityEmail = createStudentEmail
+                createStudent.qrCode = makeQrCode
                 await createStudent.save()
+
+                // const fileName = `${Date.now()}_${req.file.originalname}`
+                const fileName = `${Date.now()}_${createStudentEmail}`
+
+                const imageKitResponse = await imageKitConfig.upload({
+                    file: req.file.buffer,
+                    fileName: fileName
+                })
+                // console.log("Image kit response",imageKitResponse)
+                const imageKitUrl = imageKitResponse.url
+                console.log('Image kit url ', imageKitResponse.url)
+                if (imageKitUrl.length > 0 || imageKitUrl) {
+                    createStudent.imageUrl = imageKitUrl
+                    await createStudent.save()
+                }
+                return res.status(200).json({ message: 'Student Created Successfully', createStudent })
+                // console.log('Student Created Successfully')
+            } catch (error) {
+                console.log("Facing Error in Student Registration", error)
+                res.status(403).json({ message: "Facing Issue in Student Registration", error })
             }
-            return res.status(200).json({ message: 'Student Created Successfully', createStudent })
-        // console.log('Student Created Successfully')
-        } catch (error) {
-            console.log("Facing Error in Student Registration",error)
-             res.status(403).json({message:"Facing Issue in Student Registration",error})
-        }
-        })    
-    } 
+        })
+    }
     catch (error) {
-    console.log("Issue in Registrating Student ",error)
-    return res.status(404).json({message:"Issue in Registrating Student"})
- }
+        console.log("Issue in Registrating Student ", error)
+        return res.status(404).json({ message: "Issue in Registrating Student" })
+    }
 }
 
-const getAStudentByCnic= async (req,res)=>{
+const getAStudentByCnic = async (req, res) => {
     try {
-        const {cnicNo}= req.body
-        console.log("Cnic No : ",cnicNo)
-        const studentData = await studentModel.findOne({cnicNo:cnicNo})
-        if(!studentData){
+        const { cnicNo } = req.body
+        console.log("Cnic No : ", cnicNo)
+        const studentData = await studentModel.findOne({ cnicNo: cnicNo })
+        if (!studentData) {
             console.log("No student Found With This CNIC No")
-            return res.status(402).json({message:"Student Not Found against this Cnic No"})
+            return res.status(402).json({ message: "Student Not Found against this Cnic No" })
         }
         console.log('Student Found')
-        return res.status(200).json({message:"Student Found",studentData})
+        return res.status(200).json({ message: "Student Found", studentData })
     } catch (error) {
-        console.log("Error in Getting Student with this Cnic No",error)
-        return res.status(404).json({message:"Error in Getting Student with this Cnic No",error})
+        console.log("Error in Getting Student with this Cnic No", error)
+        return res.status(404).json({ message: "Error in Getting Student with this Cnic No", error })
     }
-    
+
 }
 
-const getAStudentById= async (req,res)=>{
+const getAStudentById = async (req, res) => {
     try {
-        const {studentId}= req.params
+        const { studentId } = req.params
         const studentData = await studentModel.findById(studentId)
-        if(!studentData){
+        if (!studentData) {
             console.log("No student Found With This id")
-            return res.status(402).json({message:"Student Not Found against this id"})
+            return res.status(402).json({ message: "Student Not Found against this id" })
         }
         console.log('Student Found')
-        return res.status(200).json({message:"Student Found",studentData})
+        return res.status(200).json({ message: "Student Found", studentData })
     } catch (error) {
-        console.log("Error in Getting Student with this id",error)
-        return res.status(404).json({message:"Error in Getting Student with this id",error})
+        console.log("Error in Getting Student with this id", error)
+        return res.status(404).json({ message: "Error in Getting Student with this id", error })
     }
-    
+
 }
 
-const updateDataUsingId = async (req,res)=>{
+const updateDataUsingId = async (req, res) => {
     try {
-        const {id} = req.params
-        const updatedData= req.body
-        const updatedStudent= await studentModel.findByIdAndUpdate(id,updatedData,{new:true})
-        if(!updatedStudent){
+        const { id } = req.params
+        const updatedData = req.body
+        const updatedStudent = await studentModel.findByIdAndUpdate(id, updatedData, { new: true })
+        if (!updatedStudent) {
             console.log('Student Not Updated')
-            return res.status(402).json({message:"Student Not Updated"})
+            return res.status(402).json({ message: "Student Not Updated" })
         }
-        return res.status(200).json({message:'Student Updated Successfully',updatedStudent})
+        return res.status(200).json({ message: 'Student Updated Successfully', updatedStudent })
     } catch (error) {
-        console.log('Student not updated Successfully',error)
-        return res.status(404).json({message:"Not able to update Student Data",error})
+        console.log('Student not updated Successfully', error)
+        return res.status(404).json({ message: "Not able to update Student Data", error })
 
     }
 }
 
-const updateDataUsingCnic= async (req,res)=>{
+const updateDataUsingCnic = async (req, res) => {
     try {
-        const {cnicNo} = req.params
-        const dataToUpdate= req.body
-        const updatedStudent= await studentModel.findOneAndUpdate({cnicNo:cnicNo},dataToUpdate,{new:true})
-        if(!updatedStudent){
+        const { cnicNo } = req.params
+        const dataToUpdate = req.body
+        const updatedStudent = await studentModel.findOneAndUpdate({ cnicNo: cnicNo }, dataToUpdate, { new: true })
+        if (!updatedStudent) {
             console.log('Student Not Updated')
-            return res.status(402).json({message:"Student Not Updated"})
+            return res.status(402).json({ message: "Student Not Updated" })
         }
-        return res.status(200).json({message:'Student Updated Successfully',updatedStudent})
+        return res.status(200).json({ message: 'Student Updated Successfully', updatedStudent })
     } catch (error) {
-        console.log('Student not updated Successfully',error)
-        return res.status(404).json({message:"Not able to update Student Data",error})
+        console.log('Student not updated Successfully', error)
+        return res.status(404).json({ message: "Not able to update Student Data", error })
 
     }
 }
 
-const deleteStudent = async (req,res)=>{
+const deleteStudent = async (req, res) => {
     try {
-        const {id,imageUrl} = req.body
+        const { id, imageUrl } = req.body
         console.log(id)
-        const deleteStudent= await studentModel.deleteOne({_id:id})
-        if(deleteStudent.deletedCount<1){
+        const deleteStudent = await studentModel.deleteOne({ _id: id })
+        if (deleteStudent.deletedCount < 1) {
             console.log("Not able to delete Student")
-            return res.status(400).json({message:"Student not deleted/Student not exist"})
+            return res.status(400).json({ message: "Student not deleted/Student not exist" })
         }
-        const decodedUrl= decodeURIComponent(imageUrl)
-        const fileName=decodedUrl.substring(decodedUrl.lastIndexOf('/')+1).split('?')[0]
-        const fileId= await fileIdByName(fileName)
+        const decodedUrl = decodeURIComponent(imageUrl)
+        const fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/') + 1).split('?')[0]
+        const fileId = await fileIdByName(fileName)
         try {
             const deleteFile = await imageKitConfig.deleteFile(fileId)
             console.log(deleteFile)
-            if(!deleteFile){
+            if (!deleteFile) {
                 console.log('File Not Deleted')
             }
             console.log("File Deleted Successfully")
         } catch (error) {
-            console.log("Issue in deleting file from imagekit",error)
+            console.log("Issue in deleting file from imagekit", error)
         }
         console.log('Student Deleted Successfully')
-        return res.status(200).json({message:'Student Deleted Succesfully',deleteStudent})
+        return res.status(200).json({ message: 'Student Deleted Succesfully', deleteStudent })
     } catch (error) {
-        console.log("Error in Delete Student Function",error)
-        return res.status(404).json({message:"Error in Delete Student Function",error})
+        console.log("Error in Delete Student Function", error)
+        return res.status(404).json({ message: "Error in Delete Student Function", error })
     }
 }
 
 
 
 // 21/3/26
-const newStudentRegistration = async (req,res)=>{
+const newStudentRegistration = async (req, res) => {
     try {
-        const {name,instituteId,cnicNo,contactNo} =req.body
+        const { name, instituteId, cnicNo, contactNo } = req.body
         // do multiple checking in this function later
-        const createNewStudent = await studentRegistrationModel.create({name,instituteId,cnicNo,contactNo})
-        if(!createNewStudent){
+
+        // check institute existance with given ID
+        const checkInstitute = await instituteModel.findById(instituteId)
+        if (!checkInstitute) {
+            console.log("Institute Not Exist")
+            return res.status(400).json({ message: "Invalid Institute Id" })
+        }
+        const checkStudentExistanceWithCnicNoInSameInstitute = await studentRegistrationModel.find({ instituteId: instituteId, cnicNo: cnicNo })
+        if (checkStudentExistanceWithCnicNoInSameInstitute) {
+            console.log("Student Already Register", checkStudentExistanceWithCnicNoInSameInstitute)
+            return res.status(200).json({ message: "Student Already Register with This Cnic No" })
+        }
+
+        const createNewStudent = await studentRegistrationModel.create({ name, instituteId, cnicNo, contactNo })
+        if (!createNewStudent) {
             console.log("Issue in Creating New Students")
         }
-        console.log("Student Created Succesfully",createNewStudent)
-        return res.status(200).json({message:"Student Created Successfully"})
+        console.log("Student Created Succesfully", createNewStudent)
+        return res.status(200).json({ message: "Student Created Successfully" })
     } catch (error) {
-        console.log("Error in New Student Registration Function",error)
-        return res.status(400).json({message:"Error in New Student Registration Function",error})
+        console.log("Error in New Student Registration Function", error)
+        return res.status(400).json({ message: "Error in New Student Registration Function", error })
     }
 }
 
-module.exports = { studentRegistration,getAStudentByCnic,getAStudentById,updateDataUsingId,updateDataUsingCnic,deleteStudent,newStudentRegistration }
+module.exports = { studentRegistration, getAStudentByCnic, getAStudentById, updateDataUsingId, updateDataUsingCnic, deleteStudent, newStudentRegistration }
