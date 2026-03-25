@@ -126,4 +126,6 @@ const selectiveTeacherCourses =async (req,res)=>{
     }
     
 }
+
+
 module.exports={courseAllocation,getNonSelectedCoursesOfParticularDepartment,selectiveTeacherCourses}
