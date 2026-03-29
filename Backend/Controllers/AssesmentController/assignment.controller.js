@@ -335,17 +335,39 @@ try{
         console.log("File Not Found")
         return res.status(400).json({message:"File Not Found"})
     }
+
+    
     const {subscriptionId,courseId,staffId,duration}=req.body
     const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
     const instituteId = subscriptionDetails.instituteId
     console.log("Institute Id :",instituteId)
 
+    
+    
+    
     const getStaffInfo = await staffModel.findById(staffId)
     const getInstituteIdFromStaff = getStaffInfo.instituteId
-
+    
     const courseInfo = await courseModel.findById(courseId)
     const getInstituteIdFromCourse = courseInfo.instituteId
+    const instructorAssignedToCourse = courseInfo.instructorTeached
+
+    console.log("Instructor Assign TO Course",instructorAssignedToCourse)
+    if(!instructorAssignedToCourse){
+        console.log("Cant Upload Assignment Untill Assign Instructor To Course")
+        return res.status(400).json({message:"Assignment Creation Failed Due To No Instructor Assigned"})
+    }
+
+    // match id of staff with the person who assign to teach course 
+    if((instructorAssignedToCourse.toString())!== (staffId.toString()) ){
+        console.log("Only Assigned Instructor Can Create Assignement ID Mis Match")
+        return res.status(404).json({message:"Only Assigned Instructor Can Create Assignement ID Mis Match"})
+    }
     // const getInstructorIdFromCourse = courseInfo.instructorTeached
+
+
+
+
     const courseName = courseInfo.name
     
     console.log("Institute Id from Staff",getInstituteIdFromStaff)
@@ -411,6 +433,7 @@ catch(error){
 const uploadingManualAssignmentFileByStudents = async(req,res)=>{
 try {
     const {studentId,assignmentId,instituteId}=req.body
+
 
     // sab se pehle yeh check karna hai k jo student upload kar raha hai wo is institute ka hai ya nhi or is course me enroll hai ya nhi 
     

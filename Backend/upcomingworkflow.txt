@@ -28,3 +28,9 @@ Manual Assignment per kaam chal raha hai
 Manual Assignment per kaam hogya ab students ko register karwa kar uploading per kaam hoga
 Note:Humne aik studentRegistration ke naam se schema banaya hai jo student schema ki jagah use karna hoga 
 upcoming days me to next time jab bhi betho to pehle in dono schemas ko compare karke best schema banao
+
+
+29/3/26
+Aik cheez zehan me yeh rakhni hai k humne course banate waqt or institute ID ko map karlia tha to bar bar har function me map karke apne time waste nhi karna 
+
+assignment uploading per kaam chal raha hai

@@ -158,7 +158,7 @@ const assignInstructorToCourse = async(req,res)=>{
     try{
         const {courseId,instructorId}=req.body
         let checkCourseUpdate = await courseModel.findById(courseId)
-        if(checkCourseUpdate){
+        if(!checkCourseUpdate){
             console.log("No Course Available With This ID")
             return res.status(400).json({message:"No Course Available With This Id"}) 
               }
@@ -166,8 +166,9 @@ const assignInstructorToCourse = async(req,res)=>{
           
         const checkInstituteIdOfCourse = checkCourseUpdate.instituteId
         const checkInstituteIdOfInstructor= checkInstructorUpdate.instituteId
-        
-        if(!(checkInstituteIdOfCourse.toString())==(checkInstituteIdOfInstructor.toString())){
+              console.log("Institute Id Via Course :",checkInstituteIdOfCourse)
+              console.log("Institute Id via Instructor :",checkInstituteIdOfInstructor)
+        if((checkInstituteIdOfCourse.toString()) !==(checkInstituteIdOfInstructor.toString())){
             console.log("Instructor is not of Same Institute as of Course")
             return res.status(400).json({message:"Instructor is not of Same Institute as of Course"})
         }
@@ -178,7 +179,7 @@ const assignInstructorToCourse = async(req,res)=>{
         checkCourseUpdate.instructorTeached= instructorId
         await checkCourseUpdate.save()
 
-        return res.status(200).json({message:"Instructor Assigned Succesfully"})
+        return res.status(200).json({message:"Instructor Assigned Succesfully",checkCourseUpdate})
     }
     catch(error){
         console.log("Error in Assign Instructor To Course",error)
