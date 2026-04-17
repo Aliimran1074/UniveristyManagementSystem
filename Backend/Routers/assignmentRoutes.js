@@ -11,6 +11,7 @@ router.route('/assignmentQueue').get(assignmentQueueCalling)
 router.post('/getData', uploadforAssessment, createAutoAssignmentByGivingFile)
 router.route('/checking').post(checking)
 router.post('/manualAssignmentCreation',uploadforAssessment,manualAssignmentCreationByPdfUploading)
-router.post('/uploadAssignment',assignmentUploading)
+router.post('/uploadAssignment',uploadforAssessment,assignmentUploading)
+
 
 module.exports=router

@@ -1,10 +1,12 @@
 const assignmentModel = require("../../Models/Assignment/assignment.model")
 const assignmentUploadingModel = require("../../Models/Assignment/assignmentUploading.model")
 const { courseEnrollmentModel } = require("../../Models/CourseModels/courseEnrollment.model")
-const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
+// const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
+const { imageKitConfig} = require('../../ImageKit.IO Setup/setup')
 
 
-// is function ko run karke test karna hai
+
+// is function ko run karke test to karlia but kuch problem abhi bhi lag rahi hai khair isko end me test karenge ab aik cheez or is me aik assignment upload deleting function bhi banana hai qk kabhi student galti se galt file upload kardete hai is wajah se  
 const assignmentUploading= async(req,res)=>{
     try {
         
@@ -21,9 +23,11 @@ const assignmentUploading= async(req,res)=>{
         }
 
         const getCourseIdViaAssignment= getAssignmentDetails.course
+        console.log(getCourseIdViaAssignment)
         const getCourseEnrollmentDetails = await courseEnrollmentModel.find({studentId:studentId,courseId:getCourseIdViaAssignment})
 
-        if(!getCourseEnrollmentDetails){
+        console.log("Get Course Enrollment Details:",getCourseEnrollmentDetails)
+        if(getCourseEnrollmentDetails.length<1){
             console.log("Sorry Only Enroll Student Can Upload Assignment")
             return res.status(400).json({message:"Sorry Only Enroll Student Can Upload Assignment"})
         }
@@ -31,7 +35,8 @@ const assignmentUploading= async(req,res)=>{
         // check student already upload assignment or not
         const checkAlreadyAssignmentUploading = await assignmentUploadingModel.find({assigmnetId:assignmentId,studentId:studentId})
 
-        if(checkAlreadyAssignmentUploading){
+        console.log("Already Assignment Uploading",checkAlreadyAssignmentUploading.length)
+        if(checkAlreadyAssignmentUploading.length>0){
             console.log("Student Already Uplaod Assignment")
             return res.status(400).json({message:"Student Already Uploaded Assignment"})
         }

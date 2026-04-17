@@ -37,3 +37,6 @@ assignment uploading per kaam chal raha hai
 
 07/04/26
 assignment uploading function ko run karke test karna hai
+
+17/4/26 
+Assignment uploading wala kaam karlia humne ab quiz uploading or normal uploading ka kaam karke is dashboard ko complete karna hai phr AI dashboard ki taraf quickly move karna hai ya phr direct AI assignment ki taraf move karte hai sath sath link karte jayenge sath sath result or exam generation ka kaam bhi karna hai
