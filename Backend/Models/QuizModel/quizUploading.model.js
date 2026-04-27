@@ -20,7 +20,16 @@ const quizUploadingSchema = new mongoose.Schema(
             default:Date.now()
         },
         marks:{
-            type:Number
+            type:Number,
+            default:0
+        },
+        marksAssigned:{
+            type:Boolean,
+            default:false
+        },
+        maxMarks:{
+            type:Number,
+            default:5
         }
     }
 )

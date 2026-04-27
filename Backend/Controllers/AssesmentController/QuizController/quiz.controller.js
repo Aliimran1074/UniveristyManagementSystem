@@ -2,7 +2,8 @@ const quizModel = require("../../../Models/QuizModel/quiz.model")
 const subscriptionModel = require("../../../Models/SuperAdminModels/subscription.model")
 const staffModel= require('../../../Models/UserModels/staff.model')
 const courseModel = require('../../../Models/CourseModels/course.model')
-const courseEnrollmentModel = require('../../../Models/CourseModels/courseEnrollment.model')
+const {courseEnrollmentModel} = require('../../../Models/CourseModels/courseEnrollment.model')
+const quizUploadingModel = require('../../../Models/QuizModel/quizUploading.model')
 const {imageKitConfig} =require('../../../ImageKit.IO Setup/setup')
 const manualQuizCreation=async()=>{
 
@@ -151,7 +152,7 @@ const quizUploading= async(req,res)=>{
             return res.status(400).json({message:"Student Already Uploaded Quiz"})
         }
 
-        const uploadQuiz = await quizUploadingModel.create({assigmnetId:quizId,studentId:studentId})
+        const uploadQuiz = await quizUploadingModel.create({quizId:quizId,studentId:studentId})
 
         if(!uploadQuiz){
             console.log("Issue in Quiz Uploading")
@@ -180,4 +181,49 @@ const quizUploading= async(req,res)=>{
     }
    }
 
-module.exports = {manualQuizCreation,manualQuizCreationByPdfUploading,quizUploading}
+const quizManualMarksUploadingByTeacher= async(req,res)=>{
+try {
+    const {staffId,quizId,studentId,marks}= req.body
+    
+    const getMatchInstructor = await quizModel.findOne({_id:quizId,createdBy:staffId})
+    
+    console.log("Get Match Instructor",getMatchInstructor)
+    if(!getMatchInstructor){
+        console.log("Instructor not Match")
+        return res.status(400).json({message:'Instructor Not Match'})
+    } 
+    // console.log("Instructor Matched ")
+    // return res.status(200).json({message:"Instructor Matched"})   
+    const checkIsQuizUploadedByStudentOrNot = await quizUploadingModel.findOne({quizId:quizId,studentId:studentId})
+    if(!checkIsQuizUploadedByStudentOrNot){
+        console.log("Student not Uploaded Quiz Yet")
+        return res.status(400).json({message:"Student not Uploaded Quiz Yet"})
+    }
+    console.log("Uploaded Quiz Found ")
+    let assignMarksInfo = checkIsQuizUploadedByStudentOrNot.marksAssigned
+    if(assignMarksInfo)
+        {
+            console.log("Marks Already Assign")
+            return res.status(200).json({message:"Marks Already Assign"})
+        }
+    const maxMarks = checkIsQuizUploadedByStudentOrNot.maxMarks
+
+        if(marks>maxMarks || marks<0){
+            console.log("Please Give Marks Between max marks and Zero")
+            return res.status(200).json({message:"Please Give Marks Between max marks and Zero"})
+        }
+     checkIsQuizUploadedByStudentOrNot.marks = marks
+     checkIsQuizUploadedByStudentOrNot.marksAssigned= true
+
+// some working remaining
+
+    return res.status(200).json({message:"Uploaded Quiz Found Successfully",checkIsQuizUploadedByStudentOrNot})
+
+} 
+catch (error) {
+    console.log("Error in Uploading Manual Marks Function",error)
+    return res.status(404).json({message:"Issue in Uploading Maunal Marks Function",error})
+}
+}
+
+module.exports = {manualQuizCreation,manualQuizCreationByPdfUploading,quizUploading,quizManualMarksUploadingByTeacher}
