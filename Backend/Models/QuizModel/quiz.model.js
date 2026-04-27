@@ -10,8 +10,7 @@ instituteId:{
 
     quizFile :{
         type:String,
-        // type:file
-        // required:true
+
     },
     course:{
         type:mongoose.Schema.ObjectId,
@@ -23,11 +22,6 @@ instituteId:{
     ref:'staffModel',
     required:true
    },
-   uploadedBy:[{
-    type:mongoose.Schema.ObjectId,
-    ref:'studentModel'
-   }
-   ],
    generatedDate:{
     type:Date,
     // required:true

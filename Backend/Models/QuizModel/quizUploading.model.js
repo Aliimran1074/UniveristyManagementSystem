@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const assignmentUploadingSchema = new mongoose.Schema(
+const quizUploadingSchema = new mongoose.Schema(
     {
-        assigmnetId:{
+        quizId:{
             type:mongoose.Schema.ObjectId,
-            ref:"assignmentModel",
+            ref:"quizModel",
             required:true
         },
         studentId:{
@@ -25,5 +25,5 @@ const assignmentUploadingSchema = new mongoose.Schema(
     }
 )
 
-const assignmentUploadingModel = mongoose.model('assignmentUploadingModel',assignmentUploadingSchema)
-module.exports = assignmentUploadingModel
+const quizUploadingModel = mongoose.model('quizUploadingModel',quizUploadingSchema)
+module.exports = quizUploadingModel

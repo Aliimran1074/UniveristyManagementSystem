@@ -23,11 +23,11 @@ const assignmentSchema = new mongoose.Schema({
     ref:'staffModel',
     required:true
    },
-   uploadedBy:[{
-    type:mongoose.Schema.ObjectId,
-    ref:'studentModel'
-   }
-   ],
+//    uploadedBy:[{
+//     type:mongoose.Schema.ObjectId,
+//     ref:'studentModel'
+//    }
+//    ],
    generatedDate:{
     type:Date,
     // required:true

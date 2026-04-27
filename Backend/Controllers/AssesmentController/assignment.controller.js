@@ -342,9 +342,6 @@ try{
     const instituteId = subscriptionDetails.instituteId
     console.log("Institute Id :",instituteId)
 
-    
-    
-    
     const getStaffInfo = await staffModel.findById(staffId)
     const getInstituteIdFromStaff = getStaffInfo.instituteId
     
@@ -475,7 +472,7 @@ module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculat
     //     console.log("Today is greater ")
     // }
     // else{
-    //     let time = (getTime-today)
+    //     let time = (getTim0e-today)
     //     totalTime = Math.round(time/86400000)
     //     console.log("Time remain :",time)
     //     console.log("Total Time remain :",totalTime)
