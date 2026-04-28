@@ -8,7 +8,7 @@ router.post('/quizChecker',uploadforAssessment,quizChecker)
 router.post('/manualQuizCreation',uploadforAssessment,manualQuizCreation)
 router.post('/manualQuizCreationByUploadingPdf',uploadforAssessment,manualQuizCreationByPdfUploading)
 router.post('/uploadingQuiz',uploadforAssessment,quizUploading)
-router.post('/manualQuizMarksUploading',quizManualMarksUploadingByTeacher)
+router.put('/manualQuizMarksUploading',quizManualMarksUploadingByTeacher)
 
 
 module.exports=router

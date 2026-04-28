@@ -187,7 +187,7 @@ try {
     
     const getMatchInstructor = await quizModel.findOne({_id:quizId,createdBy:staffId})
     
-    console.log("Get Match Instructor",getMatchInstructor)
+    // console.log("Get Match Instructor",getMatchInstructor)
     if(!getMatchInstructor){
         console.log("Instructor not Match")
         return res.status(400).json({message:'Instructor Not Match'})
@@ -199,8 +199,9 @@ try {
         console.log("Student not Uploaded Quiz Yet")
         return res.status(400).json({message:"Student not Uploaded Quiz Yet"})
     }
-    console.log("Uploaded Quiz Found ")
+    // console.log("Uploaded Quiz Found ")
     let assignMarksInfo = checkIsQuizUploadedByStudentOrNot.marksAssigned
+    console.log("Assign Marks Info",assignMarksInfo)
     if(assignMarksInfo)
         {
             console.log("Marks Already Assign")
@@ -210,12 +211,12 @@ try {
 
         if(marks>maxMarks || marks<0){
             console.log("Please Give Marks Between max marks and Zero")
-            return res.status(200).json({message:"Please Give Marks Between max marks and Zero"})
+            return res.status(200).json({message:`Please Give Marks Between 0 & ${maxMarks} `})
         }
      checkIsQuizUploadedByStudentOrNot.marks = marks
      checkIsQuizUploadedByStudentOrNot.marksAssigned= true
 
-// some working remaining
+     checkIsQuizUploadedByStudentOrNot.save()
 
     return res.status(200).json({message:"Uploaded Quiz Found Successfully",checkIsQuizUploadedByStudentOrNot})
 

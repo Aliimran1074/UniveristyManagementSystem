@@ -11,6 +11,7 @@ const subscriptionModel = require('../../Models/SuperAdminModels/subscription.mo
 const courseModel = require('../../Models/CourseModels/course.model')
 const staffModel = require('../../Models/UserModels/staff.model')
 const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
+const assignmentUploadingModel = require('../../Models/Assignment/assignmentUploading.model')
 // pdf file creating function
 
 // MUlter Storage setting
@@ -427,20 +428,54 @@ catch(error){
 }
 }
 
-const uploadingManualAssignmentFileByStudents = async(req,res)=>{
+
+const assignmentManualMarksUploadingByTeacher= async(req,res)=>{
 try {
-    const {studentId,assignmentId,instituteId}=req.body
-
-
-    // sab se pehle yeh check karna hai k jo student upload kar raha hai wo is institute ka hai ya nhi or is course me enroll hai ya nhi 
+    const {staffId,assignmentId,studentId,marks}= req.body
     
-} catch (error) {
+    const getMatchInstructor = await assignmentModel.findOne({_id:assignmentId,createdBy:staffId})
     
+    // console.log("Get Match Instructor",getMatchInstructor)
+    if(!getMatchInstructor){
+        console.log("Instructor not Match")
+        return res.status(400).json({message:'Instructor Not Match'})
+    } 
+    
+     const checkIsAssignmentUploadedByStudentOrNot = await assignmentUploadingModel.findOne({assigmnetId:assignmentId,studentId:studentId})
+    if(!checkIsAssignmentUploadedByStudentOrNot){
+        console.log("Student not Assignment Quiz Yet")
+        return res.status(400).json({message:"Student not Uploaded Assignment Yet"})
+    }
+    // console.log("Uploaded Quiz Found ")
+    let assignMarksInfo = checkIsAssignmentUploadedByStudentOrNot.marksAssigned
+    console.log("Assign Marks Info",assignMarksInfo)
+    if(assignMarksInfo)
+        {
+            console.log("Marks Already Assign")
+            return res.status(200).json({message:"Marks Already Assign"})
+        }
+    const maxMarks = checkIsAssignmentUploadedByStudentOrNot.maxMarks
+
+        if(marks>maxMarks || marks<0){
+            console.log("Please Give Marks Between max marks and Zero")
+            return res.status(200).json({message:`Please Give Marks Between 0 & ${maxMarks} `})
+        }
+     checkIsAssignmentUploadedByStudentOrNot.marks = marks
+     checkIsAssignmentUploadedByStudentOrNot.marksAssigned= true
+
+     checkIsAssignmentUploadedByStudentOrNot.save()
+
+    return res.status(200).json({message:"Uploaded Assignment Found Successfully",checkIsAssignmentUploadedByStudentOrNot})
+
+} 
+catch (error) {
+    console.log("Error in Uploading Manual Marks Function",error)
+    return res.status(404).json({message:"Issue in Uploading Maunal Marks Function",error})
 }
 }
 
 
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading}
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher}
 
 
 
