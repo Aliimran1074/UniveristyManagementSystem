@@ -46,3 +46,6 @@ Assignment uploading wala kaam karlia humne ab quiz uploading or normal uploadin
 Same as 17/4/26 
 27/4/26
 Marks uploading per kaam chal raha hai test karke assignment ke marks uploading phr result then phr individual AI dashboard ki taraf move hona hai
+
+1/5/26 
+humay assignment input function me validation testing karke api ko call karwana hai same isi tarhan quiz wale me bhi karna hai 

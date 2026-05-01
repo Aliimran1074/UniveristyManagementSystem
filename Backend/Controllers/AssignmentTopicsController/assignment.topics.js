@@ -2,6 +2,8 @@ const assignmentTopicModel= require('../../Models/AssignmentInputModel/assignmen
 
 const assignmentTopicHandling= async(req,res)=>{
     try {
+
+        
         const {instructorId,courseId,assignmentTopic}= req.body
         const lowerCaseAssignmentTopic= assignmentTopic.toLowerCase()
         const checkNoOfTopicsOfParticularCourse= await assignmentTopicModel.find({course:courseId})
@@ -11,7 +13,7 @@ const assignmentTopicHandling= async(req,res)=>{
         }
         if(checkNoOfTopicsOfParticularCourse.length>9){
             console.log("Already Four Topics Assigned")
-            return res.status(201).json({message:"Already 4 Topics Assigned "})
+            return res.status(201).json({message:"Already 9 Topics Assigned "})
         }
         // check duplication of topic 
         for(let i=0;i<checkNoOfTopicsOfParticularCourse.length;i++){

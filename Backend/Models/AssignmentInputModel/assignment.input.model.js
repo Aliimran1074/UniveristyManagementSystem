@@ -1,7 +1,11 @@
 const mongoose= require('mongoose')
-// const { required } = require('zod/mini')
 
 const assignmentInputSchema= new mongoose.Schema({
+    instituteId:{
+            type:mongoose.Schema.ObjectId,
+            ref:"instituteModel",
+            required :true
+        },
     instructor:{
         type:mongoose.Schema.ObjectId,
         ref:'staffModel',
