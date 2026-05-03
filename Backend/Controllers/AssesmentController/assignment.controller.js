@@ -337,8 +337,6 @@ try{
         console.log("File Not Found")
         return res.status(400).json({message:"File Not Found"})
     }
-
-    
     const {subscriptionId,courseId,staffId,duration}=req.body
     const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
     const instituteId = subscriptionDetails.instituteId

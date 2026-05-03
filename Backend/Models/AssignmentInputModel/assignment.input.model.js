@@ -1,33 +1,58 @@
-const mongoose= require('mongoose')
+const mongoose = require('mongoose')
+const { trim } = require('zod')
 
-const assignmentInputSchema= new mongoose.Schema({
-    instituteId:{
-            type:mongoose.Schema.ObjectId,
-            ref:"instituteModel",
-            required :true
+const assignmentInputSchema = new mongoose.Schema({
+
+    instituteId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "instituteModel",
+        required: true
+    },
+    instructor: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'staffModel',
+        required: true
+    },
+    course: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'courseModel',
+        required: true
+    },
+
+    assignmentTopics: [{
+        topicName: {
+            type: String,
+            required: true,
+            trim: true
         },
-    instructor:{
-        type:mongoose.Schema.ObjectId,
-        ref:'staffModel',
-        required:true
+        source: {
+            type: String,
+            required: true,
+            enum: ['Course_content', 'outside']
+        },
+        type:{
+            type:String,
+            required:true,
+            enum:['MCQs Based', 'Q/A']
+        }
+    }],
+    status: {
+        type: String,
+        enum: ['pending', 'uploaded'],
+        default: 'pending'
     },
-    course:{
-        type:mongoose.Schema.ObjectId,
-        ref:'courseModel',
-        required:true
+    // days gap between 2 assignment creation 
+    assignmentGapDuration: {
+        type: Number,
+        required: true
     },
-    assignmentTopic:{
-     type:String,
-     required:true
-    },
-    status:{
-        type:String,
-        default:'pending',
-        enum:['pending','uploaded']
+    dateOfFirstAssignmentCreated: {
+        type: Date,
+
     }
-   
-},{timestamps:true})
 
-const assignmentTopicModel= mongoose.model('assignmentTopicModel',assignmentInputSchema)
+}, { timestamps: true })
 
-module.exports= assignmentTopicModel
+const assignmentTopicModel = mongoose.model('assignmentTopicModel', assignmentInputSchema)
+
+module.exports = assignmentTopicModel

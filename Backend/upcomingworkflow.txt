@@ -49,3 +49,7 @@ Marks uploading per kaam chal raha hai test karke assignment ke marks uploading 
 
 1/5/26 
 humay assignment input function me validation testing karke api ko call karwana hai same isi tarhan quiz wale me bhi karna hai 
+
+
+3/5/26
+Testing ka kaam karna hai assignment Input per phr Ai quiz assignment ko integrate karna hai iske sath
