@@ -53,33 +53,32 @@ const assignmentTopicHandling = async (req, res) => {
         ) {
             const alreadyGiveTopicOfParticularCourseOrNot = await assignmentTopicModel.findOne({ course: courseId })
             if (!alreadyGiveTopicOfParticularCourseOrNot) {
-                const createTopics = await assignmentTopicModel.create({ instituteId: instituteId, instructor:staffId, assignmentTopic: assignmentTopics,assignmentGapDuration:duration,course:courseId })
+                const createTopics = await assignmentTopicModel.create({ instituteId: instituteId, instructor:staffId, assignmentTopics: assignmentTopics,assignmentGapDuration:duration,course:courseId })
                 if (!createTopics) {
                     console.log("Issue in Creating Topic")
                     return res.status(403).json({ message: "Issue in Creating Assignment Topic" })
                 }
                 console.log("Topic Created Successfully")
-                return res.status(200).json({ message: "Assignment Topic Created Succesfully", createTopic })
+                return res.status(200).json({ message: "Assignment Topic Created Succesfully", createTopics })
             }
 
-            const assignmentTopicArrayOfParticularCourse = alreadyGiveTopicOfParticularCourseOrNot.assignmentTopic
-            if (assignmentTopicArrayOfParticularCourse.length + assignmentTopics.length > 6) {
+            const assignmentTopicArrayOfParticularCourse = alreadyGiveTopicOfParticularCourseOrNot.assignmentTopics
+            if (assignmentTopicArrayOfParticularCourse.length + assignmentTopics.length > 10) {
                 console.log(`Only Have Limit of 6 Assignment Uploading , Previous Assignment # ${assignmentTopicArrayOfParticularCourse.length} , You Can Only Add ${6-assignmentTopicArrayOfParticularCourse.length} Assignment`  )
                 return res.status(201).json({ message: `Only Have Limit of 6 Assignment Uploading , Previous Assignment # ${assignmentTopicArrayOfParticularCourse.length} , You Can Only Add ${6-assignmentTopicArrayOfParticularCourse.length} Assignment` })
             }
             // check duplication of topic 
             for (let i = 0; i < assignmentTopicArrayOfParticularCourse.length; i++) {
                 for (let j = 0; j < assignmentTopics.length; j++) {
-                    if (assignmentTopicArrayOfParticularCourse[i].toLowerCase() == assignmentTopics[j].toLowerCase()) {
-                        console.log(`This Topic is already assigned ,please change topic name ${assignmentTopics[j]}`)
-                        return res.status(202).json({ message: `This Topic Already Assigned ${assignmentTopics[j]}` })
+                    if (assignmentTopicArrayOfParticularCourse[i].topicName.toLowerCase() == assignmentTopics[j].topicName.toLowerCase()) {
+                        console.log(`This Topic is already assigned ,please change topic name ${assignmentTopics[j].topicName}`)
+                        return res.status(202).json({ message: `This Topic Already Assigned ${assignmentTopics[j].topicName}` })
                         // break
                     }
                 }
             }
 
-           const totalAssignment =  assignmentTopicArrayOfParticularCourse.push(...assignmentTopics)
-            alreadyGiveTopicOfParticularCourseOrNot.assignmentTopics=totalAssignment
+          alreadyGiveTopicOfParticularCourseOrNot.assignmentTopics.push(...assignmentTopics)
             await alreadyGiveTopicOfParticularCourseOrNot.save()
             console.log("Topic Created Successfully")
             return res.status(200).json({ message: "Assignment Topic Created Succesfully", alreadyGiveTopicOfParticularCourseOrNot })

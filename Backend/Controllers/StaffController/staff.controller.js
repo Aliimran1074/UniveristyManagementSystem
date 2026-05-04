@@ -6,7 +6,7 @@ const instructorModel = require('../../Models/UserModels/instructor.model')
 const staffModel = require('../../Models/UserModels/staff.model')
 const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
 const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
-const { subscriptionPlanModel } = require('../../Models/SuperAdminModels/subscriptionsPlan.model')
+const  subscriptionPlanModel  = require('../../Models/SuperAdminModels/subscriptionsPlan.model')
 
 const staffRegistration = async (req, res) => {
     try {

@@ -561,6 +561,16 @@ catch(error){
 }
 
 
+async function functionOfSelectingOfAssignmentTypeForCreation (){
+    try {
+        // const checkAssignmentsStatus = await assignmentTopicModel.find()
+    } catch (error) {
+        
+    }
+}
+
+
+
 module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher}
 
 

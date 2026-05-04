@@ -1,58 +1,69 @@
-const mongoose = require('mongoose')
-const { trim } = require('zod')
+    const mongoose = require('mongoose')
+    const { trim } = require('zod')
 
-const assignmentInputSchema = new mongoose.Schema({
+    const assignmentInputSchema = new mongoose.Schema({
 
-    instituteId: {
-        type: mongoose.Schema.ObjectId,
-        ref: "instituteModel",
-        required: true
-    },
-    instructor: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'staffModel',
-        required: true
-    },
-    course: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'courseModel',
-        required: true
-    },
-
-    assignmentTopics: [{
-        topicName: {
-            type: String,
-            required: true,
-            trim: true
+        instituteId: {
+            type: mongoose.Schema.ObjectId,
+            ref: "instituteModel",
+            required: true
         },
-        source: {
-            type: String,
-            required: true,
-            enum: ['Course_content', 'outside']
+        instructor: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'staffModel',
+            required: true
         },
-        type:{
-            type:String,
-            required:true,
-            enum:['MCQs Based', 'Q/A']
-        }
-    }],
-    status: {
+        course: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'courseModel',
+            required: true
+        },
+
+        assignmentTopics: [{
+            topicName: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            source: {
+                type: String,
+                required: true,
+                enum: ['Course_content', 'outside']
+            },
+            type:{
+                type:String,
+                required:true,
+                enum:['MCQs Based', 'Q/A']
+            },
+            status: {
+                type: String,
+                enum: ['pending', 'uploaded'],
+                default: 'pending'
+            }
+        }],
+        // days gap between 2 assignment creation 
+        assignmentGapDuration: {
+            type: Number,
+            required: true
+        },
+          job: {
         type: String,
-        enum: ['pending', 'uploaded'],
+        enum: ['pending', 'active', 'completed', 'failed'],
         default: 'pending'
     },
-    // days gap between 2 assignment creation 
-    assignmentGapDuration: {
+
+    createdAssignmentsCount: {
         type: Number,
-        required: true
+        default: 0
     },
-    dateOfFirstAssignmentCreated: {
-        type: Date,
 
-    }
+        dateOfFirstAssignmentCreated: {
+            type: Date,
 
-}, { timestamps: true })
+        }
 
-const assignmentTopicModel = mongoose.model('assignmentTopicModel', assignmentInputSchema)
+    }, { timestamps: true })
 
-module.exports = assignmentTopicModel
+    const assignmentTopicModel = mongoose.model('assignmentTopicModel', assignmentInputSchema)
+
+    module.exports = assignmentTopicModel
