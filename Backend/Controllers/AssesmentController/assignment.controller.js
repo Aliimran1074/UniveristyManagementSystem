@@ -563,6 +563,8 @@ catch(error){
 
 async function functionOfSelectingOfAssignmentTypeForCreation (){
     try {
+
+        // topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
         // const checkAssignmentsStatus = await assignmentTopicModel.find()
     } catch (error) {
         

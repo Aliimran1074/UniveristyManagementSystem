@@ -35,6 +35,15 @@
                 required:true,
                 enum:['MCQs Based', 'Q/A']
             },
+            noOfQuestions:{
+                type:Number,
+                required:true
+            },
+            difficultyLevel:{
+                type:String,
+                enum:['easy','medium','hard'],
+                required:true
+            },
             status: {
                 type: String,
                 enum: ['pending', 'uploaded'],

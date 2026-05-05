@@ -53,3 +53,6 @@ humay assignment input function me validation testing karke api ko call karwana 
 
 3/5/26
 Testing ka kaam karna hai assignment Input per phr Ai quiz assignment ko integrate karna hai iske sath
+
+5/5/26
+topicsName,difficultyLevel,format,noOfQuestions openai ko yeh 4 cheezain bhejni hai jis se wo assignment ka content provide karega 
