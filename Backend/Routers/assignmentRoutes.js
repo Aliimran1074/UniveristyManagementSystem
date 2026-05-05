@@ -1,4 +1,4 @@
-const { createAssignment, assignmentFileCreation, assignmentQueueCalling, createAutoAssignmentByUploadingFile, getAssignmentData, checking, createAutoAssignmentByGivingFile, manualAssignmentCreationByPdfUploading, assignmentManualMarksUploadingByTeacher } = require('../Controllers/AssesmentController/assignment.controller')
+const { createAssignment, assignmentFileCreation, assignmentQueueCalling, createAutoAssignmentByUploadingFile, getAssignmentData, checking, createAutoAssignmentByGivingFile, manualAssignmentCreationByPdfUploading, assignmentManualMarksUploadingByTeacher, functionOfSelectingOfAssignmentTypeForCreation } = require('../Controllers/AssesmentController/assignment.controller')
 const { assignmentUploading } = require('../Controllers/AssesmentController/assignmentUploading.controller')
 const { uploadforAssessment } = require('../Multer/multer')
 
@@ -13,5 +13,5 @@ router.route('/checking').post(checking)
 router.post('/manualAssignmentCreation',uploadforAssessment,manualAssignmentCreationByPdfUploading)
 router.post('/uploadAssignment',uploadforAssessment,assignmentUploading)
 router.put('/manualAssignmentMarksUploading',assignmentManualMarksUploadingByTeacher)
-
+router.post('/getAssignmentTopicsDetails',functionOfSelectingOfAssignmentTypeForCreation)
 module.exports=router

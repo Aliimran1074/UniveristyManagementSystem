@@ -48,6 +48,9 @@
                 type: String,
                 enum: ['pending', 'uploaded'],
                 default: 'pending'
+            },
+            dateOfCreation:{
+                type:Date
             }
         }],
         // days gap between 2 assignment creation 

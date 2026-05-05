@@ -56,3 +56,6 @@ Testing ka kaam karna hai assignment Input per phr Ai quiz assignment ko integra
 
 5/5/26
 topicsName,difficultyLevel,format,noOfQuestions openai ko yeh 4 cheezain bhejni hai jis se wo assignment ka content provide karega 
+
+6/5/26
+// yahan aik scenario me issue araha ha k agr source course content howa to humay kese pata chalega k konse pdf se assignment banana aese to possible nhi hota har mataba k jo file ka naam ho us me hi topic ho to ab is case ka koi solution nikalna hai , filal me topic name ke through wala kaam kar raha ho iska solution souchte hai 

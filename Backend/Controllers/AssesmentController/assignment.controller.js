@@ -561,19 +561,75 @@ catch(error){
 }
 
 
-async function functionOfSelectingOfAssignmentTypeForCreation (){
+const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
     try {
+        const {mainAssignmentTopicsId} =req.body 
+        const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
+        // here calculate duration 
+        const getDurationInfo = assignmentTopicsInfo.assignmentGapDuration
+        const getDateOfFirstAssignmentCreated = assignmentTopicsInfo.dateOfFirstAssignmentCreated
+        const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
+        console.log("Array Of Assignment Topics")
+      
+        
+        const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement)=>{
+            // return currentElement.status=='pending'  //course content wale per kaam karna hai phr yeh karenge
+            
+            return currentElement.status=='pending' && currentElement.source=='outside'
 
-        // topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
-        // const checkAssignmentsStatus = await assignmentTopicModel.find()
+        })
+        console.log("Filter Array :",filterOnlyPendingAssignment)
+      
+    //   if no assignment pending function terminated
+        if(filterOnlyPendingAssignment.length<1)
+            {
+                console.log("No Topic is Pending to Create Assignement, Through Out This Main Assignment Id from Redis Queue")
+                return res.status(404).json({message:"No Topic is Pending to Create Assignment"})
+            }
+
+            // if no topic created 
+            if(getDateOfFirstAssignmentCreated==undefined || getDateOfFirstAssignmentCreated==false){
+                console.log("First Assignment not created yet") 
+            const getFirstTopicFromListOfTopics = filterOnlyPendingAssignment[0]
+            const data = {
+                topicName:getFirstTopicFromListOfTopics.topicName,
+                type:getFirstTopicFromListOfTopics.type,
+                noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
+                difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel
+            }   
+
+
+            // const getInfoAboutTopicSource = getFirstTopicFromListOfTopics.source
+            // console.log(getInfoAboutTopicSource) 
+           
+            return res.status(200).json({message:'Get Info About Topic Source',getFirstTopicFromListOfTopics})
+            // yahan aik scenario me issue araha ha k agr source course content howa to humay kese pata chalega k konse pdf se assignment banana aese to possible nhi hota har mataba k jo file ka naam ho us me hi topic ho to ab is case ka koi solution nikalna hai  
+        
+        }
+
+    } catch (error) {
+        console.log("Error in Assignment Selecting Type Function",error )
+        return res.status("Error in Assignment Selecting Type Function",error)
+    }
+}
+
+const createAssignmentViaTopic =async(data)=>{
+    try {
+        const {topicName,type,noOfQuestions,difficultyLevel} =data
+
+        // send request to AI
+        const response = await axios.post()
+
     } catch (error) {
         
     }
 }
 
+// topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
+// const checkAssignmentsStatus = await assignmentTopicModel.find()
 
 
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher}
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher,functionOfSelectingOfAssignmentTypeForCreation}
 
 
 
