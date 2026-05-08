@@ -14,4 +14,5 @@ router.post('/manualAssignmentCreation',uploadforAssessment,manualAssignmentCrea
 router.post('/uploadAssignment',uploadforAssessment,assignmentUploading)
 router.put('/manualAssignmentMarksUploading',assignmentManualMarksUploadingByTeacher)
 router.post('/getAssignmentTopicsDetails',functionOfSelectingOfAssignmentTypeForCreation)
+// router.post('/createAssignmentViaTopic',createAssignmentViaTopic)
 module.exports=router

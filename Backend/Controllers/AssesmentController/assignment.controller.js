@@ -12,6 +12,7 @@ const courseModel = require('../../Models/CourseModels/course.model')
 const staffModel = require('../../Models/UserModels/staff.model')
 const {imageKitConfig,fileIdByName}= require('../../ImageKit.IO Setup/setup')
 const assignmentUploadingModel = require('../../Models/Assignment/assignmentUploading.model')
+const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.model')
 // pdf file creating function
 
 // MUlter Storage setting
@@ -127,11 +128,12 @@ const checkAssignmentInput =async()=>{
 }
 
 
-const createPdf = (fileName,text)=>{
+const createPdf = (fileName,text,info)=>{
 try {
     // console.log("Working on Create Pdf Function")
     const questions= text.questions
-    // console.log("Text is",text)
+    console.log("Text is",text)
+    console.log("Questions is ",questions)
     // console.log("Text is ",text[0].question)
     // console.log("Text length:",text.length)
     // if(text.length>3){
@@ -141,10 +143,13 @@ try {
     const document = new pdfDocument()
     document.pipe(fs.createWriteStream(fileName))
     // pdf formatting 
-    document.fontSize(20).text("MAA Institute",{align:'center',underline:true})
+    document.fontSize(20).text(`${info.instituteName}`,{align:'center',underline:true})
     document.moveDown(2)
 
     document.fontSize(16).text('Assignment',{align:'center'})
+    document.moveDown(1)
+
+    document.fontSize(16).text(`Teached By ${info.instructorName}`,{align:'center'})
     document.moveDown(1)
 
     document.fontSize(16).text(`${text.title}`,{align:'center'})
@@ -591,18 +596,51 @@ const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
             if(getDateOfFirstAssignmentCreated==undefined || getDateOfFirstAssignmentCreated==false){
                 console.log("First Assignment not created yet") 
             const getFirstTopicFromListOfTopics = filterOnlyPendingAssignment[0]
-            const data = {
-                topicName:getFirstTopicFromListOfTopics.topicName,
-                type:getFirstTopicFromListOfTopics.type,
-                noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
-                difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel
-            }   
-
-
             // const getInfoAboutTopicSource = getFirstTopicFromListOfTopics.source
             // console.log(getInfoAboutTopicSource) 
+            const inputData = 
+            {   topicsName:getFirstTopicFromListOfTopics.topicName,
+                type:getFirstTopicFromListOfTopics.type,
+                noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
+                difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel}   
+            
+            const assignmentData = await createAssignmentsViaTopic(inputData)
+            if(assignmentData.message!=="Done"){
+                console.log("Issue in Getting Result from LLM")
+            }
+
+                // get information about institute
+            const instituteId = assignmentTopicsInfo.instituteId
+            console.log("institute Id is :",instituteId)
+            const getInstituteInfo =await instituteModel.findById(instituteId)
+            console.log("Institute Information is ",getInstituteInfo)
+            const instituteName = getInstituteInfo.name
+
+            const instructorId = assignmentTopicsInfo.instructor
+            const getInstructorInfo= await staffModel.findById(instructorId)
+                        console.log("Staff Information is ",getInstructorInfo)
+            const instructorName = getInstructorInfo.name
+            console.log("Instructor Name is :",instructorName)
+ 
+            const info= {instituteName,instructorName}
+                    const data = assignmentData.finalResult
+                    console.log(data)
+        const parseData =JSON.parse(data)
+        // console.log(parseData)
+        const fileName = `${inputData.topicsName} assignment file.pdf`
+        const document=createPdf(fileName,parseData,info)
+        if(!document){
+            console.log("Issue in Creating Document")
+            return res.status(402).json({message:"Issue in Creating Assignment"})
+        }
+
+        return res.status(200).json({message:"Document Created Successfully",data})
+            
+            // return res.status(200).json({message:'Assignment Created Successfully',assignmentData})
+            
            
-            return res.status(200).json({message:'Get Info About Topic Source',getFirstTopicFromListOfTopics})
+           
+           
             // yahan aik scenario me issue araha ha k agr source course content howa to humay kese pata chalega k konse pdf se assignment banana aese to possible nhi hota har mataba k jo file ka naam ho us me hi topic ho to ab is case ka koi solution nikalna hai  
         
         }
@@ -613,17 +651,58 @@ const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
     }
 }
 
-const createAssignmentViaTopic =async(data)=>{
+const createAssignmentsViaTopic =async(data)=>{
     try {
-        const {topicName,type,noOfQuestions,difficultyLevel} =data
+        const {topicsName,type,noOfQuestions,difficultyLevel} =data
 
-        // send request to AI
-        const response = await axios.post()
-
+        const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
+            topicsName,
+            type,
+            noOfQuestions,
+            difficultyLevel,
+            format:"JSON"
+        })
+        if(!response){
+            const message="LLM not responding"
+            console.log(message)
+            return message
+        }
+           const finalData = response.data
+        console.log("LLM give data successfully",finalData)
+        return finalData
+       
     } catch (error) {
-        
+        console.log("Error in Getting Assignment Data from LLM",error)
+        return error
     }
 }
+
+// const createAssignmentViaTopic =async(req,res)=>{
+//     try {
+//         const {topicsName,type,noOfQuestions,difficultyLevel} =req.body
+
+        
+//         const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
+//             topicsName,
+//             type,
+//             noOfQuestions,
+//             difficultyLevel,
+//             format:"JSON"
+//         })
+//         if(!response){
+//             const message="LLM not responding"
+//             console.log(message)
+//             return res.status(400).json({message:"LLM not responding"})
+//         }
+//         const data = response.data
+//         console.log("LLM give data successfully",data)
+//         return res.status(200).json({message:"LLM give data",data}) 
+
+//     } catch (error) {
+//         console.log("Error in Getting Assignment Data from LLM",error)
+//         return res.status(404).json({message:"Error in Getting Assignment Data from LLM",error})
+//     }
+// }
 
 // topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
 // const checkAssignmentsStatus = await assignmentTopicModel.find()
