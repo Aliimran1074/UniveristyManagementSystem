@@ -62,3 +62,6 @@ topicsName,difficultyLevel,format,noOfQuestions openai ko yeh 4 cheezain bhejni 
 
 9/5/26
 PDF create horaha hai or assignment bhi topic ki help se generate horaha hai ab is pdf ko buffer me rakh kar imagekit.io me save karwa kar iska link Database me save karwana hai phr assignment checker , quiz generator and quiz checker ko complete karke result generation ,Ai usage ,superadmin report or integration ki taraf move karna hai 
+
+10/5/26
+Sab se pehle humay sare agents wala kaam karna hai phr backend integration ki taraf move karna hai takay aik month me sab pora hota jaye
