@@ -69,7 +69,7 @@
         default: 0
     },
 
-        dateOfFirstAssignmentCreated: {
+        dateOfLastAssignmentCreated: {
             type: Date,
 
         }

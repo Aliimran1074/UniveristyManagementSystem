@@ -429,8 +429,6 @@ catch(error){
 
 
 
-
-
 const assignmentManualMarksUploadingByTeacher= async(req,res)=>{
 try {
     const {staffId,assignmentId,studentId,marks}= req.body
@@ -529,7 +527,7 @@ try{
         console.log("Issue in Creating Manual Assignment ")
         return res.status(400).json({message:"Issue in Creating Manual Assignment"})
        }
-
+    
         const fileName = `${courseName}_${Date.now()}`
         
                     const imageKitResponse= await imageKitConfig.upload({
@@ -566,89 +564,315 @@ catch(error){
 }
 
 
-const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
-    try {
-        const {mainAssignmentTopicsId} =req.body 
-        const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
-        // here calculate duration 
-        const getDurationInfo = assignmentTopicsInfo.assignmentGapDuration
-        const getDateOfFirstAssignmentCreated = assignmentTopicsInfo.dateOfFirstAssignmentCreated
-        const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
-        console.log("Array Of Assignment Topics")
+// const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
+//     try {
+//         const {mainAssignmentTopicsId} =req.body 
+//         const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
+//         // here calculate duration 
+//         const getDurationInfo = assignmentTopicsInfo.assignmentGapDuration
+//         const getDateOfLastAssignmentCreated = assignmentTopicsInfo.dateOfLastAssignmentCreated
+//         const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
+//         console.log("Array Of Assignment Topics")
       
         
-        const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement)=>{
-            // return currentElement.status=='pending'  //course content wale per kaam karna hai phr yeh karenge
+//         const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement)=>{
+//             // return currentElement.status=='pending'  //course content wale per kaam karna hai phr yeh karenge
             
-            return currentElement.status=='pending' && currentElement.source=='outside'
+//             return currentElement.status=='pending' && currentElement.source=='outside'
+
+//         })
+//         console.log("Filter Array :",filterOnlyPendingAssignment)
+      
+//     //   if no assignment pending function terminated
+//         if(filterOnlyPendingAssignment.length<1)
+//             {
+//                 console.log("No Topic is Pending to Create Assignement, Through Out This Main Assignment Id from Redis Queue")
+//                 return res.status(404).json({message:"No Topic is Pending to Create Assignment"})
+//             }
+
+//             // if no topic created 
+//             if(getDateOfLastAssignmentCreated==undefined || getDateOfLastAssignmentCreated==false){
+//                 console.log("First Assignment not created yet") 
+//             const getFirstTopicFromListOfTopics = filterOnlyPendingAssignment[0]
+//             const topicName = getFirstTopicFromListOfTopics.topicName
+//             // const getInfoAboutTopicSource = getFirstTopicFromListOfTopics.source
+//             // console.log(getInfoAboutTopicSource) 
+//             const inputData = 
+//             {   topicsName:topicName,
+//                 type:getFirstTopicFromListOfTopics.type,
+//                 noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
+//                 difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel}   
+            
+//             const assignmentData = await createAssignmentsViaTopic(inputData)
+//             if(assignmentData.message!=="Done"){
+//                 console.log("Issue in Getting Result from LLM")
+//             }
+
+//             const assignmentCreationDate = Date.now().toLocaleString()
+//             assignmentTopicsInfo.dateOfLastAssignmentCreated=assignmentCreationDate
+
+//             for(let i =0;i<getArrayOfAssignmentTopics.length;i++){
+//                 if(getArrayOfAssignmentTopics[i].topicName==topicName){
+//                     getArrayOfAssignmentTopics[i].status='uploaded'
+//                     await assignmentTopicsInfo.save()
+//                     break
+//                 }
+//             }
+//                 // get information about institute
+//             const instituteId = assignmentTopicsInfo.instituteId
+//             console.log("institute Id is :",instituteId)
+//             const getInstituteInfo =await instituteModel.findById(instituteId)
+//             console.log("Institute Information is ",getInstituteInfo)
+//             const instituteName = getInstituteInfo.name
+
+//             const instructorId = assignmentTopicsInfo.instructor
+//             const getInstructorInfo= await staffModel.findById(instructorId)
+//                         console.log("Staff Information is ",getInstructorInfo)
+//             const instructorName = getInstructorInfo.name
+//             console.log("Instructor Name is :",instructorName)
+ 
+//             const info= {instituteName,instructorName}
+//                     const data = assignmentData.finalResult
+//                     console.log(data)
+//         const parseData =JSON.parse(data)
+//         // console.log(parseData)
+//         const fileName = `${inputData.topicsName} assignment file.pdf`
+//         const document=createPdf(fileName,parseData,info)
+//         if(!document){
+//             console.log("Issue in Creating Document")
+//             return res.status(402).json({message:"Issue in Creating Assignment"})
+//         }
+
+//         return res.status(200).json({message:"Document Created Successfully",data})
+            
+//             // return res.status(200).json({message:'Assignment Created Successfully',assignmentData})
+            
+           
+           
+           
+//             // yahan aik scenario me issue araha ha k agr source course content howa to humay kese pata chalega k konse pdf se assignment banana aese to possible nhi hota har mataba k jo file ka naam ho us me hi topic ho to ab is case ka koi solution nikalna hai  
+        
+//         }
+//         else{
+//             // comparsion of date if less than assignmentDurationGap no need to send to done other jobs just left out function
+
+//             const getTodayDate = Date.now()
+//             const getAssignmentCreationGap = assignmentTopicsInfo.assignmentGapDuration
+//             // convert last assignment Created Date into mili second then compare 
+//             const convertLastAssignmentCreationDateIntoMiliSecond =new Date(getDateOfLastAssignmentCreated).getTime()
+//             const assignmentDaysGapIntoMiliSecond = Number(getAssignmentCreationGap)*24*60*60*1000 
+
+//             if(getTodayDate-convertLastAssignmentCreationDateIntoMiliSecond<assignmentDaysGapIntoMiliSecond){
+//                 console.log(`Not ${getAssignmentCreationGap} Days Completed`)
+//                 return res.status(404).json({message:`Not ${getAssignmentCreationGap} Days Completed`})
+//             }
+
+//         else{
+//                         const getFirstTopicFromListOfTopics = filterOnlyPendingAssignment[0]
+//             const topicName = getFirstTopicFromListOfTopics.topicName
+//             // const getInfoAboutTopicSource = getFirstTopicFromListOfTopics.source
+//             // console.log(getInfoAboutTopicSource) 
+//             const inputData = 
+//             {   topicsName:topicName,
+//                 type:getFirstTopicFromListOfTopics.type,
+//                 noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
+//                 difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel}   
+            
+//             const assignmentData = await createAssignmentsViaTopic(inputData)
+//             if(assignmentData.message!=="Done"){
+//                 console.log("Issue in Getting Result from LLM")
+//             }
+
+//             const assignmentCreationDate = Date.now().toLocaleString()
+//             assignmentTopicsInfo.dateOfLastAssignmentCreated=assignmentCreationDate
+
+//             for(let i =0;i<getArrayOfAssignmentTopics.length;i++){
+//                 if(getArrayOfAssignmentTopics[i].topicName==topicName){
+//                     getArrayOfAssignmentTopics[i].status='uploaded'
+//                     await assignmentTopicsInfo.save()
+//                     break
+//                 }
+//             }
+//                 // get information about institute
+//             const instituteId = assignmentTopicsInfo.instituteId
+//             console.log("institute Id is :",instituteId)
+//             const getInstituteInfo =await instituteModel.findById(instituteId)
+//             console.log("Institute Information is ",getInstituteInfo)
+//             const instituteName = getInstituteInfo.name
+
+//             const instructorId = assignmentTopicsInfo.instructor
+//             const getInstructorInfo= await staffModel.findById(instructorId)
+//                         console.log("Staff Information is ",getInstructorInfo)
+//             const instructorName = getInstructorInfo.name
+//             console.log("Instructor Name is :",instructorName)
+ 
+//             const info= {instituteName,instructorName}
+//                     const data = assignmentData.finalResult
+//                     console.log(data)
+//         const parseData =JSON.parse(data)
+//         // console.log(parseData)
+//         const fileName = `${inputData.topicsName} assignment file.pdf`
+//         const document=createPdf(fileName,parseData,info)
+//         if(!document){
+//             console.log("Issue in Creating Document")
+//             return res.status(402).json({message:"Issue in Creating Assignment"})
+//         }
+
+//         return res.status(200).json({message:"Document Created Successfully",data})
+//         }
+//         }
+
+//     } catch (error) {
+//         console.log("Error in Assignment Selecting Type Function",error )
+//         return res.status("Error in Assignment Selecting Type Function",error)
+//     }
+// }
+
+const functionOfSelectingOfAssignmentTypeForCreation = async (req, res) => {
+
+    try {
+
+        const { mainAssignmentTopicsId } = req.body
+
+        const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
+
+        if (!assignmentTopicsInfo) {
+            return res.status(404).json({
+                message: "Assignment Topic Record Not Found"
+            })
+        }
+
+        const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
+
+        const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement) => {
+
+            return currentElement.status == 'pending'
+                && currentElement.source == 'outside'
 
         })
-        console.log("Filter Array :",filterOnlyPendingAssignment)
-      
-    //   if no assignment pending function terminated
-        if(filterOnlyPendingAssignment.length<1)
-            {
-                console.log("No Topic is Pending to Create Assignement, Through Out This Main Assignment Id from Redis Queue")
-                return res.status(404).json({message:"No Topic is Pending to Create Assignment"})
-            }
 
-            // if no topic created 
-            if(getDateOfFirstAssignmentCreated==undefined || getDateOfFirstAssignmentCreated==false){
-                console.log("First Assignment not created yet") 
-            const getFirstTopicFromListOfTopics = filterOnlyPendingAssignment[0]
-            // const getInfoAboutTopicSource = getFirstTopicFromListOfTopics.source
-            // console.log(getInfoAboutTopicSource) 
-            const inputData = 
-            {   topicsName:getFirstTopicFromListOfTopics.topicName,
-                type:getFirstTopicFromListOfTopics.type,
-                noOfQuestions:getFirstTopicFromListOfTopics.noOfQuestions,
-                difficultyLevel:getFirstTopicFromListOfTopics.difficultyLevel}   
-            
-            const assignmentData = await createAssignmentsViaTopic(inputData)
-            if(assignmentData.message!=="Done"){
-                console.log("Issue in Getting Result from LLM")
-            }
+        if (filterOnlyPendingAssignment.length < 1) {
 
-                // get information about institute
-            const instituteId = assignmentTopicsInfo.instituteId
-            console.log("institute Id is :",instituteId)
-            const getInstituteInfo =await instituteModel.findById(instituteId)
-            console.log("Institute Information is ",getInstituteInfo)
-            const instituteName = getInstituteInfo.name
-
-            const instructorId = assignmentTopicsInfo.instructor
-            const getInstructorInfo= await staffModel.findById(instructorId)
-                        console.log("Staff Information is ",getInstructorInfo)
-            const instructorName = getInstructorInfo.name
-            console.log("Instructor Name is :",instructorName)
- 
-            const info= {instituteName,instructorName}
-                    const data = assignmentData.finalResult
-                    console.log(data)
-        const parseData =JSON.parse(data)
-        // console.log(parseData)
-        const fileName = `${inputData.topicsName} assignment file.pdf`
-        const document=createPdf(fileName,parseData,info)
-        if(!document){
-            console.log("Issue in Creating Document")
-            return res.status(402).json({message:"Issue in Creating Assignment"})
+            return res.status(404).json({
+                message: "No Topic is Pending to Create Assignment"
+            })
         }
 
-        return res.status(200).json({message:"Document Created Successfully",data})
-            
-            // return res.status(200).json({message:'Assignment Created Successfully',assignmentData})
-            
-           
-           
-           
-            // yahan aik scenario me issue araha ha k agr source course content howa to humay kese pata chalega k konse pdf se assignment banana aese to possible nhi hota har mataba k jo file ka naam ho us me hi topic ho to ab is case ka koi solution nikalna hai  
-        
+        const getDateOfLastAssignmentCreated = assignmentTopicsInfo.dateOfLastAssignmentCreated
+
+        // if first assignment not created
+        if (!getDateOfLastAssignmentCreated) {
+
+            return await createAssignmentFunction(
+                assignmentTopicsInfo,
+                filterOnlyPendingAssignment,
+                res
+            )
         }
 
-    } catch (error) {
-        console.log("Error in Assignment Selecting Type Function",error )
-        return res.status("Error in Assignment Selecting Type Function",error)
+        // compare dates
+        const todayMilliseconds = Date.now()
+
+        const lastAssignmentMilliseconds =new Date(getDateOfLastAssignmentCreated).getTime()
+
+        const assignmentGapDays =Number(assignmentTopicsInfo.assignmentGapDuration)
+
+        const assignmentGapMilliseconds =assignmentGapDays * 24 * 60 * 60 * 1000
+
+        const difference =todayMilliseconds - lastAssignmentMilliseconds
+
+        if (difference < assignmentGapMilliseconds) {
+
+            return res.status(400).json({
+                message: `${assignmentGapDays} Days Not Completed Yet`
+            })
+        }
+
+        // create next assignment
+        return await createAssignment(
+            assignmentTopicsInfo,
+            filterOnlyPendingAssignment,
+            res
+        )
+
     }
+
+    catch (error) {
+
+        console.log("Error in Assignment Selecting Type Function", error)
+
+        return res.status(500).json({
+            message: "Error in Assignment Selecting Type Function",
+            error: error.message
+        })
+    }
+}
+
+const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAssignment,res) => {
+
+    const getFirstTopicFromListOfTopics =filterOnlyPendingAssignment[0]
+
+    const topicName =getFirstTopicFromListOfTopics.topicName
+
+    const inputData = {
+
+        topicsName: topicName,
+        type: getFirstTopicFromListOfTopics.type,
+        noOfQuestions: getFirstTopicFromListOfTopics.noOfQuestions,
+        difficultyLevel: getFirstTopicFromListOfTopics.difficultyLevel
+    }
+
+    const assignmentData =await createAssignmentsViaTopic(inputData)
+
+    if (assignmentData.message !== "Done") {
+
+        return res.status(400).json({
+            message: "Issue in Getting Result from LLM"
+        })
+    }
+
+    // save date
+    assignmentTopicsInfo.dateOfLastAssignmentCreated =new Date()
+
+    // update topic status
+    for (let i = 0; i < assignmentTopicsInfo.assignmentTopics.length; i++) {
+
+        if (assignmentTopicsInfo.assignmentTopics[i].topicName == topicName) {
+            assignmentTopicsInfo.assignmentTopics[i].status ='uploaded'
+            break
+        }
+    }
+
+    await assignmentTopicsInfo.save()
+
+    // institute info
+    const instituteInfo =await instituteModel.findById(assignmentTopicsInfo.instituteId)
+
+    if (!instituteInfo) { return res.status(404).json({ message: "Institute Not Found" })}
+
+    // instructor info
+    const instructorInfo =
+        await staffModel.findById( assignmentTopicsInfo.instructor )
+
+    if (!instructorInfo) {return res.status(404).json({message: "Instructor Not Found"})}
+
+    const info = {
+        instituteName: instituteInfo.name,
+        instructorName: instructorInfo.name
+    }
+
+    const data = assignmentData.finalResult
+
+    const parseData = JSON.parse(data)
+
+    const fileName =`${inputData.topicsName} assignment file.pdf`
+
+    const document = createPdf(fileName, parseData, info)
+
+    if (!document) {
+        return res.status(400).json({ message: "Issue in Creating Assignment"})}
+
+    return res.status(200).json({message: "Document Created Successfully",data})
 }
 
 const createAssignmentsViaTopic =async(data)=>{

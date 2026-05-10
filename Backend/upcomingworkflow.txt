@@ -65,3 +65,6 @@ PDF create horaha hai or assignment bhi topic ki help se generate horaha hai ab 
 
 10/5/26
 Sab se pehle humay sare agents wala kaam karna hai phr backend integration ki taraf move karna hai takay aik month me sab pora hota jaye
+
+10/5/26
+Assignment Ai ke through generate horahe hai ab inhe imagekit .io me send karke then assignment model me upload karna hai
