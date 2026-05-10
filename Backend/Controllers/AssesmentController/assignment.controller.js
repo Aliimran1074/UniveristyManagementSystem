@@ -128,18 +128,118 @@ const checkAssignmentInput =async()=>{
 }
 
 
+
+const createPdfInBuffer = async (text, info) => {
+
+    try {
+
+        return new Promise((resolve, reject) => {
+
+            const questions = text.questions
+
+            const document = new pdfDocument()
+
+            const buffers = []
+
+            // collect chunks
+            document.on('data', (chunk) => {
+
+                buffers.push(chunk)
+            })
+
+            // completed
+            document.on('end', () => {
+
+                const pdfBuffer = Buffer.concat(buffers)
+
+                console.log("PDF Buffer Created Successfully")
+
+                resolve(pdfBuffer)
+            })
+
+            // error handling
+            document.on('error', (error) => {
+
+                reject(error)
+            })
+
+            // PDF Formatting
+
+            document
+                .fontSize(20)
+                .text(`${info.instituteName}`, {
+                    align: 'center',
+                    underline: true
+                })
+
+            document.moveDown(2)
+
+            document
+                .fontSize(16)
+                .text('Assignment', {
+                    align: 'center'
+                })
+
+            document.moveDown(1)
+
+            document
+                .fontSize(16)
+                .text(`Teached By ${info.instructorName}`, {
+                    align: 'center'
+                })
+
+            document.moveDown(1)
+
+            document
+                .fontSize(16)
+                .text(`${text.title}`, {
+                    align: 'center'
+                })
+
+            document.moveDown(1)
+
+            if(info.assignmentType=='Q/A'){
+
+                for (let i = 0; i < questions.length; i++) {
+    
+                    document.fontSize(12).text(`Q${i + 1} ${questions[i]}`, {align: 'left'})
+                    document.moveDown(0.5)
+                }
+            }
+            else{
+                for (let i = 0; i < questions.length; i++) {
+                    document.fontSize(12).text(`Q${i + 1} ${questions[i].question}`, {
+                            align: 'left'
+                        })
+                    document.moveDown(0.5)
+                    for (let j =0;j<questions[i].options.length;j++){
+                        document.fontSize(12).text(`${j+1} ${questions[i].options[j]}`)
+                        document.moveDown(0.2)
+                    }
+                    document.moveDown(0.8)
+                }
+            }
+
+            document.end()
+
+        })
+
+    }
+
+    catch (error) {
+
+        console.log("Error in creating Pdf", error)
+    }
+}
+
 const createPdf = (fileName,text,info)=>{
 try {
-    // console.log("Working on Create Pdf Function")
+    
+
     const questions= text.questions
     console.log("Text is",text)
     console.log("Questions is ",questions)
-    // console.log("Text is ",text[0].question)
-    // console.log("Text length:",text.length)
-    // if(text.length>3){
-        // console.log("I am entering in if condition")
-        // const newArray = text.slice(0,3)
-        // console.log("I am new Array",newArray)
+ 
     const document = new pdfDocument()
     document.pipe(fs.createWriteStream(fileName))
     // pdf formatting 
@@ -159,14 +259,14 @@ try {
        document.fontSize(12).text(`Q${i+1} ${questions[i]}`,{align:'left'})
        document.moveDown(0.5)
     }
-    // newArray.forEach((data,index)=>{
-    // document.fontSize(12).text(`Q${index+1}) ${data.question}`,{align:'left'})
-    // document.moveDown(0.5)
-    
-// })
-document.end()
-console.log("PDF created Successfully")
-return document
+ 
+    document.end()
+    console.log("PDF created Successfully") 
+    return document
+} catch (error) {
+    console.log("Error in creating Pdf",error)
+
+}
 //     }
 //     else{
     
@@ -186,11 +286,14 @@ return document
 //     document.end()
 //     return document
 // }
-} catch (error) {
-    console.log("Error in creating Pdf",error)
 
 }
-}
+
+
+
+
+
+
 
 
 const assignmentFileCreation = (topic,fileName)=>{
@@ -330,7 +433,6 @@ try {
 } catch (error) {
     console.log("Error in Assignment Creation Function ",error)
     return res.status(404).json({message:'Issue in Create Assignement Function ',error})
-
 } 
 }
 
@@ -545,9 +647,6 @@ try{
         return res.status(200).json({message:"Assignment Created Successfully",createManualAssignment})
         // console.log("You can Upload Assignment ")
         // return res.status(200).json({message:"You can Upload Assignment"})
-
-
-       
     }
     // console.log("Same Id")
 }
@@ -564,6 +663,281 @@ catch(error){
 }
 
 
+
+const functionOfSelectingOfAssignmentTypeForCreation = async (req, res) => {
+
+    try {
+
+        const { mainAssignmentTopicsId } = req.body
+
+        const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
+
+        if (!assignmentTopicsInfo) {
+            return res.status(404).json({
+                message: "Assignment Topic Record Not Found"
+            })
+        }
+
+        const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
+
+        const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement) => {
+
+            return currentElement.status == 'pending'
+                && currentElement.source == 'outside'
+
+        })
+
+        if (filterOnlyPendingAssignment.length < 1) {
+
+            return res.status(404).json({
+                message: "No Topic is Pending to Create Assignment"
+            })
+        }
+
+        const getDateOfLastAssignmentCreated = assignmentTopicsInfo.dateOfLastAssignmentCreated
+
+        // if first assignment not created
+        if (!getDateOfLastAssignmentCreated) {
+
+            return await createAssignmentFunction(
+                assignmentTopicsInfo,
+                filterOnlyPendingAssignment,
+                res
+            )
+        }
+
+        // compare dates
+        const todayMilliseconds = Date.now()
+
+        const lastAssignmentMilliseconds =new Date(getDateOfLastAssignmentCreated).getTime()
+
+        const assignmentGapDays =Number(assignmentTopicsInfo.assignmentGapDuration)
+
+        const assignmentGapMilliseconds =assignmentGapDays * 24 * 60 * 60 * 1000
+
+        const difference =todayMilliseconds - lastAssignmentMilliseconds
+
+        if (difference < assignmentGapMilliseconds) {
+
+            return res.status(400).json({
+                message: `${assignmentGapDays} Days Not Completed Yet`
+            })
+        }
+
+        // create next assignment
+        return await createAssignmentFunction(
+            assignmentTopicsInfo,
+            filterOnlyPendingAssignment,
+            res
+        )
+
+    }
+
+    catch (error) {
+
+        console.log("Error in Assignment Selecting Type Function", error)
+
+        return res.status(500).json({
+            message: "Error in Assignment Selecting Type Function",
+            error: error.message
+        })
+    }
+}
+
+const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAssignment,res) => {
+
+    const getFirstTopicFromListOfTopics =filterOnlyPendingAssignment[0]
+
+    const topicName =getFirstTopicFromListOfTopics.topicName
+    const getTypeOfAssignment = getFirstTopicFromListOfTopics.type
+    const inputData = {
+        topicsName: topicName,
+        type: getTypeOfAssignment,
+        noOfQuestions: getFirstTopicFromListOfTopics.noOfQuestions,
+        difficultyLevel: getFirstTopicFromListOfTopics.difficultyLevel
+    }
+
+    const assignmentData =await createAssignmentsViaTopic(inputData)
+
+    if (assignmentData.message !== "Done") {
+        return res.status(400).json({
+            message: "Issue in Getting Result from LLM"
+        })
+    }
+
+    // save date
+    assignmentTopicsInfo.dateOfLastAssignmentCreated =new Date()
+
+    // update topic status
+    for (let i = 0; i < assignmentTopicsInfo.assignmentTopics.length; i++) {
+
+        if (assignmentTopicsInfo.assignmentTopics[i].topicName == topicName) {
+            assignmentTopicsInfo.assignmentTopics[i].status ='uploaded'
+            break
+        }
+    }
+
+    await assignmentTopicsInfo.save()
+
+    // institute info
+    const instituteInfo =await instituteModel.findById(assignmentTopicsInfo.instituteId)
+
+    if (!instituteInfo) { return res.status(404).json({ message: "Institute Not Found" })}
+
+    // instructor info
+    const instructorInfo =await staffModel.findById( assignmentTopicsInfo.instructor )
+
+    if (!instructorInfo) {return res.status(404).json({message: "Instructor Not Found"})}
+
+    const info = {
+        instituteName: instituteInfo.name,
+        instructorName: instructorInfo.name,
+        assignmentType :getTypeOfAssignment
+    }
+
+    const data = assignmentData.finalResult
+
+    const parseData = JSON.parse(data)
+
+    const fileName =`${inputData.topicsName} assignment file.pdf`
+
+    // const document = createPdf(fileName, parseData, info) // yeh function file system ki madad se file create kar raha tha lekin humay buffer ka use karna hai is liye humne is function ko commit kardia
+
+
+    const pdfBuffer = await createPdfInBuffer(parseData, info)
+    if (!pdfBuffer) {
+        return res.status(400).json({ message: "Issue in Creating PDF in Buffer"})}
+
+const imageKitResponse= await imageKitConfig.upload({
+                        file:pdfBuffer,
+                        fileName:fileName,
+                        folder:"/assignmentFile"
+                    })
+                    const getUrl = imageKitResponse.url
+
+if(getUrl.length>0 || getUrl){
+    const assignmentCreation = await assignmentModel.create({instituteId:assignmentTopicsInfo.instituteId,assignmentFile:getUrl,course:assignmentTopicsInfo.course,createdBy:assignmentTopicsInfo.instructor,duration:7})
+
+return res.status(200).json({message: "Document Created Successfully",data,getUrl,assignmentCreation})
+}
+
+
+// ab yahan humne assignemnt model ke through assignment to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of assignments hone chahiye , agr koi manual assignment banaya gya hai to is me or AI wale assignment me kitne din ka gap hona chahiye
+
+return res.status(200).json({message: "Document Created Successfully, not Uploaded in Assignment Model",data,getUrl})
+}
+
+const createAssignmentsViaTopic =async(data)=>{
+    try {
+        const {topicsName,type,noOfQuestions,difficultyLevel} =data
+
+        const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
+            topicsName,
+            type,
+            noOfQuestions,
+            difficultyLevel,
+            format:"JSON"
+        })
+        if(!response){
+            const message="LLM not responding"
+            console.log(message)
+            return message
+        }
+           const finalData = response.data
+        console.log("LLM give data successfully",finalData)
+        return finalData
+       
+    } catch (error) {
+        console.log("Error in Getting Assignment Data from LLM",error)
+        return error
+    }
+}
+
+
+module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher,functionOfSelectingOfAssignmentTypeForCreation}
+
+
+// const createAssignmentViaTopic =async(req,res)=>{
+//     try {
+//         const {topicsName,type,noOfQuestions,difficultyLevel} =req.body
+
+        
+//         const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
+//             topicsName,
+//             type,
+//             noOfQuestions,
+//             difficultyLevel,
+//             format:"JSON"
+//         })
+//         if(!response){
+//             const message="LLM not responding"
+//             console.log(message)
+//             return res.status(400).json({message:"LLM not responding"})
+//         }
+//         const data = response.data
+//         console.log("LLM give data successfully",data)
+//         return res.status(200).json({message:"LLM give data",data}) 
+
+//     } catch (error) {
+//         console.log("Error in Getting Assignment Data from LLM",error)
+//         return res.status(404).json({message:"Error in Getting Assignment Data from LLM",error})
+//     }
+// }
+
+
+// topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
+// const checkAssignmentsStatus = await assignmentTopicModel.find()
+
+
+// const createAutoAssignmentByUploadingFile = async(req,res)=>{
+//     try {
+//         const {course} =req.body
+
+//         // check already uploaded assignment of that particular course
+        
+
+
+//     } catch (error) {
+//         console.log("Error in Create AutoAssignment By File Uploading",error)
+//         return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
+//     }
+// }
+
+
+
+// let today= new Date().getTime()
+    // let endDate = new Date()
+    // endDate.setDate(endDate.getDate()+duration)
+    // endDate.setHours(23,59,59,999)
+    // console.log(endDate)   
+    // let getTime = endDate.getTime()
+    // console.log("Get Time :",getTime)
+    // console.log("Today Time :",today)
+    // if(today>getTime){
+    //     console.log("Today is greater ")
+    // }
+    // else{
+    //     let time = (getTim0e-today)
+    //     totalTime = Math.round(time/86400000)
+    //     console.log("Time remain :",time)
+    //     console.log("Total Time remain :",totalTime)
+
+    //      console.log("7 Days are greater")
+    // }
+
+    // let setEndDate = date+7
+    // const newDate =new Date(setEndDate)
+    // console.log(newDate)
+
+    // console.log("Duration is ",duration)
+    // console.log("Assignment Creation : ",assignmentCreate)
+    // return res.status(200).json({message:"Assignment Created Successfully",assignmentCreate})
+
+    // console.log("No of assignment Found Of Particular Subject",checkNoOfAssignmentofParticularCourse)
+    // return res.status(200).json({message:"Assignment Found of this Course",checkNoOfAssignmentofParticularCourse})
+
+
+    
 // const functionOfSelectingOfAssignmentTypeForCreation=async (req,res)=>{
 //     try {
 //         const {mainAssignmentTopicsId} =req.body 
@@ -727,258 +1101,3 @@ catch(error){
 //         return res.status("Error in Assignment Selecting Type Function",error)
 //     }
 // }
-
-const functionOfSelectingOfAssignmentTypeForCreation = async (req, res) => {
-
-    try {
-
-        const { mainAssignmentTopicsId } = req.body
-
-        const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
-
-        if (!assignmentTopicsInfo) {
-            return res.status(404).json({
-                message: "Assignment Topic Record Not Found"
-            })
-        }
-
-        const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
-
-        const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement) => {
-
-            return currentElement.status == 'pending'
-                && currentElement.source == 'outside'
-
-        })
-
-        if (filterOnlyPendingAssignment.length < 1) {
-
-            return res.status(404).json({
-                message: "No Topic is Pending to Create Assignment"
-            })
-        }
-
-        const getDateOfLastAssignmentCreated = assignmentTopicsInfo.dateOfLastAssignmentCreated
-
-        // if first assignment not created
-        if (!getDateOfLastAssignmentCreated) {
-
-            return await createAssignmentFunction(
-                assignmentTopicsInfo,
-                filterOnlyPendingAssignment,
-                res
-            )
-        }
-
-        // compare dates
-        const todayMilliseconds = Date.now()
-
-        const lastAssignmentMilliseconds =new Date(getDateOfLastAssignmentCreated).getTime()
-
-        const assignmentGapDays =Number(assignmentTopicsInfo.assignmentGapDuration)
-
-        const assignmentGapMilliseconds =assignmentGapDays * 24 * 60 * 60 * 1000
-
-        const difference =todayMilliseconds - lastAssignmentMilliseconds
-
-        if (difference < assignmentGapMilliseconds) {
-
-            return res.status(400).json({
-                message: `${assignmentGapDays} Days Not Completed Yet`
-            })
-        }
-
-        // create next assignment
-        return await createAssignment(
-            assignmentTopicsInfo,
-            filterOnlyPendingAssignment,
-            res
-        )
-
-    }
-
-    catch (error) {
-
-        console.log("Error in Assignment Selecting Type Function", error)
-
-        return res.status(500).json({
-            message: "Error in Assignment Selecting Type Function",
-            error: error.message
-        })
-    }
-}
-
-const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAssignment,res) => {
-
-    const getFirstTopicFromListOfTopics =filterOnlyPendingAssignment[0]
-
-    const topicName =getFirstTopicFromListOfTopics.topicName
-
-    const inputData = {
-
-        topicsName: topicName,
-        type: getFirstTopicFromListOfTopics.type,
-        noOfQuestions: getFirstTopicFromListOfTopics.noOfQuestions,
-        difficultyLevel: getFirstTopicFromListOfTopics.difficultyLevel
-    }
-
-    const assignmentData =await createAssignmentsViaTopic(inputData)
-
-    if (assignmentData.message !== "Done") {
-
-        return res.status(400).json({
-            message: "Issue in Getting Result from LLM"
-        })
-    }
-
-    // save date
-    assignmentTopicsInfo.dateOfLastAssignmentCreated =new Date()
-
-    // update topic status
-    for (let i = 0; i < assignmentTopicsInfo.assignmentTopics.length; i++) {
-
-        if (assignmentTopicsInfo.assignmentTopics[i].topicName == topicName) {
-            assignmentTopicsInfo.assignmentTopics[i].status ='uploaded'
-            break
-        }
-    }
-
-    await assignmentTopicsInfo.save()
-
-    // institute info
-    const instituteInfo =await instituteModel.findById(assignmentTopicsInfo.instituteId)
-
-    if (!instituteInfo) { return res.status(404).json({ message: "Institute Not Found" })}
-
-    // instructor info
-    const instructorInfo =
-        await staffModel.findById( assignmentTopicsInfo.instructor )
-
-    if (!instructorInfo) {return res.status(404).json({message: "Instructor Not Found"})}
-
-    const info = {
-        instituteName: instituteInfo.name,
-        instructorName: instructorInfo.name
-    }
-
-    const data = assignmentData.finalResult
-
-    const parseData = JSON.parse(data)
-
-    const fileName =`${inputData.topicsName} assignment file.pdf`
-
-    const document = createPdf(fileName, parseData, info)
-
-    if (!document) {
-        return res.status(400).json({ message: "Issue in Creating Assignment"})}
-
-    return res.status(200).json({message: "Document Created Successfully",data})
-}
-
-const createAssignmentsViaTopic =async(data)=>{
-    try {
-        const {topicsName,type,noOfQuestions,difficultyLevel} =data
-
-        const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
-            topicsName,
-            type,
-            noOfQuestions,
-            difficultyLevel,
-            format:"JSON"
-        })
-        if(!response){
-            const message="LLM not responding"
-            console.log(message)
-            return message
-        }
-           const finalData = response.data
-        console.log("LLM give data successfully",finalData)
-        return finalData
-       
-    } catch (error) {
-        console.log("Error in Getting Assignment Data from LLM",error)
-        return error
-    }
-}
-
-// const createAssignmentViaTopic =async(req,res)=>{
-//     try {
-//         const {topicsName,type,noOfQuestions,difficultyLevel} =req.body
-
-        
-//         const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
-//             topicsName,
-//             type,
-//             noOfQuestions,
-//             difficultyLevel,
-//             format:"JSON"
-//         })
-//         if(!response){
-//             const message="LLM not responding"
-//             console.log(message)
-//             return res.status(400).json({message:"LLM not responding"})
-//         }
-//         const data = response.data
-//         console.log("LLM give data successfully",data)
-//         return res.status(200).json({message:"LLM give data",data}) 
-
-//     } catch (error) {
-//         console.log("Error in Getting Assignment Data from LLM",error)
-//         return res.status(404).json({message:"Error in Getting Assignment Data from LLM",error})
-//     }
-// }
-
-// topicsName,difficultyLevel,format,noOfQuestions  yeh cheezain openAi ko bhejni hai 
-// const checkAssignmentsStatus = await assignmentTopicModel.find()
-
-
-module.exports = {createAssignment,assignmentFileCreation,assignmentDateCalculator,autoAssignmentCreation,assignmentQueueCalling,checkAssignmentInput,checking,createAutoAssignmentByGivingFile,manualAssignmentCreationByPdfUploading,assignmentManualMarksUploadingByTeacher,functionOfSelectingOfAssignmentTypeForCreation}
-
-
-
-// const createAutoAssignmentByUploadingFile = async(req,res)=>{
-//     try {
-//         const {course} =req.body
-
-//         // check already uploaded assignment of that particular course
-        
-
-
-//     } catch (error) {
-//         console.log("Error in Create AutoAssignment By File Uploading",error)
-//         return res.status(404).json({message:"Error in Create AutoAssignment By File Uploading",error})
-//     }
-// }
-
-
-
-// let today= new Date().getTime()
-    // let endDate = new Date()
-    // endDate.setDate(endDate.getDate()+duration)
-    // endDate.setHours(23,59,59,999)
-    // console.log(endDate)   
-    // let getTime = endDate.getTime()
-    // console.log("Get Time :",getTime)
-    // console.log("Today Time :",today)
-    // if(today>getTime){
-    //     console.log("Today is greater ")
-    // }
-    // else{
-    //     let time = (getTim0e-today)
-    //     totalTime = Math.round(time/86400000)
-    //     console.log("Time remain :",time)
-    //     console.log("Total Time remain :",totalTime)
-
-    //      console.log("7 Days are greater")
-    // }
-
-    // let setEndDate = date+7
-    // const newDate =new Date(setEndDate)
-    // console.log(newDate)
-
-    // console.log("Duration is ",duration)
-    // console.log("Assignment Creation : ",assignmentCreate)
-    // return res.status(200).json({message:"Assignment Created Successfully",assignmentCreate})
-
-    // console.log("No of assignment Found Of Particular Subject",checkNoOfAssignmentofParticularCourse)
-    // return res.status(200).json({message:"Assignment Found of this Course",checkNoOfAssignmentofParticularCourse})

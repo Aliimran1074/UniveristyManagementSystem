@@ -10,8 +10,6 @@ const assignmentSchema = new mongoose.Schema({
     },
     assignmentFile :{
         type:String,
-        // type:file
-        // required:true
     },
     course:{
         type:mongoose.Schema.ObjectId,
@@ -23,14 +21,9 @@ const assignmentSchema = new mongoose.Schema({
     ref:'staffModel',
     required:true
    },
-//    uploadedBy:[{
-//     type:mongoose.Schema.ObjectId,
-//     ref:'studentModel'
-//    }
-//    ],
+
    generatedDate:{
     type:Date,
-    // required:true
     default:function (){
       const date=  new Date()
       date.setHours(0,0,0,0)

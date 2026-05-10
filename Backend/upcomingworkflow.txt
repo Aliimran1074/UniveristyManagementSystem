@@ -68,3 +68,6 @@ Sab se pehle humay sare agents wala kaam karna hai phr backend integration ki ta
 
 10/5/26
 Assignment Ai ke through generate horahe hai ab inhe imagekit .io me send karke then assignment model me upload karna hai
+
+10/5/26
+Humne Galti se assignment ko bhi MCQs based generate karwa kar khud ke liye kaam bhara diya assignment sirf theoratical based hote hai not MCQS based isay sahi karna hoga
