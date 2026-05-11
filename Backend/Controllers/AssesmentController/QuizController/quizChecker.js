@@ -10,7 +10,6 @@ const quizChecker = async(req,res)=>{
             return res.status(400).json({message:"No File Found Please Upload File First"})
         }
         const {questions}= req.body
-        
         const formData= new FormData()
         formData.append('pdf',req.file.buffer,req.file.originalname)
         formData.append('questions',questions)

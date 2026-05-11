@@ -71,3 +71,6 @@ Assignment Ai ke through generate horahe hai ab inhe imagekit .io me send karke 
 
 10/5/26
 Humne Galti se assignment ko bhi MCQs based generate karwa kar khud ke liye kaam bhara diya assignment sirf theoratical based hote hai not MCQS based isay sahi karna hoga
+
+11/5/2026
+10 may wala kaam bhi sahi karna hai or assignment input model me bhi total marks wala kaam karna hai or quiz input schema correctly design karke aj final karna hai 

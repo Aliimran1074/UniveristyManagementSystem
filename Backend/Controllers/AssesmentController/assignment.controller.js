@@ -820,10 +820,7 @@ if(getUrl.length>0 || getUrl){
 
 return res.status(200).json({message: "Document Created Successfully",data,getUrl,assignmentCreation})
 }
-
-
 // ab yahan humne assignemnt model ke through assignment to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of assignments hone chahiye , agr koi manual assignment banaya gya hai to is me or AI wale assignment me kitne din ka gap hona chahiye
-
 return res.status(200).json({message: "Document Created Successfully, not Uploaded in Assignment Model",data,getUrl})
 }
 

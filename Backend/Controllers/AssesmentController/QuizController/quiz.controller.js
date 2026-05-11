@@ -5,8 +5,8 @@ const courseModel = require('../../../Models/CourseModels/course.model')
 const {courseEnrollmentModel} = require('../../../Models/CourseModels/courseEnrollment.model')
 const quizUploadingModel = require('../../../Models/QuizModel/quizUploading.model')
 const {imageKitConfig} =require('../../../ImageKit.IO Setup/setup')
-const manualQuizCreation=async()=>{
 
+const manualQuizCreation=async()=>{
 try {
  const {instituteId,courseId,createdBy,duration,quizFile} = req.body
  if(!req.file){
