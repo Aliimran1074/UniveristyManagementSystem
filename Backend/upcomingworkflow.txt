@@ -81,3 +81,6 @@ Course allocation Function : Deparment wale kaam ki wajah se error araha hai yeh
 
 12/5/2026
 Assignment Input me correction karke sirf Q/A wala kaam kardia ab same kaam quiz model me bhi karna hai but with MCQs bhi duration sirf one hour ki rakhni hai takay cheating per control kiya ja sake 
+
+13/5/2026
+Quiz Wala kaam karna hai 
