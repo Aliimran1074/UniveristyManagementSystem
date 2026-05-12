@@ -26,10 +26,9 @@ const staffRegistration = async (req, res) => {
 
                 //  Image kit.IO work Remaining
             }
-            // console.log(req.file)
+            console.log(req.file)
             // const { name,cnicNo,mobileNo,address,department,designation,instituteId } = req.body
-            const { subscriptionId, name, cnicNo, mobileNo, address, department, designation } = req.body
-
+            const {  name, cnicNo, mobileNo, address, department, designation ,subscriptionId } = req.body
             //check staff by CNIC no 
             console.log("Name :", name)
             console.log("Subscription Id :", subscriptionId)

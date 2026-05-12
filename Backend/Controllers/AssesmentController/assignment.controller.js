@@ -130,107 +130,83 @@ const checkAssignmentInput =async()=>{
 
 
 const createPdfInBuffer = async (text, info) => {
-
-    try {
-
-        return new Promise((resolve, reject) => {
-
+try {
+             return new Promise((resolve, reject) => {
             const questions = text.questions
-
             const document = new pdfDocument()
-
             const buffers = []
-
             // collect chunks
             document.on('data', (chunk) => {
-
                 buffers.push(chunk)
             })
-
             // completed
             document.on('end', () => {
-
                 const pdfBuffer = Buffer.concat(buffers)
-
                 console.log("PDF Buffer Created Successfully")
-
                 resolve(pdfBuffer)
             })
-
             // error handling
             document.on('error', (error) => {
-
                 reject(error)
             })
-
             // PDF Formatting
-
             document
                 .fontSize(20)
                 .text(`${info.instituteName}`, {
                     align: 'center',
                     underline: true
                 })
-
             document.moveDown(2)
-
             document
                 .fontSize(16)
                 .text('Assignment', {
                     align: 'center'
                 })
-
             document.moveDown(1)
-
             document
-                .fontSize(16)
-                .text(`Teached By ${info.instructorName}`, {
-                    align: 'center'
-                })
+    .fontSize(16)
+    .text(`Teached By ${info.instructorName}`, {
+        align: 'left',
+        continued: true
+    })
+    .text(`Total Marks: ${text.total_marks}`, {
+        align: 'right'
+    })
 
             document.moveDown(1)
-
             document
                 .fontSize(16)
                 .text(`${text.title}`, {
                     align: 'center'
                 })
-
             document.moveDown(1)
-
-            if(info.assignmentType=='Q/A'){
-
-                for (let i = 0; i < questions.length; i++) {
+            for (let i = 0; i < questions.length; i++) {
     
-                    document.fontSize(12).text(`Q${i + 1} ${questions[i]}`, {align: 'left'})
+                    document.fontSize(12).text(`${questions[i]}`, {align: 'left'})
                     document.moveDown(0.5)
                 }
-            }
-            else{
-                for (let i = 0; i < questions.length; i++) {
-                    document.fontSize(12).text(`Q${i + 1} ${questions[i].question}`, {
-                            align: 'left'
-                        })
-                    document.moveDown(0.5)
-                    for (let j =0;j<questions[i].options.length;j++){
-                        document.fontSize(12).text(`${j+1} ${questions[i].options[j]}`)
-                        document.moveDown(0.2)
-                    }
-                    document.moveDown(0.8)
-                }
-            }
-
-            document.end()
-
-        })
-
+                document.end() }  )
     }
-
     catch (error) {
-
-        console.log("Error in creating Pdf", error)
-    }
+        console.log("Error in creating Pdf", error)    }
 }
+// }
+// else{
+//     for (let i = 0; i < questions.length; i++) {
+//         document.fontSize(12).text(`Q${i + 1} ${questions[i].question}`, {
+//                 align: 'left'
+//             })
+//         document.moveDown(0.5)
+//         for (let j =0;j<questions[i].options.length;j++){
+//             document.fontSize(12).text(`${j+1} ${questions[i].options[j]}`)
+//             document.moveDown(0.2)
+//         }
+//         document.moveDown(0.8)
+//     }
+// }
+
+
+// }
 
 const createPdf = (fileName,text,info)=>{
 try {
@@ -710,15 +686,16 @@ const functionOfSelectingOfAssignmentTypeForCreation = async (req, res) => {
         const todayMilliseconds = Date.now()
 
         const lastAssignmentMilliseconds =new Date(getDateOfLastAssignmentCreated).getTime()
+        console.log("Last Assignment Created Date in Mili Second",lastAssignmentMilliseconds)
 
         const assignmentGapDays =Number(assignmentTopicsInfo.assignmentGapDuration)
 
         const assignmentGapMilliseconds =assignmentGapDays * 24 * 60 * 60 * 1000
-
+        console.log("Assignment Gap in Mili Second :",assignmentGapMilliseconds)
         const difference =todayMilliseconds - lastAssignmentMilliseconds
 
+        console.log("Difference In Mili Second",difference)
         if (difference < assignmentGapMilliseconds) {
-
             return res.status(400).json({
                 message: `${assignmentGapDays} Days Not Completed Yet`
             })
@@ -749,10 +726,11 @@ const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAs
     const getFirstTopicFromListOfTopics =filterOnlyPendingAssignment[0]
 
     const topicName =getFirstTopicFromListOfTopics.topicName
-    const getTypeOfAssignment = getFirstTopicFromListOfTopics.type
+    // const totalMarks = getFirstTopicFromListOfTopics.totalMarks
+    // const getTypeOfAssignment = getFirstTopicFromListOfTopics.type
     const inputData = {
         topicsName: topicName,
-        type: getTypeOfAssignment,
+        totalMarks: getFirstTopicFromListOfTopics.totalMarks,
         noOfQuestions: getFirstTopicFromListOfTopics.noOfQuestions,
         difficultyLevel: getFirstTopicFromListOfTopics.difficultyLevel
     }
@@ -792,7 +770,7 @@ const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAs
     const info = {
         instituteName: instituteInfo.name,
         instructorName: instructorInfo.name,
-        assignmentType :getTypeOfAssignment
+        // assignmentType :getTypeOfAssignment
     }
 
     const data = assignmentData.finalResult
@@ -826,11 +804,11 @@ return res.status(200).json({message: "Document Created Successfully, not Upload
 
 const createAssignmentsViaTopic =async(data)=>{
     try {
-        const {topicsName,type,noOfQuestions,difficultyLevel} =data
+        const {topicsName,noOfQuestions,difficultyLevel,totalMarks} =data
 
         const response = await axios.post('https://huggingface-configuration.vercel.app/setup/generateAssignmentByTopic',{
             topicsName,
-            type,
+            totalMarks,
             noOfQuestions,
             difficultyLevel,
             format:"JSON"

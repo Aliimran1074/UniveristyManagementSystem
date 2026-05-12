@@ -34,36 +34,40 @@ const courseAllocation = async(req,res)=>{
             console.log('Not a Valid User To Select Course')
             return res.status(403).json({message:"Selector is neither an Instructor nor HOD"})
         }
-        const findInstructorDepartment  = await staffModel.findById(instructorId)
-        if(!findInstructorDepartment){
-            console.log("No Instructor Available with this Id")
-            return res.status(404).json({message:"No Instructor Available with this id"})
-        }
-        const departmentIdOfInstructor = findInstructorDepartment.department.toString()
-        console.log('Department Id of Instructor',departmentIdOfInstructor)
+
+        // deparment wale kaam ki wajah se error araha hai yeh kaam hum correct karenge
+        // const findInstructorDepartment  = await staffModel.findById(instructorId)
+        // if(!findInstructorDepartment){
+        //     console.log("No Instructor Available with this Id")
+        //     return res.status(404).json({message:"No Instructor Available with this id"})
+        // }
+        // const departmentIdOfInstructor = findInstructorDepartment.department.toString()
+        // console.log('Department Id of Instructor',departmentIdOfInstructor)
+
+
         const findCourses  =await courseModel.find({_id:{$in:coursesIds}})
         if(!findCourses){
             console.log("No Course Found")
             return res.status(404).json({message:"No Course Found"})
         }
-        const arrayOfDepartmentId = findCourses.map((currentElement)=>{
-                return currentElement.department
-            })
-            let sameDepartment = true
-    for(let i=0;i<arrayOfDepartmentId.length;i++){
-            console.log(arrayOfDepartmentId[i]._id.toString())
-        if(departmentIdOfInstructor!==arrayOfDepartmentId[i]._id.toString()){
-            console.log("Department of Both Is Different")
-            sameDepartment=false
-            break
-        }
-        console.log("Same Department")
-    }
-    if(!sameDepartment)
-     {
-        console.log("Department of Instructor and Course is Different ")
-        return res.status(404).json({message:"Department of Instructor and Course is Different",sameDepartment})
-     }
+    //     const arrayOfDepartmentId = findCourses.map((currentElement)=>{
+    //             return currentElement.department
+    //         })
+    //         let sameDepartment = true
+    // for(let i=0;i<arrayOfDepartmentId.length;i++){
+    //         console.log(arrayOfDepartmentId[i]._id.toString())
+    //     if(departmentIdOfInstructor!==arrayOfDepartmentId[i]._id.toString()){
+    //         console.log("Department of Both Is Different")
+    //         sameDepartment=false
+    //         break
+    //     }
+    //     console.log("Same Department")
+    // }
+    // if(!sameDepartment)
+    //  {
+    //     console.log("Department of Instructor and Course is Different ")
+    //     return res.status(404).json({message:"Department of Instructor and Course is Different",sameDepartment})
+    //  }
         // return res.status(200).json({message:"Courses Found",arrayOfDepartmentId,departmentIdOfInstructor})
         
         // check no of Courses already registered by instructor

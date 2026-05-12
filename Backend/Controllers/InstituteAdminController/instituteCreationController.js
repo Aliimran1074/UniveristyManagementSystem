@@ -1,6 +1,6 @@
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model.js")
-const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
+const subscriptionPlanModel  = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
 const studentModel = require("../../Models/UserModels/students.models.js")
 const staffModel = require('../../Models/UserModels/staff.model')
 // working on institute creation
@@ -9,6 +9,7 @@ const instituteCreation = async (req, res) => {
     try {
         const { instituteName, address, contactNo, subscriptionPlanId } = req.body
 
+        console.log("Subscription Plan ID :",subscriptionPlanId)
         // check institute already exist by name 
         const checkInstitute = await instituteModel.findOne({ name: instituteName })
         if (checkInstitute) {

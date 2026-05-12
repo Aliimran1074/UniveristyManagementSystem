@@ -74,3 +74,10 @@ Humne Galti se assignment ko bhi MCQs based generate karwa kar khud ke liye kaam
 
 11/5/2026
 10 may wala kaam bhi sahi karna hai or assignment input model me bhi total marks wala kaam karna hai or quiz input schema correctly design karke aj final karna hai 
+
+
+12/5/2026 
+Course allocation Function : Deparment wale kaam ki wajah se error araha hai yeh kaam hum correct karenge
+
+12/5/2026
+Assignment Input me correction karke sirf Q/A wala kaam kardia ab same kaam quiz model me bhi karna hai but with MCQs bhi duration sirf one hour ki rakhni hai takay cheating per control kiya ja sake 

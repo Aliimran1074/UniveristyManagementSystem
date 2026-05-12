@@ -30,11 +30,11 @@
                 required: true,
                 enum: ['Course_content', 'outside']
             },
-            type:{
-                type:String,
-                required:true,
-                enum:['MCQs Based', 'Q/A']
-            },
+            // type:{
+            //     type:String,
+            //     required:true,
+            //     enum:['MCQs Based', 'Q/A']
+            // },
             noOfQuestions:{
                 type:Number,
                 required:true
@@ -51,6 +51,10 @@
             },
             dateOfCreation:{
                 type:Date
+            },
+            totalMarks:{
+                type:Number,
+                required:true
             }
         }],
         // days gap between 2 assignment creation 
