@@ -1,5 +1,16 @@
+const quizModel = require('../../../Models/QuizModel/quiz.model')
+const quizTopicModel = require('../../../Models/quizInputModel/quiz.input.model')
+const pdfDocument= require('pdfkit')
+const axios =require('axios')
+const subscriptionModel = require('../../../Models/SuperAdminModels/subscription.model')
+const courseModel = require('../../../Models/CourseModels/course.model')
+const staffModel = require('../../../Models/UserModels/staff.model')
+const {imageKitConfig,fileIdByName}= require('../../../ImageKit.IO Setup/setup')
+const instituteModel = require('../../../Models/InstituteBatchesClasses/Institute.model')
+
 const createPdfInBuffer = async (text, info) => {
     try {
+        console.log("This is Text :",text)
         return new Promise((resolve, reject) => {
             const questions = text.questions
             const document = new pdfDocument()
@@ -34,10 +45,14 @@ const createPdfInBuffer = async (text, info) => {
                 })
             document.moveDown(1)
             document
-                .fontSize(16)
-                .text(`Teached By ${info.instructorName}`, {
-                    align: 'center'
-                })
+         .fontSize(16)
+    .text(`Teached By ${info.instructorName}`, {
+        align: 'left',
+        continued: true
+    })
+    .text(`Total Marks: ${text.total_marks}`, {
+        align: 'right'
+    })
             document.moveDown(1)
             document
                 .fontSize(16)
@@ -73,16 +88,17 @@ const createQuizFunction = async (quizTopicsInfo,filterOnlyPendingQuiz,res) => {
     const getFirstTopicFromListOfTopics =filterOnlyPendingQuiz[0]
     const topicName =getFirstTopicFromListOfTopics.topicName
     const getTypeOfQuiz = getFirstTopicFromListOfTopics.type
+    const totalMarks = getFirstTopicFromListOfTopics.totalMarks
     const inputData = {
         topicsName: topicName,
         type: getTypeOfQuiz,
         noOfQuestions: getFirstTopicFromListOfTopics.noOfQuestions,
         difficultyLevel: getFirstTopicFromListOfTopics.difficultyLevel,
-       // totalMarks : write total marks here
+        totalMarks :totalMarks
     }
 
     const quizData =await createQuizViaTopic(inputData)
-    if (quizData.message !== "Done") {
+    if (quizData.message !== "Final Output is :") {
         return res.status(400).json({
             message: "Issue in Getting Result from LLM"
         })
@@ -115,19 +131,23 @@ const createQuizFunction = async (quizTopicsInfo,filterOnlyPendingQuiz,res) => {
     const info = {
         instituteName: instituteInfo.name,
         instructorName: instructorInfo.name,
-        quizType :getTypeOfQuiz
+        quizType :getTypeOfQuiz,
+        totalMarks :totalMarks
     }
 
-    const data = quizData.finalResult
+    console.log("This is The Data what we send",quizData)
+    // const data = quizData.finalOutput
 
-    const parseData = JSON.parse(data)
+    // const parseData = JSON.parse(data)
 
     const fileName =`${inputData.topicsName} quiz file.pdf`
 
     // const document = createPdf(fileName, parseData, info) // yeh function file system ki madad se file create kar raha tha lekin humay buffer ka use karna hai is liye humne is function ko commit kardia
 
 
-    const pdfBuffer = await createPdfInBuffer(parseData, info)
+    // const pdfBuffer = await createPdfInBuffer(parseData, info)
+    const pdfBuffer = await createPdfInBuffer(quizData.finalOutput, info)
+
     if (!pdfBuffer) {
         return res.status(400).json({ message: "Issue in Creating PDF in Buffer"})}
 
@@ -151,9 +171,10 @@ return res.status(200).json({message: "Document Created Successfully, not Upload
 
 const createQuizViaTopic =async(data)=>{
     try {
-        const {topicsName,type,noOfQuestions,difficultyLevel} =data
+        const {topicsName,type,noOfQuestions,difficultyLevel,totalMarks} =data
+        // console.log("Topics Name is :",topicsName)
 
-        const response = await axios.post('https://huggingface-configuration.vercel.app/setup/quizGeneratorByTopicName',{
+        const response = await axios.post('https://huggingface-configuration.vercel.app/quiz/quizGeneratorByTopicName',{
             topicsName,
             type,
             noOfQuestions,
@@ -166,7 +187,8 @@ const createQuizViaTopic =async(data)=>{
             console.log(message)
             return message
         }
-           const finalData = response.data
+        const finalData = response.data
+        console.log("This is What we found on response :",finalData)
         console.log("LLM give data successfully",finalData)
         return finalData
        
@@ -175,3 +197,87 @@ const createQuizViaTopic =async(data)=>{
         return error
     }
 }
+
+
+const functionOfSelectingOfQuizTypeForCreation = async (req, res) => {
+
+    try {
+
+        const { mainQuizTopicsId } = req.body
+
+        const quizTopicsInfo = await quizTopicModel.findById(mainQuizTopicsId)
+
+        if (!quizTopicsInfo) {
+            return res.status(404).json({
+                message: "Quiz Topic Record Not Found"
+            })
+        }
+
+        const getArrayOfQuizTopics = quizTopicsInfo.quizTopics
+
+        const filterOnlyPendingQuiz = getArrayOfQuizTopics.filter((currentElement) => {
+
+            return currentElement.status == 'pending'
+                && currentElement.source == 'outside'
+
+        })
+
+        if (filterOnlyPendingQuiz.length < 1) {
+
+            return res.status(404).json({
+                message: "No Topic is Pending to Create Quiz"
+            })
+        }
+
+        const getDateOfLastQuizCreated = quizTopicsInfo.dateOfLastQuizCreated
+
+        // if first Quiz not created
+        if (!getDateOfLastQuizCreated) {
+
+            return await createQuizFunction(
+                quizTopicsInfo,
+                filterOnlyPendingQuiz,
+                res
+            )
+        }
+
+        // compare dates
+        const todayMilliseconds = Date.now()
+
+        const lastQuizMilliseconds =new Date(getDateOfLastQuizCreated).getTime()
+        console.log("Last Quiz Created Date in Mili Second",lastQuizMilliseconds)
+
+        const quizGapDays =Number(quizTopicsInfo.quizGapDuration)
+
+        const quizGapMilliseconds =quizGapDays * 24 * 60 * 60 * 1000
+        console.log("Quiz Gap in Mili Second :",quizGapMilliseconds)
+        const difference =todayMilliseconds - lastQuizMilliseconds
+
+        console.log("Difference In Mili Second",difference)
+        if (difference < quizGapMilliseconds) {
+            return res.status(400).json({
+                message: `${quizGapDays} Days Not Completed Yet`
+            })
+        }
+
+        // create next Quiz
+        return await createQuizFunction(
+            quizTopicsInfo,
+            filterOnlyPendingQuiz,
+            res
+        )
+
+    }
+
+    catch (error) {
+
+        console.log("Error in Quiz Selecting Type Function", error)
+
+        return res.status(500).json({
+            message: "Error in Quiz Selecting Type Function",
+            error: error.message
+        })
+    }
+}
+
+module.exports ={functionOfSelectingOfQuizTypeForCreation}
