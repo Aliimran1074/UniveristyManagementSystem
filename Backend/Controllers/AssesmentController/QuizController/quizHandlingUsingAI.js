@@ -163,9 +163,17 @@ if(getUrl.length>0 || getUrl){
 
 return res.status(200).json({message: "Document Created Successfully",data,getUrl,quizCreation})
 }
-// ab yahan humne assignemnt model ke through quiz to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of quizs hone chahiye , agr koi manual quiz banaya gya hai to is me or AI wale quiz me kitne din ka gap hona chahiye
+// ab yahan humne quiz model ke through quiz to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of quizs hone chahiye , agr koi manual quiz banaya gya hai to is me or AI wale quiz me kitne din ka gap hona chahiye
 return res.status(200).json({message: "Document Created Successfully, not Uploaded in quiz Model",data,getUrl})
 }
+
+
+const abcFunction = async()=>
+{
+    console.log("Abc")
+}
+// yeh aese hi commit kiya hai takay github ki steak maintain rahe 
+
 
 
 
