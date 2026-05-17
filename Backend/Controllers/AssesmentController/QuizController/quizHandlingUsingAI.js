@@ -8,9 +8,9 @@ const staffModel = require('../../../Models/UserModels/staff.model')
 const {imageKitConfig,fileIdByName}= require('../../../ImageKit.IO Setup/setup')
 const instituteModel = require('../../../Models/InstituteBatchesClasses/Institute.model')
 
-const createPdfInBuffer = async (text, info) => {
+const createPdfInBuffer = async (text,info) => {
     try {
-        console.log("This is Text :",text)
+        // console.log("This is Text :",text)
         return new Promise((resolve, reject) => {
             const questions = text.questions
             const document = new pdfDocument()
@@ -39,9 +39,10 @@ const createPdfInBuffer = async (text, info) => {
                 })
             document.moveDown(2)
             document
-                .fontSize(16)
-                .text('quiz', {
-                    align: 'center'
+                .fontSize(18)
+                .text('Quiz File', {
+                    align: 'center',
+                   
                 })
             document.moveDown(1)
             document
@@ -54,17 +55,22 @@ const createPdfInBuffer = async (text, info) => {
         align: 'right'
     })
             document.moveDown(1)
-            document
-                .fontSize(16)
-                .text(`${text.title}`, {
-                    align: 'center'
-                })
-            document.moveDown(1)
-            if(info.quizType=='Q/A'){
-                for (let i = 0; i < questions.length; i++) {
-                    document.fontSize(12).text(`Q${i + 1} ${questions[i]}`, {align: 'left'})
-                    document.moveDown(0.5)
-                } }
+            // document
+            //     .fontSize(16)
+            //     .text(`${text.title}`, {
+            //         align: 'center'
+            //     })
+            // document.moveDown(1)
+            if (info.quizType == 'Q/A') {
+    for (let i = 0; i < questions.length; i++) {
+
+        document
+            .fontSize(12)
+            .text(`Q${i + 1}: ${questions[i].question}`)
+
+        document.moveDown(0.5)
+    }
+}
             else{
                 for (let i = 0; i < questions.length; i++) {
                     document.fontSize(12).text(`Q${i + 1} ${questions[i].question}`, {
@@ -135,18 +141,22 @@ const createQuizFunction = async (quizTopicsInfo,filterOnlyPendingQuiz,res) => {
         totalMarks :totalMarks
     }
 
-    console.log("This is The Data what we send",quizData)
+    // console.log("This is The Data what we send",quizData)
     // const data = quizData.finalOutput
 
-    // const parseData = JSON.parse(data)
-
+    
     const fileName =`${inputData.topicsName} quiz file.pdf`
+    // const questions = quizData.finalOuput.questions
+    // const parseData = JSON.parse(questions)
+
+    // console.log("Question is : ",questions)
+    // console.log("Parse Data is :",parseData)
 
     // const document = createPdf(fileName, parseData, info) // yeh function file system ki madad se file create kar raha tha lekin humay buffer ka use karna hai is liye humne is function ko commit kardia
 
 
     // const pdfBuffer = await createPdfInBuffer(parseData, info)
-    const pdfBuffer = await createPdfInBuffer(quizData.finalOutput, info)
+    const pdfBuffer = await createPdfInBuffer(quizData.finalOuput,info)
 
     if (!pdfBuffer) {
         return res.status(400).json({ message: "Issue in Creating PDF in Buffer"})}
@@ -161,20 +171,12 @@ const imageKitResponse= await imageKitConfig.upload({
 if(getUrl.length>0 || getUrl){
     const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7})
 
-return res.status(200).json({message: "Document Created Successfully",data,getUrl,quizCreation})
+return res.status(200).json({message: "Document Created Successfully",getUrl,quizCreation})
 }
+// return res.status(200).json({message:"Hello World"})
 // ab yahan humne quiz model ke through quiz to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of quizs hone chahiye , agr koi manual quiz banaya gya hai to is me or AI wale quiz me kitne din ka gap hona chahiye
 return res.status(200).json({message: "Document Created Successfully, not Uploaded in quiz Model",data,getUrl})
 }
-
-
-const abcFunction = async()=>
-{
-    console.log("Abc")
-}
-// yeh aese hi commit kiya hai takay github ki steak maintain rahe 
-
-
 
 
 const createQuizViaTopic =async(data)=>{
@@ -196,8 +198,8 @@ const createQuizViaTopic =async(data)=>{
             return message
         }
         const finalData = response.data
-        console.log("This is What we found on response :",finalData)
-        console.log("LLM give data successfully",finalData)
+        // console.log("This is What we found on response :",finalData)
+        // console.log("LLM give data successfully",finalData)
         return finalData
        
     } catch (error) {
@@ -253,15 +255,15 @@ const functionOfSelectingOfQuizTypeForCreation = async (req, res) => {
         const todayMilliseconds = Date.now()
 
         const lastQuizMilliseconds =new Date(getDateOfLastQuizCreated).getTime()
-        console.log("Last Quiz Created Date in Mili Second",lastQuizMilliseconds)
+        // console.log("Last Quiz Created Date in Mili Second",lastQuizMilliseconds)
 
         const quizGapDays =Number(quizTopicsInfo.quizGapDuration)
 
         const quizGapMilliseconds =quizGapDays * 24 * 60 * 60 * 1000
-        console.log("Quiz Gap in Mili Second :",quizGapMilliseconds)
+        // console.log("Quiz Gap in Mili Second :",quizGapMilliseconds)
         const difference =todayMilliseconds - lastQuizMilliseconds
 
-        console.log("Difference In Mili Second",difference)
+        // console.log("Difference In Mili Second",difference)
         if (difference < quizGapMilliseconds) {
             return res.status(400).json({
                 message: `${quizGapDays} Days Not Completed Yet`
