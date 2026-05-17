@@ -87,3 +87,10 @@ Quiz File nhi ban rahi to reason check karna hai undefined araha hai
 
 14/5/2026
 Quiz File ki input ka issue hai jo 13/May ko tha ab iska solution batao 
+
+
+17/5/2026
+aik logic thek karna hai k jab Ai assignment banaye to us assignement k questions ko database me save karna hai takay checker agent aram se check kar sake
+
+17/5/2026
+Checker agent ko data bhejna hai assignment file or assignment questions as strings

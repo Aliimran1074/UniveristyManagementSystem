@@ -794,7 +794,8 @@ const imageKitResponse= await imageKitConfig.upload({
                     const getUrl = imageKitResponse.url
 
 if(getUrl.length>0 || getUrl){
-    const assignmentCreation = await assignmentModel.create({instituteId:assignmentTopicsInfo.instituteId,assignmentFile:getUrl,course:assignmentTopicsInfo.course,createdBy:assignmentTopicsInfo.instructor,duration:7})
+    const assignmentQuestions = JSON.stringify(parseData)
+    const assignmentCreation = await assignmentModel.create({instituteId:assignmentTopicsInfo.instituteId,assignmentFile:getUrl,course:assignmentTopicsInfo.course,createdBy:assignmentTopicsInfo.instructor,duration:7,assignmentQuestions:assignmentQuestions})
 
 return res.status(200).json({message: "Document Created Successfully",data,getUrl,assignmentCreation})
 }

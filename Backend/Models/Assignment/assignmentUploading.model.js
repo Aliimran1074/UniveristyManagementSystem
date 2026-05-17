@@ -30,6 +30,11 @@ const assignmentUploadingSchema = new mongoose.Schema(
         maxMarks:{
             type:Number,
             default:5
+        },
+        status:{
+            type:String,
+            enum:['checked','uncheck'],
+            default:'uncheck'
         }
     }
 )

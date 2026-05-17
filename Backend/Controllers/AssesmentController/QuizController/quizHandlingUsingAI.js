@@ -156,7 +156,8 @@ const createQuizFunction = async (quizTopicsInfo,filterOnlyPendingQuiz,res) => {
 
 
     // const pdfBuffer = await createPdfInBuffer(parseData, info)
-    const pdfBuffer = await createPdfInBuffer(quizData.finalOuput,info)
+    const quizFinalOutput=quizData.finalOuput
+    const pdfBuffer = await createPdfInBuffer(quizFinalOutput,info)
 
     if (!pdfBuffer) {
         return res.status(400).json({ message: "Issue in Creating PDF in Buffer"})}
@@ -168,8 +169,10 @@ const imageKitResponse= await imageKitConfig.upload({
                     })
                     const getUrl = imageKitResponse.url
 
+
 if(getUrl.length>0 || getUrl){
-    const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7})
+    const quizQuestions = JSON.stringify(quizFinalOutput)
+    const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7,quizQuestions:quizQuestions})
 
 return res.status(200).json({message: "Document Created Successfully",getUrl,quizCreation})
 }

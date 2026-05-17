@@ -22,6 +22,10 @@ instituteId:{
     ref:'staffModel',
     required:true
    },
+   quizQuestions:{
+    type:String,
+    required:true
+   },
    generatedDate:{
     type:Date,
     // required:true

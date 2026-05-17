@@ -21,7 +21,10 @@ const assignmentSchema = new mongoose.Schema({
     ref:'staffModel',
     required:true
    },
-
+   assignmentQuestions:{
+    type:String,
+    required:true
+   },
    generatedDate:{
     type:Date,
     default:function (){
