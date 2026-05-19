@@ -17,6 +17,12 @@ const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.m
 
 // MUlter Storage setting
 
+
+const abcFunction = ()=>{
+    console.log("ABC")
+}
+
+
 const checking=async(req,res)=>{
 try{
     const{fileName}= req.body
