@@ -40,3 +40,7 @@ const assignmentCheckerFunction = async(req,res)=>{
 
     }
 }
+
+const extraFunction = async()=>{
+    console.log("Working on Upper Function")
+}
