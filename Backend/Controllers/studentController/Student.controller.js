@@ -203,7 +203,7 @@ const newStudentRegistration = async (req, res) => {
             console.log("Institute Not Exist")
             return res.status(400).json({ message: "Invalid Institute Id" })
         }
-        const checkStudentExistanceWithCnicNoInSameInstitute = await studentRegistrationModel.find({ instituteId: instituteId, cnicNo: cnicNo })
+        const checkStudentExistanceWithCnicNoInSameInstitute = await studentRegistrationModel.findOne({ instituteId: instituteId, cnicNo: cnicNo })
         if (checkStudentExistanceWithCnicNoInSameInstitute) {
             console.log("Student Already Register", checkStudentExistanceWithCnicNoInSameInstitute)
             return res.status(200).json({ message: "Student Already Register with This Cnic No" })
