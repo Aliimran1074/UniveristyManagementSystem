@@ -97,3 +97,6 @@ Checker agent ko data bhejna hai assignment file or assignment questions as stri
 
 19/5/2026
 Checker agent per kaam karna hai
+
+25/5/26
+Checker agent wale server ko backend wale server k sath jo issue araha hai wo solve karna hai
