@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const assignmentUploadingSchema = new mongoose.Schema(
     {
-        assigmnetId:{
+        assignmentId:{
             type:mongoose.Schema.ObjectId,
             ref:"assignmentModel",
             required:true

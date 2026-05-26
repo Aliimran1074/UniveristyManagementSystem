@@ -100,3 +100,6 @@ Checker agent per kaam karna hai
 
 25/5/26
 Checker agent wale server ko backend wale server k sath jo issue araha hai wo solve karna hai
+
+26/5/25
+Checker agent ki prompt ka issue lag raha hai jo question ke according assignment check nhi kar rahi

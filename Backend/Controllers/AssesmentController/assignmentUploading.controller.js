@@ -15,6 +15,7 @@ const assignmentUploading= async(req,res)=>{
         return res.status(400).json({message:"File Not Found"})
         }
         const {assignmentId,studentId}= req.body
+        console.log("assignment Id :",assignmentId)
         const getAssignmentDetails = await assignmentModel.findById(assignmentId)
         
         if(!getAssignmentDetails){
@@ -33,7 +34,7 @@ const assignmentUploading= async(req,res)=>{
         }
         
         // check student already upload assignment or not
-        const checkAlreadyAssignmentUploading = await assignmentUploadingModel.find({assigmnetId:assignmentId,studentId:studentId})
+        const checkAlreadyAssignmentUploading = await assignmentUploadingModel.find({assignmentId:assignmentId,studentId:studentId})
 
         console.log("Already Assignment Uploading",checkAlreadyAssignmentUploading.length)
         if(checkAlreadyAssignmentUploading.length>0){
@@ -41,7 +42,7 @@ const assignmentUploading= async(req,res)=>{
             return res.status(400).json({message:"Student Already Uploaded Assignment"})
         }
 
-        const uploadAssignment = await assignmentUploadingModel.create({assigmnetId:assignmentId,studentId:studentId})
+        const uploadAssignment = await assignmentUploadingModel.create({assignmentId:assignmentId,studentId:studentId})
 
         if(!uploadAssignment){
             console.log("Issue in Assignment Uploading")

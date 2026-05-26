@@ -62,37 +62,48 @@ const assignmentCheckerFunction = async (req, res) => {
       return res.status(400).json({ message: "Assignment Uploading not Exist" });
     }
 
-    const assignmentId = isUploadAssignmentExist.assigmnetId;
+    const assignmentId = isUploadAssignmentExist.assignmentId;
     const studentId = isUploadAssignmentExist.studentId;
 
     const getStudentName = await studentRegistrationModel
       .findById(studentId)
       .select("name");
 
-    const getAssignmentQuestions = await assignmentModel
+    const getAssignment = await assignmentModel
       .findById(assignmentId)
-      .select("assignmentQuestions");
+      // .select("assignmentQuestions")
 
+     const getAssignmentQuestions = getAssignment.assignmentQuestions 
     const fileResponse = await axios.get(
       isUploadAssignmentExist.uploadedFile,
       { responseType: "arraybuffer" }
-    );
+    )
+    
+    // console.log("Assignment Questions are :",getAssignmentQuestions)
+    const parsed =
+  typeof getAssignmentQuestions === "string"
+    ? JSON.parse(getAssignmentQuestions)
+    : getAssignmentQuestions;
 
+// 🔥 STEP 2: now extract questions
+const onlyAssignmentQuestions = parsed.questions;
+
+console.log("Only Assignment Questions:", onlyAssignmentQuestions);
+    
     const pdfBuffer = Buffer.from(fileResponse.data);
 
     const formData = new FormData();
 
+        formData.append(
+      "questions",
+      JSON.stringify(onlyAssignmentQuestions)
+    )
+
+    formData.append("studentName", getStudentName.name)
     formData.append("pdf", pdfBuffer, {
       filename: `assignment_${Date.now()}.pdf`,
       contentType: "application/pdf",
-    });
-
-    formData.append(
-      "questions",
-      JSON.stringify(getAssignmentQuestions.assignmentQuestions)
-    )
-
-    formData.append("studentName", getStudentName.name);
+    })
 
     const getResponseFromAi = await axios.post(
       "http://localhost:4000/assignment/assignmentChecker",
