@@ -4,7 +4,6 @@ const FormData= require('form-data')
 const quizChecker = async(req,res)=>{
     try {
 
-        // console.log("Quiz Checker Function is Running")
         if(!req.file){
             console.log("No File Found Please Upload File First")
             return res.status(400).json({message:"No File Found Please Upload File First"})
@@ -15,7 +14,7 @@ const quizChecker = async(req,res)=>{
         formData.append('questions',questions)
 
         const response = await axios.post("https://huggingface-configuration.vercel.app/quiz/quizChecker",formData,{headers:formData.getHeaders()})
-        // const response  = await axios.post("http://localhost:4000/quiz/quizChecker",formData,{headers:formData.getHeaders()})
+       
 
         if(!response){
             console.log("Issue in make request from another Server")
