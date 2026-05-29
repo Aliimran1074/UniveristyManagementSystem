@@ -106,3 +106,6 @@ Checker agent ki prompt ka issue lag raha hai jo question ke according assignmen
 
 28/5/26
 Assignment Checker wala kaam to hogya but aik issue hai k marks assign karne k baad model se marks ki key gayab horahi hai 
+
+29/5/2026
+Quiz Checker Function per kaam karna hai

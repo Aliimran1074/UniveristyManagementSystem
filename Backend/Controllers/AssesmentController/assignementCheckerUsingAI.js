@@ -9,6 +9,12 @@ const assignmentCheckerFunction = async (req, res) => {
     const { uploadAssignmentId } = req.body
     const isUploadAssignmentExist = await assignmentUploadingModel.findById(uploadAssignmentId)
     if (!isUploadAssignmentExist) { return res.status(400).json({ message: "Assignment Uploading not Exist" }) }
+    const checkStatusOfAssignment= isUploadAssignmentExist.status
+    console.log("Status of Assignment Checking : ",checkStatusOfAssignment)
+    if(checkStatusOfAssignment=='checked'){
+      console.log("Assignment Already Checked")
+      return res.status(400).json({message:"Assignment Already Checked"})
+    }
     const assignmentId = isUploadAssignmentExist.assignmentId
     const studentId = isUploadAssignmentExist.studentId
     const getStudentName = await studentRegistrationModel
@@ -22,8 +28,8 @@ const assignmentCheckerFunction = async (req, res) => {
       : getAssignmentQuestions
 
     const getTotalMarks = parsed.total_marks
-    const onlyAssignmentQuestions = parsed.quaestions
-    // console.log("Total Marks :", getTotalMarks)
+    const onlyAssignmentQuestions = parsed.questions
+    console.log("Total Marks :", getTotalMarks)
     const pdfBuffer = Buffer.from(fileResponse.data)
     const formData = new FormData();
     formData.append(
@@ -61,11 +67,12 @@ const assignmentCheckerFunction = async (req, res) => {
     isUploadAssignmentExist.marksAssigned = true
 
     await isUploadAssignmentExist.save()
-    // console.log("Succed to Check Assignement Using AI")
+    console.log("Succed to Check Assignement Using AI")
     return res.status(200).json({ message: "Succed to Check Assignement Using AI", isUploadAssignmentExist, data })
 
 
   } catch (error) {
+    console.log("Error in Assignment Checker Using AI",error)
     return res.status(500).json({
       message: "Error",
       error: error.message,

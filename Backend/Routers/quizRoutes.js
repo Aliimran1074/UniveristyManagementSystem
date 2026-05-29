@@ -1,5 +1,5 @@
 const { manualQuizCreation, manualQuizCreationByPdfUploading, quizUploading, quizManualMarksUploadingByTeacher } = require('../Controllers/AssesmentController/QuizController/quiz.controller')
-const { quizChecker } = require('../Controllers/AssesmentController/QuizController/quizChecker')
+const { quizChecker, quizCheckerFunctionUsingAI } = require('../Controllers/AssesmentController/QuizController/quizChecker')
 const { functionOfSelectingOfQuizTypeForCreation } = require('../Controllers/AssesmentController/QuizController/quizHandlingUsingAI')
 const { uploadforAssessment } = require('../Multer/multer')
 
@@ -11,5 +11,5 @@ router.post('/manualQuizCreationByUploadingPdf',uploadforAssessment,manualQuizCr
 router.post('/uploadingQuiz',uploadforAssessment,quizUploading)
 router.put('/manualQuizMarksUploading',quizManualMarksUploadingByTeacher)
 router.post('/quizCreationUsingAI',functionOfSelectingOfQuizTypeForCreation)
-
+router.post('/quizCheckerUsingAI',quizCheckerFunctionUsingAI)
 module.exports=router

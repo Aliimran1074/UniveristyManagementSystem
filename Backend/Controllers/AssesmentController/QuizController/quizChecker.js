@@ -1,6 +1,8 @@
 const axios = require('axios')
 const FormData= require('form-data')
-
+const quizUploadingModel = require('../../../Models/QuizModel/quizUploading.model')
+const studentRegistrationModel = require('../../../Models/UserModels/studentRegistration.model')
+const quizModel = require('../../../Models/QuizModel/quiz.model')
 const quizChecker = async(req,res)=>{
     try {
 
@@ -29,4 +31,83 @@ const quizChecker = async(req,res)=>{
     }
 }
 
-module.exports={quizChecker}
+
+const quizCheckerFunctionUsingAI = async (req, res) => {
+  try {
+    const { uploadquizId } = req.body
+    // const isUploadquizExist = await quizUploadingModel.findById(uploadquizId)
+    const isUploadQuizExist = await quizUploadingModel.findById(uploadquizId)
+    if (!isUploadQuizExist) { return res.status(400).json({ message: "Quiz Uploading not Exist" }) }
+    const checkStatusOfQuiz= isUploadQuizExist.status
+    console.log("Status of quiz Checking : ",checkStatusOfQuiz)
+    if(checkStatusOfQuiz=='checked'){
+      console.log("Quiz Already Checked")
+      return res.status(400).json({message:"Quiz Already Checked"})
+    }
+    const quizId = isUploadQuizExist.quizId
+    const studentId = isUploadQuizExist.studentId
+    const getStudentName = await studentRegistrationModel
+      .findById(studentId)
+      .select("name")
+    const getQuiz = await quizModel.findById(quizId)
+    const getQuizQuestions = getQuiz.quizQuestions
+    const fileResponse = await axios.get(isUploadQuizExist.uploadedFile, { responseType: "arraybuffer" })
+    const parsed = typeof getQuizQuestions === "string"
+      ? JSON.parse(getQuizQuestions)
+      : getQuizQuestions
+
+    const getTotalMarks = parsed.total_marks
+    const onlyQuizQuestions = parsed.questions
+    console.log("Total Marks :", getTotalMarks)
+    const pdfBuffer = Buffer.from(fileResponse.data)
+    const formData = new FormData();
+    formData.append(
+      "questions",
+      JSON.stringify(onlyQuizQuestions)
+    )
+    formData.append("total_marks", getTotalMarks)
+    formData.append("studentName", getStudentName.name)
+    formData.append("pdf", pdfBuffer, {
+      filename: `quiz_${Date.now()}.pdf`,
+      contentType: "application/pdf",
+    })
+
+    const getResponseFromAi = await axios.post(
+      "http://localhost:4000/quiz/quizChecker",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+      }
+    )
+    const data = getResponseFromAi.data
+    if (!data) {
+      // console.log("Issue in Getting Response From AI")
+      return res.status(400).json({ message: "Issue in Getting Response From Ai" })
+    }
+    const getGivenMarks = data.checkQuizData.total_marks
+    console.log("Get Given Marks ", getGivenMarks)
+    isUploadQuizExist.marks = getGivenMarks
+    isUploadQuizExist.maxMarks = getTotalMarks
+    isUploadQuizExist.status = 'checked'
+    isUploadQuizExist.marksAssigned = true
+
+    await isUploadQuizExist.save()
+    console.log("Succed to Check Assignement Using AI")
+    return res.status(200).json({ message: "Succed to Check Assignement Using AI", isUploadQuizExist, data })
+
+
+  } catch (error) {
+    console.log("Error in Quiz Checker Using AI",error)
+    return res.status(500).json({
+      message: "Error",
+      error: error.message,
+    })
+  }
+}
+
+
+module.exports={quizChecker,quizCheckerFunctionUsingAI}
