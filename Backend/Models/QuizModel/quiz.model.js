@@ -26,6 +26,10 @@ instituteId:{
     type:String,
     required:true
    },
+   quizType:{
+    type:String,
+    enum:['MCQs Based','Q/A']
+   },
    generatedDate:{
     type:Date,
     // required:true

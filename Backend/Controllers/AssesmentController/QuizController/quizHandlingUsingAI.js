@@ -172,7 +172,8 @@ const imageKitResponse= await imageKitConfig.upload({
 
 if(getUrl.length>0 || getUrl){
     const quizQuestions = JSON.stringify(quizFinalOutput)
-    const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7,quizQuestions:quizQuestions})
+    console.log("Quiz Questions Are:",quizQuestions)
+    const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7,quizQuestions:quizQuestions,quizType:getTypeOfQuiz})
 
 return res.status(200).json({message: "Document Created Successfully",getUrl,quizCreation})
 }

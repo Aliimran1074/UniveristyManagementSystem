@@ -3,6 +3,7 @@ const FormData= require('form-data')
 const quizUploadingModel = require('../../../Models/QuizModel/quizUploading.model')
 const studentRegistrationModel = require('../../../Models/UserModels/studentRegistration.model')
 const quizModel = require('../../../Models/QuizModel/quiz.model')
+
 const quizChecker = async(req,res)=>{
     try {
 
@@ -58,7 +59,7 @@ const quizCheckerFunctionUsingAI = async (req, res) => {
 
     const getTotalMarks = parsed.total_marks
     const onlyQuizQuestions = parsed.questions
-    console.log("Total Marks :", getTotalMarks)
+    // console.log("Total Marks :", getTotalMarks)
     const pdfBuffer = Buffer.from(fileResponse.data)
     const formData = new FormData();
     formData.append(
@@ -73,7 +74,7 @@ const quizCheckerFunctionUsingAI = async (req, res) => {
     })
 
     const getResponseFromAi = await axios.post(
-      "http://localhost:4000/quiz/quizChecker",
+      "https://huggingface-configuration.vercel.app/quiz/quizChecker",
       formData,
       {
         headers: {
@@ -88,7 +89,9 @@ const quizCheckerFunctionUsingAI = async (req, res) => {
       // console.log("Issue in Getting Response From AI")
       return res.status(400).json({ message: "Issue in Getting Response From Ai" })
     }
-    const getGivenMarks = data.checkQuizData.total_marks
+    console.log("Data :",data)
+    const getGivenMarks = data.result.total_marks
+    // console.log("Get Given Marks :",getGivenMa)
     console.log("Get Given Marks ", getGivenMarks)
     isUploadQuizExist.marks = getGivenMarks
     isUploadQuizExist.maxMarks = getTotalMarks
