@@ -114,3 +114,6 @@ Quiz Checker Function per kaam karna hai
 All four agents completed , redis ya queue ke through hum aik exact time period k baad functions ko call karana hai 
 
 29/5/2026 (Most neccessary jab bhi koi AI function completed ho humay subscription id ke through us institute ya us subscription ki AI usage me count plus kardena hai takay monthly report ban sake)
+
+31/5/26
+Institute ki monthly report model ko bilkul simple karna hai sirf institute id , month ,year or pdf ka link save karwana hai 

@@ -2,9 +2,35 @@
 
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
-const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
-const superadminMonthlyreportModel = require("../../Models/SuperAdminModels/superadminMonthlyreport.model")
+const subscriptionPlanModel = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
+const {superAdminMonthlyReportModel} = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
 
+
+const individualInstituteReportMonthlyReport = async()=>{
+    try {
+    const {subscriptionId} = req.body
+    const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
+    const instituteId = subscriptionDetails.instituteId
+    const planId = subscriptionDetails.planId
+    const subscriptionPlanDetails = await subscriptionPlanModel.findById(planId)
+    const planName = subscriptionPlanDetails.subscriptionName
+    const aiStatus = subscriptionPlanDetails.aiFeatures.enabled
+    const instituteName = await instituteModel.findOne({_id:instituteId},{name:1,_id:0})
+    console.log("Institute Name is :",instituteName)
+    const scopeType = subscriptionDetails.scopeType
+    const startDate = subscriptionDetails.startDate
+    const endDate = subscriptionDetails.endDate
+    const activationStatus = subscriptionDetails.status
+    if(!aiStatus){
+        // create pdf without AI column
+    }
+    // create pdf with AI columns
+
+
+    } catch (error) {
+        
+    }
+}
 const createReport = async (req, res) => {
     try {
         const { instituteId, subscriptionId } = req.body
