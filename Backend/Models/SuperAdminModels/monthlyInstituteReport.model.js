@@ -94,4 +94,4 @@ const monthlyReportSchema = new mongoose.Schema({
 // Prevent duplicate monthly report per institute
 monthlyReportSchema.index({ instituteId: 1, reportMonth: 1, reportYear: 1 }, { unique: true });
 
-module.exports = mongoose.model('MonthlyReport', monthlyReportSchema);
+module.exports = mongoose.model('MonthlyReport', monthlyReportSchema)

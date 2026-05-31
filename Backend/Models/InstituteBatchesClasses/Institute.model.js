@@ -7,11 +7,7 @@ const instituteSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    // scope:{
-    //     type:String,
-    //     enum:['Institute','Batch','Class'],
-    //     required:true
-    // }
+    
     address:{
         type:String,
         required:true

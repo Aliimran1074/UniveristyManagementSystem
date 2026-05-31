@@ -1,36 +1,174 @@
-// We will here how to create superadmin report
-
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
 const subscriptionPlanModel = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
-const {superAdminMonthlyReportModel} = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
+const { superAdminMonthlyReportModel } = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
+const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
+const staffModel = require("../../Models/UserModels/staff.model")
+const monthlyInstituteReportModel = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
+const { instituteMonthlyReportModel } = require("../../Models/SuperAdminModels/instituteMonthlyReport.model")
+const {imageKitConfig} = require("../../ImageKit.IO Setup/setup") 
+const pdfDocument= require('pdfkit')
+const monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
-const individualInstituteReportMonthlyReport = async()=>{
+const monthReportPdf = (data,aiData,month,year) => {
+    
+    return new Promise((resolve, reject) => {
+
+        try {
+
+            const doc = new PdfDocument()
+
+            const buffers = []
+
+            doc.on("data", buffers.push.bind(buffers))
+
+            doc.on("end", () => {
+
+                const pdfBuffer =
+                    Buffer.concat(buffers)
+
+                resolve(pdfBuffer)
+
+            })
+
+            doc.fontSize(20)
+            doc.text(`Monthly Report`)
+            doc.text(`${month} ${year}`)
+
+            doc.moveDown()
+
+            doc.text(`Institute: ${data.institute}`)
+            doc.text(`Plan: ${data.plan}`)
+            doc.text(`Students: ${data.totalStudents}`)
+            doc.text(`Staff: ${data.totalStaff}`)
+            doc.text(`Status: ${data.status}`)
+
+            if(aiData.aiStatus){
+
+                doc.moveDown()
+
+                doc.text(
+                 `Total AI Requests: ${aiData.aiUsage.totalAiRequest}`
+                )
+            }
+
+            doc.end()
+
+        } catch(error){
+
+            reject(error)
+
+        }
+
+    })
+}
+
+
+// is function me last 30 days ki report wala kaam karna hai 
+const individualInstituteReportMonthlyReport = async (req,res) => {
     try {
-    const {subscriptionId} = req.body
-    const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
-    const instituteId = subscriptionDetails.instituteId
-    const planId = subscriptionDetails.planId
-    const subscriptionPlanDetails = await subscriptionPlanModel.findById(planId)
-    const planName = subscriptionPlanDetails.subscriptionName
-    const aiStatus = subscriptionPlanDetails.aiFeatures.enabled
-    const instituteName = await instituteModel.findOne({_id:instituteId},{name:1,_id:0})
-    console.log("Institute Name is :",instituteName)
-    const scopeType = subscriptionDetails.scopeType
-    const startDate = subscriptionDetails.startDate
-    const endDate = subscriptionDetails.endDate
-    const activationStatus = subscriptionDetails.status
-    if(!aiStatus){
-        // create pdf without AI column
-    }
-    // create pdf with AI columns
+        const { subscriptionId } = req.body
+        const subscriptionDetails = await subscriptionModel.findById(subscriptionId)
+        if(!subscriptionDetails){
+   return res.status(404).json({
+      message:"Subscription not found"
+   })
+}
+        const instituteId = subscriptionDetails.instituteId
+        const planId = subscriptionDetails.planId
+        const subscriptionPlanDetails = await subscriptionPlanModel.findById(planId)
+        const planName = subscriptionPlanDetails.subscriptionName
+        const aiStatus = subscriptionPlanDetails.aiFeatures.enabled
+const institute = await instituteModel.findOne(
+    { _id: instituteId },
+    { name: 1, _id: 0 }
+).lean()
 
+if(!institute){
+    return res.status(404).json({
+        message:"Institute not found"
+    })
+}
+const instituteName = institute.name
+        console.log("Institute Name is :", instituteName)
+        const scopeType = subscriptionDetails.scopeType
+        const startDate = subscriptionDetails.startDate
+        const endDate = subscriptionDetails.endDate
 
-    } catch (error) {
+        const startDateInReadableFormat = startDate.toLocaleDateString()
+        const endDateInReadableFormat = endDate.toLocaleDateString()
+
+        const today = new Date()
+
+const daysLeftCalculation = Math.ceil(
+    (endDate - today) / (1000 * 60 * 60 * 24)
+)
+        const activationStatus = subscriptionDetails.status
+        const getMonth = new Date().getMonth() + 1
+        const year = new Date().getFullYear()
+        const studentsCount = await studentRegistrationModel.countDocuments({ instituteId })
+        const staffCount = await staffModel.countDocuments({ instituteId })
+        const data = {
+            institute: instituteName,
+            scopeType: scopeType,
+            registrtionDate: startDateInReadableFormat,
+            endDate: endDateInReadableFormat,
+            plan: planName,
+            status: activationStatus,
+            totalStudents: studentsCount,
+            totalStaff: staffCount,
+            daysLeft: daysLeftCalculation
+        }
+
+                const assignmentGeneratorUsage= subscriptionDetails.aiUsage.assignmentGeneratorUsed
+                const quizGeneratorUsage=subscriptionDetails.aiUsage.quizGeneratorUsed
+                const contentGeneratorUsage=subscriptionDetails.aiUsage.contentGeneratorUsed
+                const quizCheckerUsage=subscriptionDetails.aiUsage.quizCheckerUsed
+                const assignmentCheckerUsage=subscriptionDetails.aiUsage.assignmentCheckerUsed
+                const totalAiRequest = Number (assignmentGeneratorUsage+quizGeneratorUsage+contentGeneratorUsage+quizCheckerUsage+assignmentCheckerUsage)    
+              
+                const aiUsage={assignmentCheckerUsage,quizCheckerUsage,contentGeneratorUsage,assignmentGeneratorUsage,quizGeneratorUsage,totalAiRequest}
         
+                let aiDataObject = {}
+        if (!aiStatus) {
+            aiDataObject = { aiStatus, aiUsage: null }
+        }
+        else{
+            aiDataObject = { aiStatus, aiUsage: aiUsage }
+    }
+            const pdfFile =await  monthReportPdf(data, aiDataObject,monthArray[getMonth-1],year)
+            if (pdfFile) {
+                const createMonthlyReport = await instituteMonthlyReportModel.create({ instituteId: instituteId, instituteName: instituteName, month: getMonth, year: year })
+                if(!createMonthlyReport){
+                    console.log("Issue in Storing Data in Monthly Report Schema")
+                    return res.status(400).json({message:"Issue in Storing Data in Monthly Report Schema"})
+                }
+            const fileName = `${instituteName}_${monthArray[getMonth-1]}_report`
+                        
+            const imageKitResponse= await imageKitConfig.upload({
+                file:pdfFile,
+                fileName:fileName})
+                const imageKitUrl= imageKitResponse.url
+               console.log('Image kit url ', imageKitResponse.url)
+                if(imageKitUrl){
+                    createMonthlyReport.reportPdf=imageKitUrl
+                    await createMonthlyReport.save()
+                    return res.status(200).json({message:"Report Created Successfully",createMonthlyReport})
+                }
+                
+            }
+            return res.status(400).json({ message: "Issue in Creating PDF" })
+        }
+     catch (error) {
+        console.log("Error in Creating Monthly Report of Individual Institute",error)
+        return res.status(404).json({message:"Error in Creating Monthly Report of Individual Institute"})
     }
 }
+
+
+
+
 const createReport = async (req, res) => {
     try {
         const { instituteId, subscriptionId } = req.body
@@ -111,7 +249,7 @@ const createReport = async (req, res) => {
         const getAiStatus = getPlanInfo.aiFeatures.enabled
         console.log(getAiStatus)
 
-        const recommendedActions =[{type:'no_action'}]        //this is just for dummy purchase main will done why institute creating and working
+        const recommendedActions = [{ type: 'no_action' }]        //this is just for dummy purchase main will done why institute creating and working
 
 
         if (getAiStatus) {
@@ -174,4 +312,4 @@ const createReport = async (req, res) => {
     }
 }
 
-module.exports = { createReport }
+module.exports = { createReport ,individualInstituteReportMonthlyReport }

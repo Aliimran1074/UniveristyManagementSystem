@@ -117,3 +117,6 @@ All four agents completed , redis ya queue ke through hum aik exact time period 
 
 31/5/26
 Institute ki monthly report model ko bilkul simple karna hai sirf institute id , month ,year or pdf ka link save karwana hai 
+
+1/6/2026
+Ai usage ko month ke hisab se set karna hai
