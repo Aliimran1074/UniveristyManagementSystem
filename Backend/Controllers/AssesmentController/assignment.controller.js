@@ -649,57 +649,41 @@ catch(error){
 const functionOfSelectingOfAssignmentTypeForCreation = async (req, res) => {
 
     try {
-
         const { mainAssignmentTopicsId } = req.body
-
         const assignmentTopicsInfo = await assignmentTopicModel.findById(mainAssignmentTopicsId)
-
         if (!assignmentTopicsInfo) {
             return res.status(404).json({
                 message: "Assignment Topic Record Not Found"
             })
         }
-
         const getArrayOfAssignmentTopics = assignmentTopicsInfo.assignmentTopics
-
         const filterOnlyPendingAssignment = getArrayOfAssignmentTopics.filter((currentElement) => {
-
             return currentElement.status == 'pending'
                 && currentElement.source == 'outside'
 
         })
-
         if (filterOnlyPendingAssignment.length < 1) {
-
             return res.status(404).json({
                 message: "No Topic is Pending to Create Assignment"
             })
         }
-
         const getDateOfLastAssignmentCreated = assignmentTopicsInfo.dateOfLastAssignmentCreated
 
         // if first assignment not created
         if (!getDateOfLastAssignmentCreated) {
-
             return await createAssignmentFunction(
                 assignmentTopicsInfo,
                 filterOnlyPendingAssignment,
-                res
-            )
-        }
+                res)}
 
         // compare dates
         const todayMilliseconds = Date.now()
-
         const lastAssignmentMilliseconds =new Date(getDateOfLastAssignmentCreated).getTime()
         console.log("Last Assignment Created Date in Mili Second",lastAssignmentMilliseconds)
-
         const assignmentGapDays =Number(assignmentTopicsInfo.assignmentGapDuration)
-
         const assignmentGapMilliseconds =assignmentGapDays * 24 * 60 * 60 * 1000
         console.log("Assignment Gap in Mili Second :",assignmentGapMilliseconds)
         const difference =todayMilliseconds - lastAssignmentMilliseconds
-
         console.log("Difference In Mili Second",difference)
         if (difference < assignmentGapMilliseconds) {
             return res.status(400).json({
@@ -732,8 +716,6 @@ const createAssignmentFunction = async (assignmentTopicsInfo,filterOnlyPendingAs
     const getFirstTopicFromListOfTopics =filterOnlyPendingAssignment[0]
 
     const topicName =getFirstTopicFromListOfTopics.topicName
-    // const totalMarks = getFirstTopicFromListOfTopics.totalMarks
-    // const getTypeOfAssignment = getFirstTopicFromListOfTopics.type
     const inputData = {
         topicsName: topicName,
         totalMarks: getFirstTopicFromListOfTopics.totalMarks,
@@ -802,8 +784,19 @@ const imageKitResponse= await imageKitConfig.upload({
 if(getUrl.length>0 || getUrl){
     const assignmentQuestions = JSON.stringify(parseData)
     const assignmentCreation = await assignmentModel.create({instituteId:assignmentTopicsInfo.instituteId,assignmentFile:getUrl,course:assignmentTopicsInfo.course,createdBy:assignmentTopicsInfo.instructor,duration:7,assignmentQuestions:assignmentQuestions})
+    if(!assignmentCreation){
+        console.log("Issue in Creating Assignment")
+        return res.status(400).json({message:"Issue in Creating Assignment"})
+    }   
+    const findSubscription = await subscriptionModel.findOne({instituteId:assignmentTopicsInfo.instituteId})
+    if(!findSubscription){
+      return res.status(404).json({message:"No Subscription Found Agaisnt This Institute"})
+    }
+    findSubscription.aiUsage.assignmentGeneratorUsed+=1
+    findSubscription.aiUsage.totalAiRequests+=1
+    await findSubscription.save()
 
-return res.status(200).json({message: "Document Created Successfully",data,getUrl,assignmentCreation})
+return res.status(200).json({message: "Document Created Successfully",data,getUrl,assignmentCreation,findSubscription})
 }
 // ab yahan humne assignemnt model ke through assignment to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of assignments hone chahiye , agr koi manual assignment banaya gya hai to is me or AI wale assignment me kitne din ka gap hona chahiye
 return res.status(200).json({message: "Document Created Successfully, not Uploaded in Assignment Model",data,getUrl})

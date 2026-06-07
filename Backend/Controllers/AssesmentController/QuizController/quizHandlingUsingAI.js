@@ -141,21 +141,17 @@ const createQuizFunction = async (quizTopicsInfo,filterOnlyPendingQuiz,res) => {
         totalMarks :totalMarks
     }
 
-    // console.log("This is The Data what we send",quizData)
-    // const data = quizData.finalOutput
 
     
     const fileName =`${inputData.topicsName} quiz file.pdf`
+ 
     // const questions = quizData.finalOuput.questions
     // const parseData = JSON.parse(questions)
-
     // console.log("Question is : ",questions)
     // console.log("Parse Data is :",parseData)
-
     // const document = createPdf(fileName, parseData, info) // yeh function file system ki madad se file create kar raha tha lekin humay buffer ka use karna hai is liye humne is function ko commit kardia
-
-
     // const pdfBuffer = await createPdfInBuffer(parseData, info)
+
     const quizFinalOutput=quizData.finalOuput
     const pdfBuffer = await createPdfInBuffer(quizFinalOutput,info)
 
@@ -175,9 +171,16 @@ if(getUrl.length>0 || getUrl){
     console.log("Quiz Questions Are:",quizQuestions)
     const quizCreation = await quizModel.create({instituteId:quizTopicsInfo.instituteId,quizFile:getUrl,course:quizTopicsInfo.course,createdBy:quizTopicsInfo.instructor,duration:7,quizQuestions:quizQuestions,quizType:getTypeOfQuiz})
 
-return res.status(200).json({message: "Document Created Successfully",getUrl,quizCreation})
+            const findSubscription = await subscriptionModel.findOne({instituteId:quizTopicsInfo.instituteId})
+            if(!findSubscription){
+              return res.status(404).json({message:"No Subscription Found Agaisnt This Institute"})   }
+            findSubscription.aiUsage.quizGeneratorUsed+=1
+            findSubscription.aiUsage.totalAiRequests+=1
+            await findSubscription.save()
+        
+return res.status(200).json({message: "Document Created Successfully",getUrl,quizCreation,findSubscription})
 }
-// return res.status(200).json({message:"Hello World"})
+
 // ab yahan humne quiz model ke through quiz to upload kardia but ab yahan issue hai  yeh k validations check nhi ki jo hum limit check karte hai k total kitne no of quizs hone chahiye , agr koi manual quiz banaya gya hai to is me or AI wale quiz me kitne din ka gap hona chahiye
 return res.status(200).json({message: "Document Created Successfully, not Uploaded in quiz Model",data,getUrl})
 }
@@ -202,8 +205,7 @@ const createQuizViaTopic =async(data)=>{
             return message
         }
         const finalData = response.data
-        // console.log("This is What we found on response :",finalData)
-        // console.log("LLM give data successfully",finalData)
+
         return finalData
        
     } catch (error) {
@@ -214,60 +216,37 @@ const createQuizViaTopic =async(data)=>{
 
 
 const functionOfSelectingOfQuizTypeForCreation = async (req, res) => {
-
     try {
-
         const { mainQuizTopicsId } = req.body
-
         const quizTopicsInfo = await quizTopicModel.findById(mainQuizTopicsId)
-
         if (!quizTopicsInfo) {
             return res.status(404).json({
                 message: "Quiz Topic Record Not Found"
-            })
-        }
-
+            })}
         const getArrayOfQuizTopics = quizTopicsInfo.quizTopics
-
         const filterOnlyPendingQuiz = getArrayOfQuizTopics.filter((currentElement) => {
-
             return currentElement.status == 'pending'
                 && currentElement.source == 'outside'
-
         })
-
         if (filterOnlyPendingQuiz.length < 1) {
-
             return res.status(404).json({
                 message: "No Topic is Pending to Create Quiz"
             })
         }
-
         const getDateOfLastQuizCreated = quizTopicsInfo.dateOfLastQuizCreated
-
         // if first Quiz not created
         if (!getDateOfLastQuizCreated) {
-
             return await createQuizFunction(
                 quizTopicsInfo,
                 filterOnlyPendingQuiz,
-                res
-            )
-        }
-
+                res)}
         // compare dates
         const todayMilliseconds = Date.now()
-
         const lastQuizMilliseconds =new Date(getDateOfLastQuizCreated).getTime()
-        // console.log("Last Quiz Created Date in Mili Second",lastQuizMilliseconds)
-
         const quizGapDays =Number(quizTopicsInfo.quizGapDuration)
-
         const quizGapMilliseconds =quizGapDays * 24 * 60 * 60 * 1000
-        // console.log("Quiz Gap in Mili Second :",quizGapMilliseconds)
         const difference =todayMilliseconds - lastQuizMilliseconds
 
-        // console.log("Difference In Mili Second",difference)
         if (difference < quizGapMilliseconds) {
             return res.status(400).json({
                 message: `${quizGapDays} Days Not Completed Yet`
@@ -280,9 +259,7 @@ const functionOfSelectingOfQuizTypeForCreation = async (req, res) => {
             filterOnlyPendingQuiz,
             res
         )
-
     }
-
     catch (error) {
 
         console.log("Error in Quiz Selecting Type Function", error)

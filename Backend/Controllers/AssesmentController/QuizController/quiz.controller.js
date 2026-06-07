@@ -153,7 +153,6 @@ const quizUploading= async(req,res)=>{
         }
 
         const uploadQuiz = await quizUploadingModel.create({quizId:quizId,studentId:studentId})
-
         if(!uploadQuiz){
             console.log("Issue in Quiz Uploading")
             return res.status(400).json({message:"Issue in Quiz Uploading"})
@@ -215,6 +214,7 @@ try {
         }
      checkIsQuizUploadedByStudentOrNot.marks = marks
      checkIsQuizUploadedByStudentOrNot.marksAssigned= true
+
 
      checkIsQuizUploadedByStudentOrNot.save()
 
