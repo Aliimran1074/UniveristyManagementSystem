@@ -120,3 +120,6 @@ Institute ki monthly report model ko bilkul simple karna hai sirf institute id ,
 
 1/6/2026
 Ai usage ko month ke hisab se set karna hai
+
+7/6/2026
+Assignment checker me AI usage addition ka kaam isi tarhan jahan bhi AI usage horahi hai wahan humay yeh kaam karna hai

@@ -1,7 +1,7 @@
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
 const subscriptionPlanModel = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
-const { superAdminMonthlyReportModel } = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
+// const superAdminMonthlyReportModel  = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
 const studentRegistrationModel = require("../../Models/UserModels/studentRegistration.model")
 const staffModel = require("../../Models/UserModels/staff.model")
 const monthlyInstituteReportModel = require("../../Models/SuperAdminModels/monthlyInstituteReport.model")
@@ -12,55 +12,36 @@ const monthArray = ["January", "February", "March", "April", "May", "June", "Jul
 
 
 const monthReportPdf = (data,aiData,month,year) => {
-    
-    return new Promise((resolve, reject) => {
-
+      return new Promise((resolve, reject) => {
         try {
-
-            const doc = new PdfDocument()
-
+            const doc = new pdfDocument()
             const buffers = []
-
             doc.on("data", buffers.push.bind(buffers))
-
             doc.on("end", () => {
-
                 const pdfBuffer =
                     Buffer.concat(buffers)
-
                 resolve(pdfBuffer)
-
             })
-
             doc.fontSize(20)
             doc.text(`Monthly Report`)
             doc.text(`${month} ${year}`)
-
             doc.moveDown()
-
             doc.text(`Institute: ${data.institute}`)
             doc.text(`Plan: ${data.plan}`)
             doc.text(`Students: ${data.totalStudents}`)
             doc.text(`Staff: ${data.totalStaff}`)
             doc.text(`Status: ${data.status}`)
-
+           
             if(aiData.aiStatus){
-
                 doc.moveDown()
-
                 doc.text(
                  `Total AI Requests: ${aiData.aiUsage.totalAiRequest}`
                 )
             }
-
             doc.end()
-
         } catch(error){
-
             reject(error)
-
         }
-
     })
 }
 

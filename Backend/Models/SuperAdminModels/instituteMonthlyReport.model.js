@@ -22,9 +22,7 @@ const instituteMonthlyReportSchema = new mongoose.Schema({
     },
     reportPdf:{
         type:String,
-    
     }
-
 },{timestamps:true})
 
 instituteMonthlyReportSchema.index(

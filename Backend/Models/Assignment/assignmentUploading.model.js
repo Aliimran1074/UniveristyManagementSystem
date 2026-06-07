@@ -7,9 +7,10 @@ const assignmentUploadingSchema = new mongoose.Schema(
             ref:"assignmentModel",
             required:true
         },
+        
         studentId:{
             type:mongoose.Schema.ObjectId,
-            ref:"studentModel",
+            ref:"studentRegistrationModel",
             required:true
         },
         uploadedFile:{
