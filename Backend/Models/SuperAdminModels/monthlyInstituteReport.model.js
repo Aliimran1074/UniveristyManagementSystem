@@ -95,4 +95,4 @@ monthlyReportSchema.index({ instituteId: 1, reportMonth: 1, reportYear: 1 }, { u
 
 const superAdminMonthlyReportModel= mongoose.model('individualInstituteMonthlyReport', monthlyReportSchema)
 
-module.exports={superAdminMonthlyReportModel}
+module.exports=superAdminMonthlyReportModel

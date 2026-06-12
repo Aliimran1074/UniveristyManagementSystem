@@ -126,3 +126,9 @@ Assignment checker me AI usage addition ka kaam isi tarhan jahan bhi AI usage ho
 
 11/6/2026
 Institute Report Ban gyi ab super admin report bana kar integration karwana start karni hai
+
+12/6/2026 (Most Important)
+Abhi humne report to create kardi but har report me 30 days ki calculation nhi ki na hi institute report me ai usage save karwai hai sirf pdf store karwaya jo approach galat hai humay agay future comparsion karwane me muskil ayegi
+
+12/6/2026
+SuperAdmin Monthly Report Almost Complete 
