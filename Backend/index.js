@@ -21,7 +21,7 @@ const superAdminRoutes= require('./Routers/superAdminRoutes')
 const testingRoutes= require('./Routers/testingRoutes')
 const quizInputRoutes = require('./Routers/quizTopicRoutes')
 const {databaseConnection}=require('./utils/db.connection')
-
+require('./Automation/superAdminAutoReportCreation')
 
 
 app.use(express.json())

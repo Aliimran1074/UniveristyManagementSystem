@@ -132,3 +132,6 @@ Abhi humne report to create kardi but har report me 30 days ki calculation nhi k
 
 12/6/2026
 SuperAdmin Monthly Report Almost Complete 
+
+13/6/2026
+individual Institute Report ko Cron job ki help se karna hai or sath sath agents ko bhi corn job se set karna hai

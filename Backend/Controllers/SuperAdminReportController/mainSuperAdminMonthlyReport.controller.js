@@ -75,15 +75,15 @@ const generateSuperAdminPDF = (data, aiUsage, last30DaysAI, monthName, year) => 
 
 const imageKit = require("../../ImageKit.IO Setup/setup");
 
-const generateSuperAdminMonthlyReport = async (req, res) => {
+const generateSuperAdminMonthlyReport = async () => {
   try {
     const today = new Date();
     const month = today.getMonth() + 1;
-    const year = today.getFullYear();
+    const year = today.getFullYear()
 
-    const monthName = today.toLocaleString("default", { month: "long" });
+    const monthName = today.toLocaleString("default", { month: "long" })
 
-    const subscriptions = await subscriptionModel.find();
+    const subscriptions = await subscriptionModel.find()
 
     // ---------------- AI SNAPSHOT ----------------
     let currentAI = {
@@ -94,7 +94,7 @@ const generateSuperAdminMonthlyReport = async (req, res) => {
       contentGeneratorUsed: 0,
       assignmentCheckerUsed: 0,
       quizCheckerUsed: 0
-    };
+    }
 
     subscriptions.forEach(sub => {
       const ai = sub.aiUsage || {};
@@ -109,9 +109,9 @@ const generateSuperAdminMonthlyReport = async (req, res) => {
     }, 0);
 
     // ---------------- OTHER STATS ----------------
-    const totalInstitutes = await instituteModel.countDocuments();
-    const activeInstitutes = await subscriptionModel.countDocuments({ status: "Active" });
-    const expiredInstitutes = await subscriptionModel.countDocuments({ status: "Expired" });
+    const totalInstitutes = await instituteModel.countDocuments()
+    const activeInstitutes = await subscriptionModel.countDocuments({ status: "Active" })
+    const expiredInstitutes = await subscriptionModel.countDocuments({ status: "Expired" })
 
     const newInstitutesThisMonth = await instituteModel.countDocuments({
       createdAt: {
@@ -143,7 +143,6 @@ const generateSuperAdminMonthlyReport = async (req, res) => {
       year
     );
 
-    // ---------------- IMAGEKIT UPLOAD ----------------
     const fileName = `superadmin_report_${monthName}_${year}.pdf`;
 
     const uploadResponse = await imageKitConfig.upload({
@@ -153,7 +152,6 @@ const generateSuperAdminMonthlyReport = async (req, res) => {
 
     const pdfUrl = uploadResponse.url;
 
-    // ---------------- SAVE REPORT ----------------
     const report = await superAdminMonthlyReportModel.create({
       month,
       year,
@@ -166,17 +164,17 @@ const generateSuperAdminMonthlyReport = async (req, res) => {
       totalRevenue,
       aiUsage: currentAI,
       reportPdf: pdfUrl
-    });
+    })
 
-    return res.status(200).json({
+    return ({
       message: "Super Admin Report Generated Successfully",
       pdfUrl,
       report
-    });
+    })
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return ({
       message: "Error generating report",
       error: error.message
     })
