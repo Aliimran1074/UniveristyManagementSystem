@@ -22,7 +22,7 @@ const testingRoutes= require('./Routers/testingRoutes')
 const quizInputRoutes = require('./Routers/quizTopicRoutes')
 const {databaseConnection}=require('./utils/db.connection')
 require('./Automation/superAdminAutoReportCreation')
-
+require('./Automation/instituteAutoReportCreation')
 
 app.use(express.json())
 app.use(cors())
