@@ -135,3 +135,6 @@ SuperAdmin Monthly Report Almost Complete
 
 13/6/2026
 individual Institute Report ko Cron job ki help se karna hai or sath sath agents ko bhi corn job se set karna hai
+
+19/6/2026
+Assignment Creation ko Automate kardia ab quiz generator ko automate karna hai or phr quiz checker or assignment checker ko automate karke frontend ki taraf move karna hai 
