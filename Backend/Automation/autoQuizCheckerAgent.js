@@ -2,7 +2,7 @@ const cron = require("node-cron")
 const quizUploadingModel = require("../Models/QuizModel/quizUploading.model")
 const { quizCheckerCore } = require("../Controllers/AssesmentController/QuizController/quizChecker")
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
   console.log("Quiz Checker Agent Running")
 
   try {

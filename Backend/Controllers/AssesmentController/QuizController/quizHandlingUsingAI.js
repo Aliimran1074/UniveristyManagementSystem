@@ -10,14 +10,73 @@ const instituteModel = require('../../../Models/InstituteBatchesClasses/Institut
 
 
 
+// const processQuizTopic = async (mainQuizTopicsId) => {
+
+//     const quizTopicsInfo =
+//         await quizTopicModel.findById(mainQuizTopicsId)
+
+//     if (!quizTopicsInfo) {
+//         console.log("Quiz Topic Not Found")
+//         return
+//     }
+
+//     const pendingList =
+//         quizTopicsInfo.quizTopics.filter((t) => {
+//             return t.status === "pending" && t.source === "outside"
+//         })
+
+//     if (pendingList.length < 1) {
+//         quizTopicsInfo.job = "completed"
+//         await quizTopicsInfo.save()
+//         console.log("Job completed no pending quiz topics")
+//         return
+//     }
+
+//     const lastDate = quizTopicsInfo.dateOfLastQuizCreated
+
+//     if (lastDate) {
+
+//         const gapDays = Number(quizTopicsInfo.quizGapDuration || 0)
+//         const gapMs = gapDays * 24 * 60 * 60 * 1000
+
+//         const diff = Date.now() - new Date(lastDate).getTime()
+
+//         if (diff < gapMs) {
+//             console.log("Gap not completed yet")
+//             return {
+//     success: false,
+//     message: "Gap not completed yet"
+// }
+//         }
+//     }
+
+//     await createQuizFunction(
+//         quizTopicsInfo,
+//         pendingList
+//     )
+
+//     const stillPending =
+//         quizTopicsInfo.quizTopics.some((t) => {
+//             return t.status === "pending" && t.source === "outside"
+//         })
+
+//     if (!stillPending) {
+//         quizTopicsInfo.job = "completed"
+//         await quizTopicsInfo.save()
+//         console.log("Job completed after last quiz")
+//     }
+// }
+
 const processQuizTopic = async (mainQuizTopicsId) => {
 
     const quizTopicsInfo =
         await quizTopicModel.findById(mainQuizTopicsId)
 
     if (!quizTopicsInfo) {
-        console.log("Quiz Topic Not Found")
-        return
+        return {
+            success: false,
+            message: "Quiz Topic Not Found"
+        }
     }
 
     const pendingList =
@@ -26,10 +85,14 @@ const processQuizTopic = async (mainQuizTopicsId) => {
         })
 
     if (pendingList.length < 1) {
+
         quizTopicsInfo.job = "completed"
         await quizTopicsInfo.save()
-        console.log("Job completed no pending quiz topics")
-        return
+
+        return {
+            success: false,
+            message: "No Pending Quiz Topics"
+        }
     }
 
     const lastDate = quizTopicsInfo.dateOfLastQuizCreated
@@ -42,31 +105,21 @@ const processQuizTopic = async (mainQuizTopicsId) => {
         const diff = Date.now() - new Date(lastDate).getTime()
 
         if (diff < gapMs) {
-            console.log("Gap not completed yet")
+
             return {
-    success: false,
-    message: "Gap not completed yet"
-}
+                success: false,
+                message: "Gap not completed yet"
+            }
         }
     }
 
-    await createQuizFunction(
+    const result = await createQuizFunction(
         quizTopicsInfo,
         pendingList
     )
 
-    const stillPending =
-        quizTopicsInfo.quizTopics.some((t) => {
-            return t.status === "pending" && t.source === "outside"
-        })
-
-    if (!stillPending) {
-        quizTopicsInfo.job = "completed"
-        await quizTopicsInfo.save()
-        console.log("Job completed after last quiz")
-    }
+    return result
 }
-
 const createPdfInBuffer = async (text,info) => {
     try {
         // console.log("This is Text :",text)
@@ -320,6 +373,7 @@ const createQuizFunction = async (quizTopicsInfo, filterOnlyPendingQuiz, res = n
     }
 
 const quizData = await createQuizViaTopic(inputData)
+console.log("Quiz Data :",quizData)
 
 if (!quizData || quizData.success === false || !quizData.message) {
     return {
@@ -565,7 +619,7 @@ const functionOfSelectingOfQuizTypeForCreation = async (req,res)=>{
 
         return res.status(500).json({
             message: error.message
-        });
+        })
     }
 }
 module.exports ={functionOfSelectingOfQuizTypeForCreation,processQuizTopic}
