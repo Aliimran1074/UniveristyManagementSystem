@@ -138,3 +138,10 @@ individual Institute Report ko Cron job ki help se karna hai or sath sath agents
 
 19/6/2026
 Assignment Creation ko Automate kardia ab quiz generator ko automate karna hai or phr quiz checker or assignment checker ko automate karke frontend ki taraf move karna hai 
+
+24/6/2026
+Quiz Generation Function bhi automate hogya hai , Assignment Checker bhi automate hogya , Quiz Checker bhi automate hogya 
+
+24/6/2026 
+4 agents automate hogye ab inhe Postman per bhi test karna hai 
+

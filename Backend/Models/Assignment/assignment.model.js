@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 
 const assignmentSchema = new mongoose.Schema({
 
-// will add institute id here
     instituteId:{
         type:mongoose.Schema.ObjectId,
         ref:"instituteModel",
