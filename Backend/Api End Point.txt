@@ -1,0 +1,163 @@
+Assignments api
+
+| Method | Endpoint                          |
+| ------ | --------------------------------- |
+| POST   | `/createAssignment`               |
+| GET    | `/fileCreation`                   |
+| GET    | `/assignmentQueue`                |
+| POST   | `/getData`                        |
+| POST   | `/checking`                       |
+| POST   | `/createTopic`                    |
+| POST   | `/manualAssignmentCreation`       |
+| POST   | `/uploadAssignment`               |
+| PUT    | `/manualAssignmentMarksUploading` |
+| POST   | `/getAssignmentTopicsDetails`     |
+| POST   | `/callAIAssignmentChecker`        |
+
+
+Course Content Apis
+
+| Method | Endpoint               |
+| ------ | ---------------------- |
+| POST   | `/uploadManualContent` |
+| DELETE | `/deleteCourseContent` |
+
+
+Counter Apis
+
+| Method | Endpoint           |
+| ------ | ------------------ |
+| POST   | `/counterCreation` |
+| GET    | `/counterGetter`   |
+| PUT    | `/updateCounter`   |
+
+
+Course Apis
+
+| Method | Endpoint                              |
+| ------ | ------------------------------------- |
+| POST   | `/courseAllocation/:selectorId`       |
+| GET    | `/getUnselectedCourses/:departmentId` |
+| POST   | `/coursesTeachedBySelectedTeacher`    |
+| POST   | `/courseCreation`                     |
+| PUT    | `/updateCourse/:id`                   |
+| DELETE | `/courseDeletion`                     |
+| POST   | `/courseEnrollment`                   |
+| GET    | `/getCourseInfo`                      |
+| PUT    | `/assignInstructorToCourse`           |
+
+
+Department Apis
+
+| Method | Endpoint                  |
+| ------ | ------------------------- |
+| POST   | `/departmentCreation`     |
+| PUT    | `/departmentUpdation/:id` |
+| DELETE | `/departmentDeletion`     |
+| GET    | `/getDepartments`         |
+
+
+Institute Apis
+
+| Method | Endpoint                          |
+| ------ | --------------------------------- |
+| POST   | `/instituteCreation`              |
+| POST   | `/autoInstituteStructureCreation` |
+| GET    | `/getInstituteInfo`               |
+   GET      /getAllInstituteInfo
+   GET      /allInstituteInfo    (is api me jo function call horaha hai us me different schema se info collect karke aik single function banaya hai takay frontend me use kiya ja sake)
+
+Quiz Apis
+
+| Method | Endpoint                            |
+| ------ | ----------------------------------- |
+| POST   | `/quizChecker`                      |
+| POST   | `/manualQuizCreation`               |
+| POST   | `/manualQuizCreationByUploadingPdf` |
+| POST   | `/uploadingQuiz`                    |
+| PUT    | `/manualQuizMarksUploading`         |
+| POST   | `/quizCreationUsingAI`              |
+| POST   | `/quizCheckerUsingAI`               |
+| POST   | `/quizInput`                        |
+
+Staff Apis
+
+| Method | Endpoint                        |
+| ------ | ------------------------------- |
+| POST   | `/staffRegistration`            |
+| GET    | `/getStaffByCnic`               |
+| GET    | `/getStaffById/:staffId`        |
+| PUT    | `/updateStaffUsingId/:id`       |
+| PUT    | `/updateStaffUsingCnic/:cnicNo` |
+| DELETE | `/deleteStaff`                  |
+
+Student Apis
+
+| Method | Endpoint                     |
+| ------ | ---------------------------- |
+| POST   | `/studentRegistration`       |
+| GET    | `/getStudentByCnicNo`        |
+| GET    | `/getStudentById/:studentId` |
+| PUT    | `/updateUsingId/:id`         |
+| PUT    | `/updateUsingCnic/:cnicNo`   |
+| DELETE | `/deleteStudent`             |
+| POST   | `/newStudentRegistration`    |
+
+Subscription Plan Apis
+
+| Method | Endpoint                  |
+| ------ | ------------------------- |
+| POST   | `/createSubscriptionPlan` |
+| PUT    | `/updateSubscriptionPlan` |
+| DELETE | `/deleteSubscriptionPlan` |
+   GET      '/getAllSubscription 
+
+Report Apis
+
+| Method | Endpoint                              |
+| ------ | ------------------------------------- |
+| POST   | `/monthlyReportOfIndividualInstitute` |
+| GET    | `/generateSuperAdminMonthlyReport`    |
+
+Ai Usage Apis
+
+| Method | Endpoint                    |
+| ------ | --------------------------- |
+| POST   | `/quizCountIncrement`       |
+| POST   | `/assignmentCountIncrement` |
+| GET    | `/getAiUsage`               |
+
+Time Slot Apis
+
+| Method | Endpoint                |
+| ------ | ----------------------- |
+| POST   | `/timeSlotCreation`     |
+| PUT    | `/timeSlotUpdation/:id` |
+| DELETE | `/deleteTimeSlot`       |
+
+Time Table Apis
+
+| Method | Endpoint                         |
+| ------ | -------------------------------- |
+| POST   | `/createTimeTable/:departmentId` |
+
+
+Total API Count
+
+| Category     | APIs |
+| ------------ | ---- |
+| Assignment   | 10   |
+| Content      | 2    |
+| Counter      | 3    |
+| Course       | 9    |
+| Department   | 4    |
+| Institute    | 3    |
+| Quiz         | 8    |
+| Staff        | 6    |
+| Student      | 7    |
+| Subscription | 3    |
+| Reports      | 2    |
+| AI Usage     | 3    |
+| Time Slot    | 3    |
+| Time Table   | 1    |
+

@@ -26,30 +26,50 @@ export function InstituteList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
-
+  const [instituteArray, setInstituteArray] = useState([])
   // Placeholder data - ensure this matches your actual data structure
   const institutes = [
-    { 
-      id: 1, 
-      name: "Cambridge Institute", 
-      email: "admin@cambridge.edu", 
-      subscriptionType: "Complete Institute", 
-      status: "Active", 
-      currentUsers: 850, 
-      userLimit: 1000, 
-      revenue: "$2,499" 
+    {
+      id: 1,
+      name: "Cambridge Institute",
+      email: "admin@cambridge.edu",
+      subscriptionType: "Complete Institute",
+      status: "Active",
+      currentUsers: 850,
+      userLimit: 1000,
+      contact: "012231"
     },
-    { 
-      id: 2, 
-      name: "Tech Academy", 
-      email: "contact@techacademy.io", 
-      subscriptionType: "Batch", 
-      status: "Expiring Soon", 
-      currentUsers: 180, 
-      userLimit: 200, 
-      revenue: "$899" 
+    {
+      id: 2,
+      name: "Tech Academy",
+      email: "contact@techacademy.io",
+      subscriptionType: "Batch",
+      status: "Expiring Soon",
+      currentUsers: 180,
+      userLimit: 200,
+      contact: "0000"
     }
-  ];
+  ]
+
+
+  //  is me data .data karna parega
+  const getInfoOfAvailableInstitutes = async () => {
+    try {
+      const gettingInfoOfInstituteFromServer = await fetch("http://localhost:3000/api/allInstituteInfo")
+      const data = await gettingInfoOfInstituteFromServer.json()
+      if (!gettingInfoOfInstituteFromServer.ok) {
+        console.log("Server error while fetching institutes")
+        return
+      }
+      console.log("Institutes Info:", data)
+      Array.isArray(data) ? console.log('This is not an array') :
+        console.log(data)
+      // setInstituteArray(data) 
+
+    } catch (error) {
+      console.log("Issue in Getting Info From Server",error)
+    }
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -58,7 +78,7 @@ export function InstituteList() {
       case 'Inactive': return 'bg-red-100 text-red-700 hover:bg-red-100';
       default: return 'bg-gray-100 text-gray-700';
     }
-  };
+  }
 
   const filteredInstitutes = institutes.filter((institute) => {
     const matchesSearch =
@@ -76,6 +96,7 @@ export function InstituteList() {
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Institutes</h2>
           <p className="text-sm text-gray-500">Manage all subscribed institutes</p>
+                <button onClick={()=>getInfoOfAvailableInstitutes()}> Click Me</button>
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -111,8 +132,8 @@ export function InstituteList() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Monthly Revenue</Label>
-                <Input placeholder="$2,499" />
+                <Label>Contact No</Label>
+                <Input placeholder="92******" />
               </div>
             </div>
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 mt-4 pt-4 border-t">
@@ -182,7 +203,7 @@ export function InstituteList() {
                 {inst.status}
               </Badge>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 py-2 border-y border-gray-50">
               <div>
                 <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Usage</p>
@@ -195,8 +216,8 @@ export function InstituteList() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Revenue</p>
-                <p className="font-bold text-blue-600">{inst.revenue}</p>
+                <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Contact</p>
+                <p className="font-bold text-blue-600">{inst.contact}</p>
                 <p className="text-[10px] text-gray-400 mt-1">{inst.subscriptionType}</p>
               </div>
             </div>
@@ -223,7 +244,7 @@ export function InstituteList() {
                 <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Usage</TableHead>
-                <TableHead>Revenue</TableHead>
+                <TableHead>Contact</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -259,7 +280,7 @@ export function InstituteList() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-bold text-gray-900">{institute.revenue}</TableCell>
+                    <TableCell className="font-bold text-gray-900">{institute.contact}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-blue-600"><Eye className="w-4 h-4" /></Button>
@@ -280,6 +301,7 @@ export function InstituteList() {
           </Table>
         </div>
       </Card>
+
     </div>
   );
 }

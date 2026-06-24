@@ -1,6 +1,6 @@
 const instituteModel = require("../../Models/InstituteBatchesClasses/Institute.model")
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model.js")
-const subscriptionPlanModel  = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
+const subscriptionPlanModel = require("../../Models/SuperAdminModels/subscriptionsPlan.model.js")
 const studentModel = require("../../Models/UserModels/students.models.js")
 const staffModel = require('../../Models/UserModels/staff.model')
 // working on institute creation
@@ -9,7 +9,7 @@ const instituteCreation = async (req, res) => {
     try {
         const { instituteName, address, contactNo, subscriptionPlanId } = req.body
 
-        console.log("Subscription Plan ID :",subscriptionPlanId)
+        console.log("Subscription Plan ID :", subscriptionPlanId)
         // check institute already exist by name 
         const checkInstitute = await instituteModel.findOne({ name: instituteName })
         if (checkInstitute) {
@@ -18,45 +18,45 @@ const instituteCreation = async (req, res) => {
         }
 
         const createInstitute = await instituteModel.create({ name: instituteName, address, contactNo })
-       
+
         if (!createInstitute) return res.status(400).json({ message: "Institute Not Created" })
         // console.log("Institute Created Successfully")
 
         const getSubscriptionDetails = await subscriptionPlanModel.findById(subscriptionPlanId)
-            
+
         const getSubscriptionName = getSubscriptionDetails.subscriptionName
         const startDate = Date.now()
-            // console.log("Start Date :", startDate)
-            const getDuration = getSubscriptionDetails.durationDays
-            // console.log('Duration :', getDuration)
+        // console.log("Start Date :", startDate)
+        const getDuration = getSubscriptionDetails.durationDays
+        // console.log('Duration :', getDuration)
 
-            // convert duration to milisecond
-            const miliSecondDuration = getDuration * 24 * 60 * 60 * 1000
+        // convert duration to milisecond
+        const miliSecondDuration = getDuration * 24 * 60 * 60 * 1000
 
-            const endDateInMiliSecond = startDate + miliSecondDuration
+        const endDateInMiliSecond = startDate + miliSecondDuration
 
-            // const readableStartDate = new Date(startDate).toLocaleDateString()
-            // const readableEndDate = new Date(endDateInMiliSecond).toLocaleDateString()
-            // console.log("Start Date :", readableStartDate)
-            // console.log("End Date :", readableEndDate)
-      
-            //here subscription work will done
+        // const readableStartDate = new Date(startDate).toLocaleDateString()
+        // const readableEndDate = new Date(endDateInMiliSecond).toLocaleDateString()
+        // console.log("Start Date :", readableStartDate)
+        // console.log("End Date :", readableEndDate)
+
+        //here subscription work will done
         const getInstituteId = createInstitute._id
         // console.log('Institute Id :', getInstituteId)
 
-        const getSubscriptionPlanId= getSubscriptionDetails._id
+        const getSubscriptionPlanId = getSubscriptionDetails._id
         const getScopeOfSubscription = getSubscriptionDetails.type
-        
-        const createSubscriptionOfInstitute= await subscriptionModel.create({instituteId:getInstituteId,planId:getSubscriptionPlanId,scopeType:getScopeOfSubscription,startDate:startDate,endDate:endDateInMiliSecond,subscriptionPlanName:getSubscriptionName})
-        
-        if(!createSubscriptionOfInstitute){
+
+        const createSubscriptionOfInstitute = await subscriptionModel.create({ instituteId: getInstituteId, planId: getSubscriptionPlanId, scopeType: getScopeOfSubscription, startDate: startDate, endDate: endDateInMiliSecond, subscriptionPlanName: getSubscriptionName })
+
+        if (!createSubscriptionOfInstitute) {
             console.log("Issue in Creating Subscription of Individual Institute")
-            return res.status(400).json({message:"Issue in Creating Subscription of Individual Institute"})
+            return res.status(400).json({ message: "Issue in Creating Subscription of Individual Institute" })
         }
 
         // console.log("Institute Created Successfully and Subscription Also Done")
 
-        return res.status(200).json({ message: "Institute Created and Subscription Done Succesfully", createInstitute,createSubscriptionOfInstitute })
+        return res.status(200).json({ message: "Institute Created and Subscription Done Succesfully", createInstitute, createSubscriptionOfInstitute })
 
 
         // will work on subscription when start working on superadmin 
@@ -68,29 +68,89 @@ const instituteCreation = async (req, res) => {
 
 }
 
-const getInstituteInfo =async(req,res)=>{
+const getInstituteInfo = async (req, res) => {
     try {
-        const {instituteId}= req.body
-        console.log("Institute Id : ",instituteId)
+        const { instituteId } = req.body
+        console.log("Institute Id : ", instituteId)
         const instituteInfo = await instituteModel.findById(instituteId)
-        console.log("Institute Info :",instituteInfo)
-        if(!instituteInfo){
+        console.log("Institute Info :", instituteInfo)
+        if (!instituteInfo) {
             console.log("Wrong Id , Institute not Register with This Id")
-            return res.status(400).json({message:"Wrong Id , Institute not Register with This Id"})
+            return res.status(400).json({ message: "Wrong Id , Institute not Register with This Id" })
         }
-        const getInfoOfSubscription = await subscriptionModel.find({instituteId:instituteId})
-        console.log("Info of Subscription : ",getInfoOfSubscription)
+        const getInfoOfSubscription = await subscriptionModel.find({ instituteId: instituteId })
+        console.log("Info of Subscription : ", getInfoOfSubscription)
 
-        const getCountOfNoOfStudentsInAnInstitute= await studentModel.find({instituteId:instituteId}).countDocuments()
+        const getCountOfNoOfStudentsInAnInstitute = await studentModel.find({ instituteId: instituteId }).countDocuments()
 
-        const getCountNoOfStaffInAnInstitute= await staffModel.find({instituteId:instituteId}).countDocuments()
+        const getCountNoOfStaffInAnInstitute = await staffModel.find({ instituteId: instituteId }).countDocuments()
 
-        return res.status(200).json({mesage:"Institute Info :",instituteInfo,getInfoOfSubscription,getCountOfNoOfStudentsInAnInstitute,getCountNoOfStaffInAnInstitute})
+        return res.status(200).json({ mesage: "Institute Info :", instituteInfo, getInfoOfSubscription, getCountOfNoOfStudentsInAnInstitute, getCountNoOfStaffInAnInstitute })
     } catch (error) {
-     console.log("Error in Getting Institute Information ",error)
-     return res.status(400).json({message:"Error in Getting Institute Information"})   
+        console.log("Error in Getting Institute Information ", error)
+        return res.status(400).json({ message: "Error in Getting Institute Information" })
+    }
+}
+
+const getAllInstituteInfo = async (req, res) => {
+    try {
+        const institutesInfo = await instituteModel.find({})
+        if (!institutesInfo) {
+            console.log("Institute Info not Available ")
+            return res.status(400).json({ message: 'Institute Info not available' })
+        }
+        console.log('This is Institute Info ', institutesInfo)
+        return res.status(200).json({ message: 'Successfully Found Info Of All Institutes', institutesInfo })
+    } catch (error) {
+        console.log("Error in Getting all institute info", error)
+        return res.status(400).json({ message: 'Error in Getting all institute Info', error })
+    }
+}
+
+const allInstituteInfoFunctionForDashboard = async (req, res) => {
+    try {
+        const institutes = await instituteModel.aggregate(
+            [
+                {
+                    $lookup: {
+                        from: "subscriptionmodels",
+                        localField: "_id",
+                        foreignField: "instituteId",
+                        as: "subscription"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "staffmodels",
+                        localField: "_id",
+                        foreignField: "instituteId",
+                        as: "staff"
+                    }
+                },
+                {
+                    $project: {
+                        name: 1,
+                        contactNo: 1,
+                        address: 1,
+                        scopeType: { $arrayElemAt: ["$subscription.scopeType", 0] },
+                        status: { $arrayElemAt: ["$subscription.status", 0] },
+                        totalAiRequests: { $arrayElemAt: ["$subscription.aiUsage.totalAiRequests", 0] },
+                        noOfStaff: { $size: "$staff" }
+                    }
+                }
+            ]
+        )
+        return res.status(200).json({
+            success: true,
+            data: institutes
+        })
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
     }
 }
 
 // update and delete institute functions are remaining (10/3/26)
-module.exports = { instituteCreation,getInstituteInfo}
+module.exports = { instituteCreation, getInstituteInfo, getAllInstituteInfo,allInstituteInfoFunctionForDashboard }

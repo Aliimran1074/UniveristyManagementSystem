@@ -15,6 +15,10 @@ const instituteSchema = new mongoose.Schema({
         type:String,
         required:true      
     },
+    // email:{
+    //     type:String,
+    
+    // },
     creditCardDetails:{
         type:String
     },

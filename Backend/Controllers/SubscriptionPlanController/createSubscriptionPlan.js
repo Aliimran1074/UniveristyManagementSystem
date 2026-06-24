@@ -1,3 +1,4 @@
+const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
 const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
 
 const createSubscriptionPlan= async(req,res)=>{
@@ -71,4 +72,19 @@ const deleteSubscription=async(req,res)=>{
     }
 }
 
-module.exports = {createSubscriptionPlan,updateSubscriptionPlan,deleteSubscription}
+const getAllSubscription = async (req,res)=>{
+    try{
+    const subscriptionInfo = await subscriptionModel.find({})
+            if(!subscriptionInfo){
+                console.log("Institute Info not Available ")
+                return res.status(400).json({message:'Subscriptions Info not available'})
+            }
+        console.log('This is Institute Info ',subscriptionInfo)
+        return res.status(200).json({message:'Successfully Found Info Of All Subscriptions',subscriptionInfo})
+        } catch (error) {
+            console.log("Error in Getting all institute info",error)
+            return res.status(400).json({message:'Error in Getting all institute Info',error})
+        }
+}
+
+module.exports = {createSubscriptionPlan,updateSubscriptionPlan,deleteSubscription,getAllSubscription}

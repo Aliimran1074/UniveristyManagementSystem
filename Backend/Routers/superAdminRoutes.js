@@ -7,7 +7,7 @@ const router = require('express').Router()
 
 // router.route('/createMonthlyReport').post(createReport)
 router.route('/monthlyReportOfIndividualInstitute').post(generateInstituteReportController)
+router.route('/generateSuperAdminMonthlyReport').get(generateSuperAdminMonthlyReport)
 
 // router.route('/monthlyReportOfIndividualInstitute').post(individualInstituteReportMonthlyReport)
-router.route('/generateSuperAdminMonthlyReport').get(generateSuperAdminMonthlyReport)
 module.exports = router
