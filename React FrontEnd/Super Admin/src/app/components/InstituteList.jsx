@@ -1,5 +1,4 @@
-// subscription plan araay ka kaam karlia ab institute or subscription creation ka kaam karna hai then next page otherwise next dashboard per move karna hai
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -31,8 +30,12 @@ export function InstituteList() {
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [instituteArray, setInstituteArray] = useState([])
-  const [subscriptionPlanArray,setSubscriptionPlanArray] = useState([])
-
+  const [subscriptionPlanArray, setSubscriptionPlanArray] = useState([])
+  const [instituteName, setInstituteName ] = useState('')
+  const [instituteAddress, setInstituteAddress] = useState('')
+  const [instituteContact, setInstituteContact] = useState('')
+  const [subscriptionId, setSubscriptionId] = useState('')
+  const[open,setOpen]=useState(false)
   // Placeholder data - ensure this matches your actual data structure
   const institutes = [
     {
@@ -58,35 +61,35 @@ export function InstituteList() {
   ]
 
 
-  useEffect(()=>{
-    getInfoOfAvailableInstitutes(),
+  useEffect(() => {
     detailsOfAllSubscriptionPlans()
-  },[])
+    getInfoOfAvailableInstitutes()
+  }, [])
 
-  const detailsOfAllSubscriptionPlans= async()=>{
-    try{
+  const detailsOfAllSubscriptionPlans = async () => {
+    try {
       const response = await fetch("http://localhost:3000/api/getAllSubscriptionPlanDetails")
       const data = await response.json()
-      if(!response.ok){
+      if (!response.ok) {
         console.log("Server error while fetching all plan details")
         return
       }
       // console.log("data is :",data)
       const finalData = data.checkAllPlanInfo
-       console.log("Final data is :",finalData)
-       const finalArray = finalData.map(item=>({
-        id:item._id,
-        name:item.subscriptionName
-       }))
-       setSubscriptionPlanArray(finalArray)
-       console.log("Final Array :",finalArray)
+      console.log("Final data is :", finalData)
+      const finalArray = finalData.map(item => ({
+        id: item._id,
+        name: item.subscriptionName
+      }))
+      setSubscriptionPlanArray(finalArray)
+      console.log("Final Array :", finalArray)
     }
-    catch(error){
-      console.log("Error in Fetching all subscription Details",error)     
+    catch (error) {
+      console.log("Error in Fetching all subscription Details", error)
     }
   }
 
-   const getInfoOfAvailableInstitutes = async () => {
+  const getInfoOfAvailableInstitutes = async () => {
     try {
       const gettingInfoOfInstituteFromServer = await fetch("http://localhost:3000/api/allInstituteInfo")
       const data = await gettingInfoOfInstituteFromServer.json()
@@ -99,7 +102,46 @@ export function InstituteList() {
       !Array.isArray(finalData) ? console.log('This is not an array') :
         setInstituteArray(finalData)
     } catch (error) {
-      console.log("Issue in Getting Info From Server",error)
+      console.log("Issue in Getting Info From Server", error)
+    }
+  }
+  
+  const createNewInstitute=async()=>{
+    try {
+      console.log(instituteName)
+      console.log(instituteAddress)
+      console.log(instituteContact)
+      console.log(subscriptionId)
+      if(instituteName==''||instituteAddress==''||subscriptionId==''){
+        console.log('Please Fill all the Required Fields')
+      }
+      else if(instituteContact.length!=11){
+        console.log("Please Write contact no consist of 11 numbers")
+      }
+      else{
+      const response = await fetch("http://localhost:3000/api/instituteCreation",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({instituteName:instituteName,address:instituteAddress,contactNo:instituteContact,subscriptionPlanId:subscriptionId})
+      })
+      const data = await response.json()
+      const message= data.message
+      if(message=="Institute Created and Subscription Done Succesfully"){
+        console.log("Institute Creation Successfully")
+        setInstituteName('')
+        setInstituteContact('')
+        setInstituteAddress('')
+        setSubscriptionId('')
+        setOpen(false)
+        await getInfoOfAvailableInstitutes()
+      }
+      console.log("Data is :",data)
+      
+      }
+    } catch (error) {
+      console.log("Error in Institute Creation Function",error)
     }
   }
 
@@ -114,8 +156,8 @@ export function InstituteList() {
 
   const filteredInstitutes = instituteArray.filter((institute) => {
     const matchesSearch =
-      institute.name.toLowerCase().includes(searchQuery.toLowerCase()) 
-      // institute.email.toLowerCase().includes(searchQuery.toLowerCase());
+      institute.name.toLowerCase().includes(searchQuery.toLowerCase())
+    // institute.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'all' || institute.scopeType === filterType;
     const matchesStatus = filterStatus === 'all' || institute.status === filterStatus;
     return matchesSearch && matchesType && matchesStatus
@@ -128,9 +170,9 @@ export function InstituteList() {
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Institutes</h2>
           <p className="text-sm text-gray-500">Manage all subscribed institutes</p>
-                {/* <button onClick={()=>getInfoOfAvailableInstitutes()}> Click Me</button> */}
+          {/* <button onClick={()=>getInfoOfAvailableInstitutes()}> Click Me</button> */}
         </div>
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
               <Plus className="w-4 h-4 mr-2" />
@@ -144,33 +186,42 @@ export function InstituteList() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
               <div className="space-y-2">
                 <Label>Institute Name</Label>
-                <Input placeholder="Enter institute name" />
+                <Input value={instituteName} onChange={(e) => {
+                  setInstituteName(e.target.value)
+                }} placeholder="Enter institute name" />
               </div>
               <div className="space-y-2">
-                <Label>Email</Label>
-                <Input type="email" placeholder="admin@institute.com" />
+                <Label>Address</Label>
+                <Input value={instituteAddress} onChange={(e) => setInstituteAddress(e.target.value)} placeholder="Enter Institute Address Here" />
               </div>
               <div className="space-y-2">
                 <Label>Subscription Type</Label>
-                <Select>
+                <Select value={subscriptionId}
+                onValueChange={(value)=>setSubscriptionId(value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="institute">Complete Institute</SelectItem>
-                    <SelectItem value="batch">Batch</SelectItem>
-                    <SelectItem value="individual">Class</SelectItem>
+                    {
+                      subscriptionPlanArray.map((item) => {
+                        return (
+                          <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                        )
+                      })
+                    }
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Contact No</Label>
-                <Input placeholder="92******" />
+                <Input placeholder="92******" value={instituteContact}
+                 onChange={(e)=>setInstituteContact(e.target.value)}/>
               </div>
             </div>
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 mt-4 pt-4 border-t">
-              <Button variant="ghost" className="w-full sm:w-auto">Cancel</Button>
-              <Button className="w-full sm:w-auto bg-blue-600">Save Institute</Button>
+              <Button variant="ghost" className="w-full sm:w-auto" onClick={()=>setOpen(false)}>Cancel</Button>
+              <Button onClick={()=>createNewInstitute()} className="w-full sm:w-auto bg-blue-600">Save Institute</Button>
             </div>
           </DialogContent>
         </Dialog>
