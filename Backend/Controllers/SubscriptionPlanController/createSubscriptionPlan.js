@@ -1,5 +1,5 @@
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
-const { subscriptionPlanModel } = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
+const  subscriptionPlanModel  = require("../../Models/SuperAdminModels/subscriptionsPlan.model")
 
 const createSubscriptionPlan= async(req,res)=>{
 try {
@@ -76,15 +76,31 @@ const getAllSubscription = async (req,res)=>{
     try{
     const subscriptionInfo = await subscriptionModel.find({})
             if(!subscriptionInfo){
-                console.log("Institute Info not Available ")
+                console.log("Subscription Info not Available ")
                 return res.status(400).json({message:'Subscriptions Info not available'})
             }
-        console.log('This is Institute Info ',subscriptionInfo)
+        console.log('This is Subscription Info ',subscriptionInfo)
         return res.status(200).json({message:'Successfully Found Info Of All Subscriptions',subscriptionInfo})
-        } catch (error) {
-            console.log("Error in Getting all institute info",error)
-            return res.status(400).json({message:'Error in Getting all institute Info',error})
+        } 
+        catch (error) {
+            console.log("Error in Getting all Subscription info",error)
+            return res.status(400).json({message:'Error in Getting all Subscription Info',error})
         }
 }
 
-module.exports = {createSubscriptionPlan,updateSubscriptionPlan,deleteSubscription,getAllSubscription}
+
+const getAllSubscriptionPlanDetails = async(req,res)=>{
+    try {
+        const checkAllPlanInfo = await subscriptionPlanModel.find({})
+        if(!checkAllPlanInfo){
+            console.log("No Plan Available")
+            return res.status(400).json({message:'No Plan Available'})
+        }
+        console.log("There are available Plans :",checkAllPlanInfo)
+        return res.status(200).json({message:"There are available Plans :",checkAllPlanInfo})
+    } catch (error) {
+        console.log("Error in Subscription Plan Info",error)
+        return res.status(404).json({message:"Error in Subscription Plan Info",error})
+    }
+}
+module.exports = {createSubscriptionPlan,updateSubscriptionPlan,deleteSubscription,getAllSubscription,getAllSubscriptionPlanDetails}

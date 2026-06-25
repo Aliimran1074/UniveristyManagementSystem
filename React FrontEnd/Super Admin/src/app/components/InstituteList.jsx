@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// subscription plan araay ka kaam karlia ab institute or subscription creation ka kaam karna hai then next page otherwise next dashboard per move karna hai
+import React, { useState,useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -22,11 +23,16 @@ import { Search, Download, Eye, Edit, Trash2, Plus, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Label } from './ui/label';
 
+
+
+
 export function InstituteList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [instituteArray, setInstituteArray] = useState([])
+  const [subscriptionPlanArray,setSubscriptionPlanArray] = useState([])
+
   // Placeholder data - ensure this matches your actual data structure
   const institutes = [
     {
@@ -52,8 +58,35 @@ export function InstituteList() {
   ]
 
 
-  //  is me data .data karna parega
-  const getInfoOfAvailableInstitutes = async () => {
+  useEffect(()=>{
+    getInfoOfAvailableInstitutes(),
+    detailsOfAllSubscriptionPlans()
+  },[])
+
+  const detailsOfAllSubscriptionPlans= async()=>{
+    try{
+      const response = await fetch("http://localhost:3000/api/getAllSubscriptionPlanDetails")
+      const data = await response.json()
+      if(!response.ok){
+        console.log("Server error while fetching all plan details")
+        return
+      }
+      // console.log("data is :",data)
+      const finalData = data.checkAllPlanInfo
+       console.log("Final data is :",finalData)
+       const finalArray = finalData.map(item=>({
+        id:item._id,
+        name:item.subscriptionName
+       }))
+       setSubscriptionPlanArray(finalArray)
+       console.log("Final Array :",finalArray)
+    }
+    catch(error){
+      console.log("Error in Fetching all subscription Details",error)     
+    }
+  }
+
+   const getInfoOfAvailableInstitutes = async () => {
     try {
       const gettingInfoOfInstituteFromServer = await fetch("http://localhost:3000/api/allInstituteInfo")
       const data = await gettingInfoOfInstituteFromServer.json()
@@ -61,11 +94,10 @@ export function InstituteList() {
         console.log("Server error while fetching institutes")
         return
       }
-      console.log("Institutes Info:", data)
-      Array.isArray(data) ? console.log('This is not an array') :
-        console.log(data)
-      // setInstituteArray(data) 
-
+      const finalData = data.data
+      console.log("Institutes Info:", finalData)
+      !Array.isArray(finalData) ? console.log('This is not an array') :
+        setInstituteArray(finalData)
     } catch (error) {
       console.log("Issue in Getting Info From Server",error)
     }
@@ -80,14 +112,14 @@ export function InstituteList() {
     }
   }
 
-  const filteredInstitutes = institutes.filter((institute) => {
+  const filteredInstitutes = instituteArray.filter((institute) => {
     const matchesSearch =
-      institute.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      institute.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || institute.subscriptionType === filterType;
+      institute.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+      // institute.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === 'all' || institute.scopeType === filterType;
     const matchesStatus = filterStatus === 'all' || institute.status === filterStatus;
-    return matchesSearch && matchesType && matchesStatus;
-  });
+    return matchesSearch && matchesType && matchesStatus
+  })
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
@@ -96,7 +128,7 @@ export function InstituteList() {
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Institutes</h2>
           <p className="text-sm text-gray-500">Manage all subscribed institutes</p>
-                <button onClick={()=>getInfoOfAvailableInstitutes()}> Click Me</button>
+                {/* <button onClick={()=>getInfoOfAvailableInstitutes()}> Click Me</button> */}
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -125,9 +157,9 @@ export function InstituteList() {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="complete">Complete Institute</SelectItem>
+                    <SelectItem value="institute">Complete Institute</SelectItem>
                     <SelectItem value="batch">Batch</SelectItem>
-                    <SelectItem value="class">Class</SelectItem>
+                    <SelectItem value="individual">Class</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -151,7 +183,7 @@ export function InstituteList() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search name or email..."
+                placeholder="Search name .."
                 className="pl-10 bg-white border-gray-200"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -164,9 +196,9 @@ export function InstituteList() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="Complete Institute">Institute</SelectItem>
-                  <SelectItem value="Batch">Batch</SelectItem>
-                  <SelectItem value="Class">Class</SelectItem>
+                  <SelectItem value="institute">Institute</SelectItem>
+                  <SelectItem value="batch">Batch</SelectItem>
+                  <SelectItem value="individual">Class</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -180,9 +212,9 @@ export function InstituteList() {
                   <SelectItem value="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" className="hidden sm:flex bg-white border-gray-200">
+              {/* <Button variant="outline" className="hidden sm:flex bg-white border-gray-200">
                 <Download className="w-4 h-4 mr-2" /> Export
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardHeader>
@@ -191,12 +223,12 @@ export function InstituteList() {
       {/* MOBILE LIST VIEW (Hidden on md+) */}
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {filteredInstitutes.map((inst) => (
-          <Card key={inst.id} className="p-4 space-y-4 border-gray-100 shadow-sm">
+          <Card key={inst._id} className="p-4 space-y-4 border-gray-100 shadow-sm">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <h3 className="font-bold text-gray-900">{inst.name}</h3>
                 <div className="flex items-center text-xs text-gray-500">
-                  <Mail className="w-3 h-3 mr-1" /> {inst.email}
+                  {/* <Mail className="w-3 h-3 mr-1" /> {inst.email} */}
                 </div>
               </div>
               <Badge className={getStatusColor(inst.status)} variant="secondary">
@@ -207,23 +239,23 @@ export function InstituteList() {
             <div className="grid grid-cols-2 gap-4 py-2 border-y border-gray-50">
               <div>
                 <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Usage</p>
-                <p className="font-semibold text-sm">{inst.currentUsers} / {inst.userLimit}</p>
+                <p className="font-semibold text-sm">{inst.totalAiRequests}</p>
                 <div className="h-1.5 w-full bg-gray-100 rounded-full mt-1.5">
                   <div
                     className="h-full bg-blue-600 rounded-full"
-                    style={{ width: `${(inst.currentUsers / inst.userLimit) * 100}%` }}
+                    style={{ width: `${(inst.totalAiRequests / 100) * 100}%` }}
                   />
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Contact</p>
-                <p className="font-bold text-blue-600">{inst.contact}</p>
-                <p className="text-[10px] text-gray-400 mt-1">{inst.subscriptionType}</p>
+                <p className="font-bold text-blue-600">{inst.contactNo}</p>
+                <p className="text-[10px] text-gray-400 mt-1">{inst.scopeType}</p>
               </div>
             </div>
 
             <div className="flex justify-between items-center pt-2">
-              <Badge variant="outline" className="text-[10px]">{inst.subscriptionType}</Badge>
+              <Badge variant="outline" className="text-[10px]">{inst.scopeType}</Badge>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" className="h-8 w-8 p-0"><Eye className="w-4 h-4" /></Button>
                 <Button variant="secondary" size="sm" className="h-8 w-8 p-0"><Edit className="w-4 h-4" /></Button>
@@ -251,14 +283,14 @@ export function InstituteList() {
             <TableBody>
               {filteredInstitutes.length > 0 ? (
                 filteredInstitutes.map((institute) => (
-                  <TableRow key={institute.id} className="hover:bg-gray-50/50 transition-colors">
+                  <TableRow key={institute._id} className="hover:bg-gray-50/50 transition-colors">
                     <TableCell>
                       <p className="font-semibold text-gray-900">{institute.name}</p>
-                      <p className="text-xs text-gray-500">{institute.email}</p>
+                      {/* <p className="text-xs text-gray-500">{institute.email}</p> */}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="font-normal text-gray-600">
-                        {institute.subscriptionType}
+                        {institute.scopeType}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -269,18 +301,18 @@ export function InstituteList() {
                     <TableCell>
                       <div className="w-24 lg:w-32">
                         <div className="flex justify-between text-[10px] mb-1 font-medium text-gray-500">
-                          <span>{Math.round((institute.currentUsers / institute.userLimit) * 100)}%</span>
-                          <span>{institute.currentUsers}/{institute.userLimit}</span>
+                          <span>{Math.round((institute.totalAiRequests / 100) * 100)}%</span>
+                          <span>{institute.totalAiRequests}</span>
                         </div>
                         <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                            style={{ width: `${(institute.currentUsers / institute.userLimit) * 100}%` }}
+                            style={{ width: `${(institute.totalAiRequests / 100) * 100}%` }}
                           />
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-bold text-gray-900">{institute.contact}</TableCell>
+                    <TableCell className="font-bold text-gray-900">{institute.contactNo}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-blue-600"><Eye className="w-4 h-4" /></Button>
@@ -303,5 +335,11 @@ export function InstituteList() {
       </Card>
 
     </div>
-  );
+  )
 }
+
+
+
+
+
+// edit or delete function backend me bana kar yahan aik dialogue box create karna hoga , revenue wala kaam bhi karna hoga

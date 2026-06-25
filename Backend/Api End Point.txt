@@ -111,6 +111,7 @@ Subscription Plan Apis
 | PUT    | `/updateSubscriptionPlan` |
 | DELETE | `/deleteSubscriptionPlan` |
    GET      '/getAllSubscription 
+   GET      '/getAllSubscriptionPlanDetails'  (give details of all the subscription plans)
 
 Report Apis
 
