@@ -158,3 +158,6 @@ According to teacher dashboard in frontend
 
 26/6/2026 
 generate table wale function ko test karke phr counselling agent ka kaam karke frontend se link karna hai pehle teacher dashboard ko
+
+26/6/2026
+Appointment agent per kaam karna hai abhi appointment model banaya hai is se agay k functions banane hai 

@@ -25,11 +25,12 @@ const generateTimeTable = async (instituteId) => {
   let dayIndex = 0
   let slotIndex = 0
 
+  let createTimeTable 
   for (const course of courses) {
 
     const teacherId = course.instructorTeached
 
-    const existing = await timeTableModel.findOne({
+    const existing = await instituteTimeTableModel.findOne({
       teacherId,
       day: days[dayIndex],
       startTime: slots[slotIndex].start
@@ -44,7 +45,8 @@ const generateTimeTable = async (instituteId) => {
       continue
     }
 
-    await timeTableModel.create({
+    
+   createTimeTable =  await instituteTimeTableModel.create({
       instituteId: course.instituteId,
       departmentId: course.department,
       courseId: course._id,
@@ -65,11 +67,23 @@ const generateTimeTable = async (instituteId) => {
 
   return {
     success: true,
-    message: "TimeTable Generated Successfully"
+    message: "TimeTable Generated Successfully",
+    createTimeTable
   }
 }
 
 
+const checkGenerateTable = async(req,res)=>{
+  try {
+    const {instituteId} =req.body
+    const result = await generateTimeTable(instituteId)
+    console.log("Result is :",result)
+    return res.status(200).json({message:"Final Result is :",result})
+  } catch (error) {
+    console.log("Error in Generate Time Table Function",error)
+    return res.status(404).json({message:"Error in Generate Time Table Function",error})
+  }
+}
 
 // humay is function ko postman k through test karna hoga
-module.exports = { generateTimeTable }
+module.exports = { generateTimeTable ,checkGenerateTable}
