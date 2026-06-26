@@ -154,3 +154,7 @@ According to teacher dashboard in frontend
 5 Front end me quiz generator , assignment generator ko topic dene ka kaam karna hai
 6 Recheck wala option bhi enable karna hai
 7 teacher me QR code generator or pic wala kaam bhi karna hai
+
+
+26/6/2026 
+generate table wale function ko test karke phr counselling agent ka kaam karke frontend se link karna hai pehle teacher dashboard ko

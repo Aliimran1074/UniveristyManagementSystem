@@ -29,12 +29,7 @@ const CourseSchema=new mongoose.Schema({
     {
         type:String,
     },
-    // code:{
-    //     type:Number,
-    //     // required:true,
-    //     // unique:true
-    // }
-    // ,
+
     creditHours:{
         type:Number,
         enum:[1,2,3],

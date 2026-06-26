@@ -4,6 +4,8 @@ const instituteModel = require('../../Models/InstituteBatchesClasses/Institute.m
 const subscriptionModel = require('../../Models/SuperAdminModels/subscription.model')
 const subscriptionPlanModel =  require('../../Models/SuperAdminModels/subscriptionsPlan.model')
 const staffModel = require('../../Models/UserModels/staff.model')
+const courseTeacherMapModel = require('../../Models/TimeSlot/courseTeachermap.model')
+
 // wants to work little bit in it
 const courseCreation= async (req,res)=>{
     try {
@@ -178,6 +180,19 @@ const assignInstructorToCourse = async(req,res)=>{
 
         checkCourseUpdate.instructorTeached= instructorId
         await checkCourseUpdate.save()
+        await courseTeacherMapModel.findOneAndUpdate(
+  {
+    courseId,
+    instructorId
+  },
+  {
+    instituteId: checkInstituteIdOfCourse,
+    courseId,
+    teacherId: instructorId,
+    batch: checkCourseUpdate.ForClass || "default"
+  },
+  { upsert: true, new: true }
+)
 
         return res.status(200).json({message:"Instructor Assigned Succesfully",checkCourseUpdate})
     }

@@ -51,7 +51,16 @@ const studentSubjectPerformanceSchema = new mongoose.Schema(
     lastUpdated: {
       type: Date,
       default: Date.now
-    }
+    },
+    counsellingRequested: {
+  type: Boolean,
+  default: false
+},
+
+counsellingRequestedAt: {
+  type: Date,
+  default: null
+}
   },
   { timestamps: true }
 )

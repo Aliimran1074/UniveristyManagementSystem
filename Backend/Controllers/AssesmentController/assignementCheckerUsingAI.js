@@ -4,7 +4,8 @@ const assignmentUploadingModel = require("../../Models/Assignment/assignmentUplo
 const FormData = require('form-data')
 const studentRegistrationModel = require('../../Models/UserModels/studentRegistration.model')
 const subscriptionModel = require("../../Models/SuperAdminModels/subscription.model")
-
+const studentSubjectPerformanceModel =require('../../Models/ResultModels/StudentPerSubjectPerformance.model')
+const {updateStudentPerformance} = require('../Marks Controller Folder/studentperformanceController')
 // const assignmentCheckerFunction = async (req,res) => {
 //   try {
 //     const { uploadAssignmentId } = req.body
@@ -170,6 +171,8 @@ const checkAssignmentCore = async (uploadAssignmentId) => {
     const marks =
       aiResponse.data?.checkAssignmentData?.total_marks || 0
 
+
+
     upload.marks = marks
     upload.maxMarks = totalMarks
     upload.status = "checked"
@@ -177,6 +180,27 @@ const checkAssignmentCore = async (uploadAssignmentId) => {
 
     subscription.aiUsage.assignmentCheckerUsed += 1
     subscription.aiUsage.totalAiRequests += 1
+    
+    await studentSubjectPerformanceModel.findOneAndUpdate(
+  {
+    studentId: upload.studentId,
+    courseId: assignment.course,
+    instituteId: assignment.instituteId,
+    teacherId: assignment.createdBy
+  },
+  {
+    $inc: {
+      assignmentObtainedMarks: marks,
+      assignmentTotalMarks: totalMarks
+    },
+    $set: {
+      lastUpdated: new Date()
+    }
+  },
+  { upsert: true }
+)
+
+await updateStudentPerformance(upload.studentId,assignment.course, assignment.instituteId, assignment.createdBy)
 
     await upload.save()
     await subscription.save()
@@ -207,9 +231,7 @@ const assignmentCheckerFunction = async (req, res) => {
   return res.status(200).json(result)
 }
 
-// ===============================
-// CRON WORKER (AUTO RUNNER)
-// ===============================
+
 const runAssignmentCheckerCron = async () => {
 
   const uploads =

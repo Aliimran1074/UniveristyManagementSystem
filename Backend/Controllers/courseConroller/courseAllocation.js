@@ -1,6 +1,6 @@
 const courseModel = require('../../Models/CourseModels/course.model')
 const staffModel = require('../../Models/UserModels/staff.model')
-
+const courseTeacherMapModel = require('../../Models/TimeSlot/courseTeachermap.model')
 
 //courses can be select by instructor or given by HOD (no more than 3 courses)
 const courseAllocation = async(req,res)=>{      
@@ -86,6 +86,23 @@ const courseAllocation = async(req,res)=>{
             console.log("Issue in Assigning Course")
             return res.status(401).json({message:"Issue in Assigning Course"})
         }
+
+        // new block of code for timetable formation
+        await courseTeacherMapModel.deleteMany({
+  instructorId,
+  courseId: { $in: coursesIds }
+})
+
+const mapData = coursesIds.map(courseId => ({
+  instituteId: findCourses[0].instituteId,
+  courseId,
+  teacherId: instructorId,
+  batch: findCourses[0].ForClass || "default",
+  semester: findCourses[0].ForSemester || 1
+}))
+
+await courseTeacherMapModel.insertMany(mapData)
+
         console.log('Instructor Assign Successfully')
         return res.status(200).json({message:"Instructor Assign Successfully",assignInstructor})
     } catch (error) {

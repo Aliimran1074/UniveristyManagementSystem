@@ -100,11 +100,12 @@
 
 const axios = require("axios")
 const FormData = require("form-data")
-
 const quizUploadingModel = require("../../../Models/QuizModel/quizUploading.model")
 const studentRegistrationModel = require("../../../Models/UserModels/studentRegistration.model")
 const quizModel = require("../../../Models/QuizModel/quiz.model")
 const subscriptionModel = require("../../../Models/SuperAdminModels/subscription.model")
+const studentSubjectPerformanceModel =require('../../../Models/ResultModels/StudentPerSubjectPerformance.model')
+const {updateStudentPerformance} = require('../../Marks Controller Folder/studentperformanceController')
 
 const quizCheckerCore = async (uploadQuizId) => {
   try {
@@ -176,7 +177,7 @@ const quizCheckerCore = async (uploadQuizId) => {
       )
 
     const marks =
-      aiResponse.data?.result?.total_marks || 0
+        aiResponse.data?.result?.total_marks || 0
 
     upload.marks = marks
     upload.maxMarks = totalMarks
@@ -186,6 +187,25 @@ const quizCheckerCore = async (uploadQuizId) => {
     subscription.aiUsage.quizCheckerUsed += 1
     subscription.aiUsage.totalAiRequests += 1
 
+      await studentSubjectPerformanceModel.findOneAndUpdate(
+  {
+    studentId: upload.studentId,
+    courseId: quiz.course,
+    instituteId: quiz.instituteId,
+    teacherId: quiz.createdBy
+  },
+  {
+    $inc: {
+      quizObtainedMarks: marks,
+      quizTotalMarks: totalMarks
+    },
+    $set: {
+      lastUpdated: new Date()
+    }
+  },
+  { upsert: true }
+)
+await updateStudentPerformance(upload.studentId, quiz.course, quiz.instituteId,quiz.createdBy)
     await upload.save()
     await subscription.save()
 
