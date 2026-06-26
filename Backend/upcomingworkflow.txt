@@ -145,3 +145,12 @@ Quiz Generation Function bhi automate hogya hai , Assignment Checker bhi automat
 24/6/2026 
 4 agents automate hogye ab inhe Postman per bhi test karna hai 
 
+26/6/2026
+According to teacher dashboard in frontend
+1 Attendence ka kaam rehta hai (student + teacher) 
+2 Appointment Agent ka kaam rehta hai
+3 Assignments ko seperate karna hai ,self (checker vs AI checker) 
+4 Content Uploading wala kaam ko dekhna hai
+5 Front end me quiz generator , assignment generator ko topic dene ka kaam karna hai
+6 Recheck wala option bhi enable karna hai
+7 teacher me QR code generator or pic wala kaam bhi karna hai

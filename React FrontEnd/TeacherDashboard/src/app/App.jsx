@@ -13,8 +13,9 @@ import DashboardOverview from './components/DashboardOverview';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
+  const teacherId = import.meta.env.teacherId         // in future we can acheive this by login signup
   
-  // Mock teacher data
+
   const teacherData = {
     name: 'Dr. Sarah Johnson',
     subjects: [
