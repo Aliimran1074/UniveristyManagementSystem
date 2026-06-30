@@ -161,3 +161,6 @@ generate table wale function ko test karke phr counselling agent ka kaam karke f
 
 26/6/2026
 Appointment agent per kaam karna hai abhi appointment model banaya hai is se agay k functions banane hai 
+
+30/6/2026
+Appointment agent per chatgpt ne jo previous code diye hai wo test karne hai phr frontend per integration karni hai
