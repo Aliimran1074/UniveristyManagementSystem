@@ -1,57 +1,63 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Users, BookOpen, Calendar, TrendingUp, Award, Clock } from 'lucide-react';
 
-export default function DashboardOverview({ teacherData }) {
+export default function DashboardOverview({ dashboardData }) {
+  
+  const totalStudents = dashboardData?.summary?.totalStudents || 0
+  const activeClasses = dashboardData?.summary?.totalCourses || 0
+  const avgGrade = dashboardData?.courses?.length
+  ? "Calculating..."
+  : "0%"
   const stats = [
-    {
-      title: 'Total Students',
-      value: '60',
-      description: 'Across all classes',
-      icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
-    },
-    {
-      title: 'Active Classes',
-      value: '2',
-      description: 'Biology & Chemistry',
-      icon: BookOpen,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
-    },
-    {
-      title: 'Pending Assignments',
-      value: '12',
-      description: 'Need to be checked',
-      icon: Clock,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
-    },
-    {
-      title: 'Appointments Today',
-      value: '3',
-      description: '2 confirmed, 1 pending',
-      icon: Calendar,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
-    },
-    {
-      title: 'Attendance Rate',
-      value: '94%',
-      description: 'Last 7 days',
-      icon: TrendingUp,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-100'
-    },
-    {
-      title: 'Average Grade',
-      value: '85%',
-      description: 'This semester',
-      icon: Award,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-100'
-    }
-  ];
+  {
+    title: 'Total Students',
+    value: totalStudents,
+    description: 'Across all classes',
+    icon: Users,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-100'
+  },
+  {
+    title: 'Active Classes',
+    value: activeClasses,
+    description: 'Assigned courses',
+    icon: BookOpen,
+    color: 'text-green-600',
+    bgColor: 'bg-green-100'
+  },
+  {
+    title: 'Pending Assignments',
+    value: '12',
+    description: 'Need to be checked',
+    icon: Clock,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-100'
+  },
+  {
+    title: 'Appointments Today',
+    value: '3',
+    description: '2 confirmed, 1 pending',
+    icon: Calendar,
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-100'
+  },
+  {
+    title: 'Attendance Rate',
+    value: '94%',
+    description: 'Last 7 days',
+    icon: TrendingUp,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100'
+  },
+  {
+    title: 'Average Grade',
+    value: avgGrade,
+    description: 'This semester',
+    icon: Award,
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-100'
+  }
+]
 
   const recentActivity = [
     { type: 'assignment', student: 'John Smith', action: 'submitted Biology Assignment', time: '10 mins ago' },
@@ -142,7 +148,7 @@ export default function DashboardOverview({ teacherData }) {
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Common tasks and shortcuts</CardDescription>
@@ -167,7 +173,7 @@ export default function DashboardOverview({ teacherData }) {
             </button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

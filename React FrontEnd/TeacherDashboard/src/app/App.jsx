@@ -1,21 +1,25 @@
-import { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
-import { GraduationCap, Users, Calendar, BookOpen, Settings, FileText, ClipboardCheck } from 'lucide-react';
-import StudentList from './components/StudentList';
-import AttendanceTracker from './components/AttendanceTracker';
-import AIAgentsControl from './components/AIAgentsControl';
-import AssignmentChecker from './components/AssignmentChecker';
-import QuizChecker from './components/QuizChecker';
-import ContentUploader from './components/ContentUploader';
-import AppointmentManager from './components/AppointmentManager';
-import DashboardOverview from './components/DashboardOverview';
+import { useEffect, useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card'
+import { GraduationCap, Users, Calendar, BookOpen, Settings, FileText, ClipboardCheck } from 'lucide-react'
+import StudentList from './components/StudentList'
+import AttendanceTracker from './components/AttendanceTracker'
+import AIAgentsControl from './components/AIAgentsControl'
+import AssignmentChecker from './components/AssignmentChecker'
+import QuizChecker from './components/QuizChecker'
+import ContentUploader from './components/ContentUploader'
+import AppointmentManager from './components/AppointmentManager'
+import DashboardOverview from './components/DashboardOverview'
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
   const teacherId = import.meta.env.VITE_TEACHER_ID       // in future we can acheive this by login signup
-  const [instructorData,setInstructorData]= useState({})
-  const [courseDetails,setCourseDetails] =useState({})
+const [dashboardData, setDashboardData] = useState({
+  teacher: {},
+  summary: {},
+  courses: []
+})
+
 
   const teacherData = { 
     name: 'Dr. Sarah Johnson',
@@ -31,15 +35,17 @@ useEffect(()=>{
 const getInstructorInfo = async()=>{
 try {
     console.log("Teacher ID : ",teacherId)
-      const response = await fetch(`http://localhost:3000/api/getStaffById/${teacherId}`)  
+      const response = await fetch(`http://localhost:3000/api/teacherDashboardInfo/${teacherId}`)  
       const data = await response.json()
       if(!data){
         console.log("Data not Found")
       }
+      console.log("Data is :",data)
+      setDashboardData(data)
       // console.log(data.staffData)
-      const staffData = data.staffData
-      console.log("This is Staff Information",staffData)
-      setInstructorData(staffData)
+      // const staffData = data.staffData
+      // console.log("This is Staff Information",staffData)
+      // setInstructorData(staffData)
  
 } catch (error) {
   console.log("Error in Getting Staff info",error)
@@ -56,7 +62,7 @@ try {
               <GraduationCap className="w-8 h-8 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Teacher Dashboard</h1>
-                <p className="text-sm text-gray-600">{instructorData.name}</p>
+                <p className="text-sm text-gray-600">{dashboardData?.teacher?.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -66,10 +72,10 @@ try {
                    window.location.href="https://student-dashboard-frontend-black.vercel.app/"
               }}>Next Dashboard</button>
             </div>                <p className="text-sm font-medium text-gray-900">
-                  {teacherData.subjects.length} Classes
+                  {dashboardData?.summary?.totalCourses} Classes
                 </p>
                 <p className="text-xs text-gray-600">
-                  {teacherData.subjects.reduce((acc, s) => acc + s.students, 0)} Students
+                  {dashboardData?.summary?.totalStudents} Students
                 </p>
               </div>
             </div>
@@ -116,7 +122,7 @@ try {
           </TabsList>
 
           <TabsContent value="overview">
-            <DashboardOverview teacherData={teacherData} />
+            <DashboardOverview dashboardData={dashboardData} />
           </TabsContent>
 
           <TabsContent value="students">
@@ -149,5 +155,5 @@ try {
         </Tabs>
       </main>
     </div>
-  );
+  )
 }

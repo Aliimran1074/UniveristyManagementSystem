@@ -30,4 +30,4 @@ const courseEnrollmentSchema = new mongoose.Schema({
 
 const courseEnrollmentModel = mongoose.model('courseEnrollmentModel',courseEnrollmentSchema)
 
-module.exports = {courseEnrollmentModel}
+module.exports = courseEnrollmentModel

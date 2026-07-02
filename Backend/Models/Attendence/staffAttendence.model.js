@@ -1,12 +1,21 @@
-const mongoose= require('mongoose')
+const mongoose = require('mongoose')
 
-const staffAttendence = new mongoose.Schema({
-    staffId:{
-        type:mongoose.Schema.ObjectId,
-        required:true
+const staffAttendanceSchema = new mongoose.Schema({
+    staffId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "staffModel",
+        required: true
     },
-    date:{
-        type:Date,
-        default:Date
+    status: {
+        type: String,
+        enum: ["present", "absent", "leave"],
+        default: "present"
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
-},{timestamps})
+}, { timestamps: true })
+
+const staffAttendenceModel = mongoose.model("staffAttendanceModel", staffAttendanceSchema) 
+module.exports = staffAttendenceModel
