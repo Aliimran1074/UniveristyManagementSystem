@@ -167,3 +167,4 @@ Appointment agent per chatgpt ne jo previous code diye hai wo test karne hai phr
 
 2/7/2026 
 Counselling agent properly kaam kar raha hai ab teacher dashboard ke sath jaldi se integrate karna hai
+Instructor Id ke through no of course nikalne hai or student ka data frontend per lagana hai

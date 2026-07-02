@@ -200,6 +200,12 @@ const assignInstructorToCourse = async(req,res)=>{
         console.log("Error in Assign Instructor To Course",error)
         return res.status(404).json({message:"Error in Assign Instructor To Course",error})
     }
+
+
+}
+
+const courseDetailsUsingInstructorId = async(req,res)=>{
+    tryc
 }
 
 module.exports={courseCreation,updationInCourse,courseDeletion,getCompleteCourseUpdate,assignInstructorToCourse} 

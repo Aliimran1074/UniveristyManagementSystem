@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { GraduationCap, Users, Calendar, BookOpen, Settings, FileText, ClipboardCheck } from 'lucide-react';
@@ -13,16 +13,38 @@ import DashboardOverview from './components/DashboardOverview';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('overview');
-  const teacherId = import.meta.env.teacherId         // in future we can acheive this by login signup
-  
+  const teacherId = import.meta.env.VITE_TEACHER_ID       // in future we can acheive this by login signup
+  const [instructorData,setInstructorData]= useState({})
+  const [courseDetails,setCourseDetails] =useState({})
 
-  const teacherData = {
+  const teacherData = { 
     name: 'Dr. Sarah Johnson',
     subjects: [
       { class: '9', subject: 'Biology', students: 32 },
       { class: '10', subject: 'Chemistry', students: 28 }
     ]
   };
+
+useEffect(()=>{ 
+  getInstructorInfo()
+},[]) 
+const getInstructorInfo = async()=>{
+try {
+    console.log("Teacher ID : ",teacherId)
+      const response = await fetch(`http://localhost:3000/api/getStaffById/${teacherId}`)  
+      const data = await response.json()
+      if(!data){
+        console.log("Data not Found")
+      }
+      // console.log(data.staffData)
+      const staffData = data.staffData
+      console.log("This is Staff Information",staffData)
+      setInstructorData(staffData)
+ 
+} catch (error) {
+  console.log("Error in Getting Staff info",error)
+}
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,7 +56,7 @@ export default function App() {
               <GraduationCap className="w-8 h-8 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Teacher Dashboard</h1>
-                <p className="text-sm text-gray-600">{teacherData.name}</p>
+                <p className="text-sm text-gray-600">{instructorData.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
