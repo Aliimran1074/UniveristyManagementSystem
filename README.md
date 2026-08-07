@@ -21,13 +21,12 @@ The system provides multiple user roles with dedicated dashboards and integrates
 
 ### Super Admin Dashboard
 
-![Dashboard](./screenshots/super admin 1.png)
-![Dashboard](./screenshots/super admin 2.png)
-![Dashboard](./screenshots/super admin 3.png)
-![Dashboard](./screenshots/super admin 4.png)
-![Dashboard](./screenshots/super admin 5.png)
-![Dashboard](./screenshots/super admin auto report.png)
-
+![Dashboard](./screenshots/super%20admin%201.png)
+![Dashboard](./screenshots/super%20admin%202.png)
+![Dashboard](./screenshots/super%20admin%203.png)
+![Dashboard](./screenshots/super%20admin%204.png)
+![Dashboard](./screenshots/super%20admin%205.png)
+![Dashboard](./screenshots/super%20admin%20auto%20report.png)
 
 ---
 
@@ -42,10 +41,10 @@ The system provides multiple user roles with dedicated dashboards and integrates
 ## Screenshots
 
 ### Institute Admin Dashboard
-![Dashboard](./screenshots/institute admin 1.png)
-![Dashboard](./screenshots/institute admin 2.png)
-![Dashboard](./screenshots/institute admin 3.png)
-![Dashboard](./screenshots/institute admin 4.png)
+![Dashboard](./screenshots/institute%20admin%201.png)
+![Dashboard](./screenshots/institute%20admin%202.png)
+![Dashboard](./screenshots/institute%20admin%203.png)
+![Dashboard](./screenshots/institute%20admin%204.png)
 
 ---
 
@@ -85,13 +84,13 @@ The system provides multiple user roles with dedicated dashboards and integrates
 - Track learning progress
 
 ## Screenshots
-### Student Admin Dashboard
-![Dashboard](./screenshots/student dashboard 1.png)
-![Dashboard](./screenshots/student dashboard 2.png)
-![Dashboard](./screenshots/student dashboard 3.png)
-![Dashboard](./screenshots/student dashboard 4.png)
-![Dashboard](./screenshots/student dashboard 5.png)
-![Dashboard](./screenshots/student dashboard 6.png)
+### Student Admin Dashboard  
+![Dashboard](./screenshots/student%20dashboard%201.png)
+![Dashboard](./screenshots/student%20dashboard%202.png)
+![Dashboard](./screenshots/student%20dashboard%203.png)
+![Dashboard](./screenshots/student%20dashboard%204.png)
+![Dashboard](./screenshots/student%20dashboard%205.png)
+![Dashboard](./screenshots/student%20dashboard%206.png)
 ---
 
 # 🧠 Agentic AI Features
