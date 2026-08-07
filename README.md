@@ -62,17 +62,19 @@ The system provides multiple user roles with dedicated dashboards and integrates
 ## Screenshots
 
 ### Teacher Admin Dashboard
-![Dashboard](./screenshots/teacher dashboard 1.png)
-![Dashboard](./screenshots/teacher dashboard 2.png)
-![Dashboard](./screenshots/teacher dashboard 3.png)
-![Dashboard](./screenshots/teacher dashboard 4.png)
-![Dashboard](./screenshots/teacher dashboard 5+.png)
-![Dashboard](./screenshots/teacher dashboard 6.png)
-![Dashboard](./screenshots/teacher dashboard 7.png)
-![Dashboard](./screenshots/teacher dashboard 8.png)
-![Dashboard](./screenshots/teacher dashboard 9.png)
-![Dashboard](./screenshots/teacher dashboard 10.png)
-![Dashboard](./screenshots/teacher dashboard 11.png)
+## Teacher Dashboard
+
+![Teacher Dashboard 1](./screenshots/teacher%20dashboard%201.png)
+![Teacher Dashboard 2](./screenshots/teacher%20dashboard%202.png)
+![Teacher Dashboard 3](./screenshots/teacher%20dashboard%203.png)
+![Teacher Dashboard 4](./screenshots/teacher%20dashboard%204.png)
+![Teacher Dashboard 5](./screenshots/teacher%20dashboard%205%2B.png)
+![Teacher Dashboard 6](./screenshots/teacher%20dashboard%206.png)
+![Teacher Dashboard 7](./screenshots/teacher%20dashboard%207.png)
+![Teacher Dashboard 8](./screenshots/teacher%20dashboard%208.png)
+![Teacher Dashboard 9](./screenshots/teacher%20dashboard%209.png)
+![Teacher Dashboard 10](./screenshots/teacher%20dashboard%2010.png)
+![Teacher Dashboard 11](./screenshots/teacher%20dashboard%2011.png)
 ---
 
 ## 👨‍🎓 Student Features
