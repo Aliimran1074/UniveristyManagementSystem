@@ -33,10 +33,11 @@ The system provides multiple user roles with dedicated dashboards and integrates
 
 ## 🏫 Institute Management
 
-- Create and manage institutes
+- Manage institutes
 - Manage institute information
 - Track subscription plans
 - Monitor AI feature usage
+- Manage Students and Faculty of particular institute
 
 ## Screenshots
 
@@ -44,19 +45,18 @@ The system provides multiple user roles with dedicated dashboards and integrates
 ![Dashboard](./screenshots/institute%20admin%201.png)
 ![Dashboard](./screenshots/institute%20admin%202.png)
 ![Dashboard](./screenshots/institute%20admin%203.png)
-![Dashboard](./screenshots/institute%20admin%204.png)
+![Dashboard](./screenshots/institute%20admin%204.png)-
 
 ---
 
 ## 👨‍🏫 Teacher Features
 
-- Create and manage courses
-- Manage students
 - AI Agent Control Panel
 - Generate assignments using AI
 - Generate quizzes using AI
 - AI-based assignment checking
 - AI-based quiz checking
+
 
 ## Screenshots
 
